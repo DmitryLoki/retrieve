@@ -1,0 +1,27 @@
+<table>
+	<tr>
+		<td>
+			<!-- ko widget: { data: playerControl, type: 'PlayerControl' } --><!-- /ko -->
+			<form>
+				<table>
+					<tr>
+						<td>
+							<div><input type="radio" name="tracksMode" value="on" data-bind="checked: tracksMode" />tracks on</div>
+							<div><input type="radio" name="tracksMode" value="off" data-bind="checked: tracksMode" />tracks off</div>
+							<div><input type="radio" name="tracksMode" value="auto" data-bind="checked: tracksMode" />tracks 10min</div>
+						</td>
+						<td>
+							<div><input type="radio" name="titlesMode" value="on" data-bind="checked: titlesMode" />titles on</div>
+							<div><input type="radio" name="titlesMode" value="off" data-bind="checked: titlesMode" />titles off</div>
+							<div><input type="radio" name="titlesMode" value="auto" data-bind="checked: titlesMode" />titles auto</div>
+						</td>
+					</tr>
+				</table>
+			</form>
+			<!-- ko widget: { data: ufosTable, type: 'UfosTable' } --><!-- /ko -->
+		</td>
+		<td>
+			<!-- ko widget: { data: map, type: 'GoogleMap', width: '787px', height: '640px' } --><!-- /ko -->
+		</td>
+	</tr>
+</table>

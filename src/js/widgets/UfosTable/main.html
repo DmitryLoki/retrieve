@@ -1,0 +1,26 @@
+<form style="height: 400px; overflow: auto;">
+<table>
+	<thead>
+		<tr>
+			<th><input data-bind="checked: allVisibleChecked" type="checkbox"/></th>
+			<th>#</th>
+			<th>Pilot name</th>
+			<th>Dist to goal, km</th>
+			<th>Alt, m</th>
+			<th>Gspd, km/h</th>
+			<th>Vspd, m/s</th>
+		</tr>
+	</thead>
+	<tbody data-bind="foreach: ufos">
+		<tr>
+			<td data-bind="style: { backgroundColor: color }"><input data-bind="checked: visibleChecked" type="checkbox"/></td>
+			<td data-bind="text: $index() + 1"></td>
+			<td data-bind="text: name"></td>
+			<td data-bind="text: statusOrDist" data-bind0="text: statusText ? statusText : leftDist() < 4294967295 ? (leftDist()/1000).toFixed(1) : '' "></td>
+			<td data-bind="text: alt"></td>
+			<td data-bind="text: gSpd"></td>
+			<td data-bind="text: vSpd"></td>
+		</tr>
+	</tbody>
+</table>
+</form>

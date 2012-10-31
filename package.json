@@ -1,0 +1,14 @@
+{
+  "name": "n.js",
+  "description": "airtribune vis tool",
+  "version": "1.0.0",
+  "author": "airtribune JS-team",
+  "dependencies": {
+    "connect": "*",
+    "requirejs": "*"
+  },
+  "devDependencies": {
+  },
+  "repository": "git://codecat.ru:2043/airvis",
+  "engines": { "node": "*" }
+}
