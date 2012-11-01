@@ -310,7 +310,7 @@ define(['knockout', 'google.maps', 'utils', 'EventEmitter'], function(ko, gmaps,
 			map: this._map,
 			title: params.title,
 			color: params.color
-		});
+		},{});
 		this._ufos.push(ufo);
 		var self = this;
 		ufo.on('destroy', function(){
