@@ -28,7 +28,6 @@ define([
 	}
 
 	Pilot.prototype.moveToStep = function(step) {
-		console.log("moveToStep",step,this.route,this.route[step]);
 		this.coordsUpdate(this.route[step]);
 	}
 
@@ -47,10 +46,10 @@ define([
 				icon: {url: params.imgRootUrl + "ufoFly.png", width: 32, height: 35, x: 15, y: 32}
 			});
 			pilot.route = [];
-			pilot.route.push({lat:center.lat + Math.floor(Math.random()*10) - 5, lng: center.lng + Math.floor(Math.random()*10) - 5});
-			for (var j = 1; j < 10; j++) {
+			pilot.route.push({lat:center.lat + Math.random()/2 - 0.25, lng: center.lng + Math.random()/2 - 0.25});
+			for (var j = 1; j < 40; j++) {
 				var prev = pilot.route[j-1];
-				pilot.route.push({lat:prev.lat + Math.floor(Math.random()*2) - 1, lng: prev.lng + Math.floor(Math.random()*2) - 1});
+				pilot.route.push({lat:prev.lat + Math.random()/10 - 0.05, lng: prev.lng + Math.random()/10 - 0.05});
 			}
 			pilot.moveToStep(0);
 			this.pilots.push(pilot);
@@ -64,14 +63,13 @@ define([
 			self.pilots.forEach(function(pilot) {
 				pilot.moveToStep(self.step%pilot.route.length);
 			});
-//			self.playTimer = setTimeout(play,1000);
+			self.playTimer = setTimeout(play,200);
 		}
 		play();
 	}
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		this.generateRandomPilots(params);
-		console.log(this.pilots);
 		this.startPlay();
 	}
 

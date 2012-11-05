@@ -47,8 +47,9 @@ define(['knockout', 'google.maps', 'utils', 'EventEmitter'], function(ko, gmaps,
 	//  title: params.title,
 	//  color: params.color,
 	//  titleTemplate: this.templates.markerTitle }
-	var Ufo = function(map, params){
-		this._map = map;
+//	var Ufo = function(map, params){
+	var Ufo = function(params){
+		this._map = params.map;
 		this._params = params;
 		
 		this._track = new gmaps.Polyline({
@@ -60,7 +61,8 @@ define(['knockout', 'google.maps', 'utils', 'EventEmitter'], function(ko, gmaps,
 		this._pathTime = [];
 		this._marker = new gmaps.Marker({
 			flat: true,
-			title: params.title
+			title: params.title,
+			map: params.map
 		});
 		this._titleElem = new MapFloatElem({
 			template: params.titleTemplate,
