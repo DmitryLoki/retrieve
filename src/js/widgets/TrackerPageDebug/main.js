@@ -32,17 +32,16 @@ define([
 		this.gSpd = ko.observable(0);
 		this.vSpd = ko.observable(0);
 
-		// _row = {...} нужно заменить на какой-нибудь умный объект типа this._row = this.ufosTable.row(this);
-		this._row = {
-			gSpd: ko.observable(0).extend({restrictChangeSpeed:1000}),
-			vSpd: ko.observable(0).extend({restrictChangeSpeed:1000})
+		this.tableData = {
+			gSpd: ko.observable(0),
+			vSpd: ko.observable(0)
 		}
-		this.gSpdSubscription = this.gSpd.subscribe(function(value) {
-			p._row.gSpd(value);
-		});
-		this.vSpdSubscription = this.vSpd.subscribe(function(value) {
-			p._row.vSpd(value);
-		});
+
+		this.updateTableData = function() {
+			this.tableData.gSpd(this.gSpd());
+			this.tableData.vSpd(this.vSpd());
+//			komap.fromJS(this,{},this.tableData);
+		}
 	}
 
 	Pilot.prototype.coordsUpdate = function(latlng) {
@@ -65,20 +64,7 @@ define([
 		var self = this;
 		this.map = new GoogleMap();
 		this.ufos = ko.observableArray();
-
 		this.ufosTable = new UfosTable(this.ufos);
-/*
-		this.ufosInTable = ko.observableArray();
-		this.ufosTable = new UfosTable(this.ufosInTable);
-
-		this.ufos.subscribe(function(ar) {
-			ar.forEach(function(pilot) {
-				pilot.gSpd.subscribe(function(value) {
-				}
-			});
-			self.ufos(ar);
-		});
-*/
 	}
 
 	TrackerPageDebug.prototype.generateRandomPilots = function(params) {
@@ -102,14 +88,24 @@ define([
 
 	TrackerPageDebug.prototype.startPlay = function() {
 		var self = this;
-		var play = function() {
+
+		var playPilotsPositions = function() {
 			self.step = self.step ? self.step + 1 : 1;
 			self.ufos().forEach(function(pilot) {
 				pilot.moveToStep(self.step%pilot.route.length);
 			});
-			self.playTimer = setTimeout(play,200);
+			self.playPilotsPositionsTimer = setTimeout(playPilotsPositions,200);
 		}
-		play();
+
+		var playTableData = function() {
+			self.ufos().forEach(function(pilot) {
+				pilot.updateTableData();
+			});
+			self.playTableDataTimer = setTimeout(playTableData,1000);
+		}
+
+		playPilotsPositions();
+		playTableData();
 	}
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
