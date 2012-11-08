@@ -42,6 +42,10 @@ define([
 			this.tableData.vSpd(this.vSpd());
 //			komap.fromJS(this,{},this.tableData);
 		}
+
+		this.visibleChecked.subscribe(function(val){
+			this._ufo.visible(val);
+		},this);
 	}
 
 	Pilot.prototype.coordsUpdate = function(latlng) {
