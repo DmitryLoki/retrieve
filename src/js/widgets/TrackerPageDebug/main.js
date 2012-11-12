@@ -4,6 +4,7 @@ define([
     'knockout',
     'knockout.mapping',
     'widget!GoogleMap',
+    'widget!PlayerControl',
     'widget!UfosTable',
     'knockout.restrictChangeSpeed'
 ], function(
@@ -12,6 +13,7 @@ define([
 	ko,
 	komap,
 	GoogleMap,
+	PlayerControl,
 	UfosTable
 ){
 
@@ -69,6 +71,7 @@ define([
 		this.map = new GoogleMap();
 		this.ufos = ko.observableArray();
 		this.ufosTable = new UfosTable(this.ufos);
+		this.playerControl = new PlayerControl();
 	}
 
 	TrackerPageDebug.prototype.generateRandomPilots = function(params) {
@@ -90,31 +93,83 @@ define([
 		}
 	}
 
-	TrackerPageDebug.prototype.startPlay = function() {
-		var self = this;
+	TrackerPageDebug.prototype.playerInit = function() {
 
-		var playPilotsPositions = function() {
-			self.step = self.step ? self.step + 1 : 1;
+		var self = this;
+		var startKey = (new Date()).getTime();
+		var endKey = (new Date()).getTime() + 3600000;
+		var currentKey = parseInt(startKey/1000);
+		var playerSpeed = 1;
+		var timerHandle = null;
+		var tableTimerHandle = null;
+		var renderTableDataInterval = 1000;
+
+		var renderPilots = function() {
 			self.ufos().forEach(function(pilot) {
-				pilot.moveToStep(self.step%pilot.route.length);
+				pilot.moveToStep(currentKey%pilot.route.length);
 			});
-			self.playPilotsPositionsTimer = setTimeout(playPilotsPositions,200);
 		}
 
-		var playTableData = function() {
+		var renderTableData = function() {
 			self.ufos().forEach(function(pilot) {
 				pilot.updateTableData();
 			});
-			self.playTableDataTimer = setTimeout(playTableData,1000);
 		}
 
-		playPilotsPositions();
-		playTableData();
+		var playPilots = function() {
+			clearTimeout(timerHandle);
+			renderPilots();
+			self.playerControl.setTimePos(currentKey*1000);
+			currentKey++;
+			timerHandle = setTimeout(playPilots,1000/playerSpeed);
+		}
+
+		var playTableData = function(stopSwitch) {
+			clearTimeout(tableTimerHandle);
+			renderTableData();
+			if (!stopSwitch)
+				tableTimerHandle = setTimeout(playTableData,renderTableDataInterval);
+		}
+
+		var pausePilots = function() {
+			clearTimeout(timerHandle);
+		}
+
+		var pauseTableData = function() {
+			playTableData(true);
+		}
+
+		var play = function() {
+			console.log("play");
+			playPilots();
+			playTableData();
+		}
+
+		var pause = function() {
+			pausePilots();
+			pauseTableData();
+		}
+
+		var changeSpeed = function(speed) {
+			playerSpeed = speed;
+		}
+
+		var changePos = function(time) {
+			currentKey = parseInt(time/1000);
+		}
+
+		self.playerControl
+		.on('play', play)
+		.on('pause', pause)
+		.on('time', changePos)
+		.on('speed', changeSpeed)
+		.initTimeInterval(startKey,endKey)
+		.pauseClick();
 	}
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		this.generateRandomPilots(params);
-		this.startPlay();
+		this.playerInit();
 	}
 
 	TrackerPageDebug.prototype.templates = ['main'];
