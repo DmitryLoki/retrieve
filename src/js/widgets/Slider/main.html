@@ -1,0 +1,10 @@
+
+<div>min: <span data-bind="text:min"></span></div>
+<div>max: <span data-bind="text:max"></span></div>
+<div>value: <span data-bind="text:value"></span></div>
+<div>enabled: <span data-bind="text:enabled"></span></div>
+<div>offset: <span data-bind="text:offset"></span></div>
+<div class="slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+	<div class="ui-slider-range ui-widget-header ui-slider-range-min" data-bind="style:{width:offset()+'px'}"></div>
+	<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" data-bind="event: {mouseover:hoverOn,mouseout:hoverOff,mousedown:dragStart}, style:{left:offset()+'px'}"></a>
+</div>

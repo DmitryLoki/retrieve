@@ -140,7 +140,6 @@ define([
 		}
 
 		var play = function() {
-			console.log("play");
 			playPilots();
 			playTableData();
 		}

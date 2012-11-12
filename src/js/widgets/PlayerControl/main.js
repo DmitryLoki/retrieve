@@ -1,4 +1,4 @@
-define(['knockout', 'jquery-ui'], function(ko, $){
+define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 	var PlayerControl = function(){
 		this._state = ko.observable('play');
 		this._speed = ko.observable(1);
@@ -7,8 +7,14 @@ define(['knockout', 'jquery-ui'], function(ko, $){
 		var self = this;
 		this.enabled.subscribe(function(val){
 			self._slider.slider({ disabled: !val });
+			self.slider.set("enabled",!!val);
 		});
-		
+
+		this.slider = new Slider({enabled:false});
+		this.slider.on("change",function(val) { 
+			self.setTimePos(val);
+		});
+
 		this._silence = false;
 		this._dragging = false;
 	};
@@ -53,12 +59,12 @@ define(['knockout', 'jquery-ui'], function(ko, $){
 	};
 	
 	PlayerControl.prototype.setTimePos = function(time){ //TODO: сделать через time()
-		if(!this._dragging){
-			this._silence = true;
+		if(!this._dragging)
 			this._slider.slider('value', time);
-			this._silence = false;
-			this.time(new Date(time));
-		}
+		this._silence = true;
+		this.slider.set("value",time);
+		this._silence = false;
+		this.time(new Date(time));
 		return this;
 	};
 
@@ -71,6 +77,13 @@ define(['knockout', 'jquery-ui'], function(ko, $){
 		.slider('value', timeStart);
 		this.time(new Date(timeStart));
 		this.enabled(true);
+
+		this.slider.set({
+			min: timeStart,
+			max: timeFinish,
+			value: timeStart
+		})
+
 		return this;
 	};
 
@@ -83,7 +96,8 @@ define(['knockout', 'jquery-ui'], function(ko, $){
 		.slider({
 			range: 'min',
 			slide: function(event, ui){
-				self.time(new Date(ui.value));
+				self.setTimePos(ui.value);
+//				self.time(new Date(ui.value));
 			},
 			change: function(event, ui){
 				if(!self._silence)
