@@ -24,7 +24,7 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			},
 			write: function(val) {
 				var parsedValue = parseFloat(val);
-				val = isNaN(parsedValue) ? 0 : parsedValue;
+				val = isNaN(parsedValue) ? defaults.val : parsedValue;
 				if (val < self.min())
 					val = self.min();
 				if (val > self.max())
@@ -46,7 +46,7 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			},
 			write: function(val) {
 				var parsedValue = parseFloat(val);
-				val = isNaN(parsedValue) ? 0 : parsedValue;
+				val = isNaN(parsedValue) ? defaults.min : parsedValue;
 				if (val > self.max())
 					self.max(val);
 				if (val > self.val())
@@ -61,7 +61,7 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			},
 			write: function(val) {
 				var parsedValue = parseFloat(val);
-				val = isNaN(parsedValue) ? 0 : parsedValue;
+				val = isNaN(parsedValue) ? defaults.max : parsedValue;
 				if (val < self.min())
 					self.min(val);
 				if (val < self.val())
