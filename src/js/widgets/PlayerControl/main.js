@@ -62,7 +62,7 @@ define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 		if(!this._dragging)
 			this._slider.slider('value', time);
 		this._silence = true;
-		this.slider.set("value",time);
+		this.slider.set("val",time);
 		this._silence = false;
 		this.time(new Date(time));
 		return this;
@@ -81,7 +81,7 @@ define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 		this.slider.set({
 			min: timeStart,
 			max: timeFinish,
-			value: timeStart
+			val: timeStart
 		})
 
 		return this;
