@@ -18,6 +18,15 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		self._max = ko.observable(options.max);
 		self.enabled = ko.observable(options.enabled);
 
+		// генератор случайного имени
+		// TODO: заменить на нормальный библиотечный аналог или вынести в widget
+		self.uniqId = function() {
+			if (this._uniqId)
+				return this._uniqId;
+			this._uniqId = "uniqId" + (new Date()).getTime().toString() + parseInt(1000*Math.random()).toString();
+			return this._uniqId;
+		}
+
 		self.val = ko.computed({
 			read: function() {
 				return self._val();
@@ -70,34 +79,31 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			}
 		});
 
-		self.offset = ko.computed(function() {
-			// self.container - это DOM-элемент class=slider в шаблоне, получаем его в domInit
-			var totalWidth = self.container && self.container.length > 0? self.container.width() : 0;
-			if (self.max() == self.min()) return totalWidth;
-			return Math.round((self.val()-self.min())/(self.max()-self.min())*totalWidth);
+		self.percent = ko.computed({
+			read: function() {
+				// теперь смещение слайдера будет задаваться в %-х от общей ширины, с точностью до .xx
+				var totalWidth = 100;
+				if (self.max() == self.min()) return totalWidth;
+				return Math.round((self.val()-self.min())/(self.max()-self.min())*totalWidth*100)/100;
+			},
+			write: function(val) {
+				var parsedValue = parseFloat(val);
+				val = isNaN(parsedValue) ? 0 : parsedValue;
+				self.val(Math.round(self.min() + val / 100 * (self.max() - self.min())));
+			}
 		});
 
 		self.dragStart = function(m,e) {
 			if (!self.enabled()) return false;
-			self.emit("drag",ko.utils.unwrapObservable(self.val()));
+			self.emit("drag",self.val());
 			self._dragging = true;
-			var oX = e.pageX;
-			var sX = $(e.target).position().left;
-			$(document).on("mousemove.SLIDER",function(e) {
-				self.emit("slide",e.pageX - oX + sX);
-				var val = 0;
-				if (self.container && self.container.length > 0 && self.container.width() > 0)
-					val = parseInt((e.pageX - oX + sX) / self.container.width() * (self.max() - self.min()) + self.min());
-				self.val(val);
-			}).on("mouseup.SLIDER",function(e) {
-				self.dragEnd();
-			});
+			self._dragStartPercent = self.percent();
+			self._dragStartEvent = e;
 		}
 
 		self.dragEnd = function() {
 			if (self._dragging)
-				self.emit("drop",ko.utils.unwrapObservable(self.val()));
-			$(document).off(".SLIDER");
+				self.emit("drop",self.val());
 			self._dragging = false;
 		}
 
@@ -124,10 +130,44 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		}
 
 		self.domInit = function(elem, params, parentElement) {
+			// Мы никак не можем обойтись без контейнера, нам нужна его ширина
+			// Причина в том, что даже если оффсет бегунка задан в %-х, событие mousemove работает в пикселях, 
+			// и приходится пересчитывать px-смещение мыши в %-е смещение бегунка
+			// Более того, мы не можем один раз и навсегда в domInit запомнить ширину контейнера, потому что 
+			// она может меняться, например, при ресайзе окна.
+			// Но заново высчитывать container.width() при каждом mousemove слишком накладно. 
+			// Будем считать, что пока кнопка мыши зажата, размеры контейнера постоянны, 
+			// т.е. будем пересчитывать width один раз на каждый mousedown.
 			var div = ko.virtualElements.firstChild(elem);
 			while (div && div.nodeType != 1)
 				div = ko.virtualElements.nextSibling(div);
-			self.container = $(div).find(".slider");
+			var container = $(div).find(".slider");
+			var containerWidth = container.width();
+
+			$(document).on("mousedown.SLIDER"+self.uniqId(),function(e) {
+				if (self._dragging) {
+					containerWidth = container.width();
+				}
+			}).on("mousemove.SLIDER"+self.uniqId(),function(e) {
+				if (self._dragging) {
+					// смещение в пикселях x-положения мыши от того места, где был mousedown
+					var pxMouseOffset = e.pageX - self._dragStartEvent.pageX;
+					// стартовое смещение бегунка в пикселях
+					var pxStartOffset = self._dragStartPercent*containerWidth/100;
+					// смещение бегунка, какое оно теперь должно быть, но в пикселях
+					var pxOffset = pxStartOffset + pxMouseOffset;
+					// смещение бегунка в %-х относительно общей ширины контейнера
+					self.percent(containerWidth ? pxOffset / containerWidth * 100 : 0);
+				}
+			}).on("mouseup.SLIDER"+self.uniqId(),function(e) {
+				if (self._dragging) {
+					self.dragEnd();
+				}
+			});
+		}
+
+		self.domDestroy = function(elem,val) {
+			$(document).off(".SLIDER"+self.uniqId());
 		}
 	}
 
