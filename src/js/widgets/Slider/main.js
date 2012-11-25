@@ -77,15 +77,6 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			return Math.round((self.val()-self.min())/(self.max()-self.min())*totalWidth);
 		});
 
-		self.hoverOn = function(m,e) {
-			if (!self.enabled()) return false;
-			$(e.target).addClass("ui-state-hover");
-		}
-
-		self.hoverOff = function(m,e) {
-			$(e.target).removeClass("ui-state-hover");
-		}
-
 		self.dragStart = function(m,e) {
 			if (!self.enabled()) return false;
 			self.emit("drag",ko.utils.unwrapObservable(self.val()));
