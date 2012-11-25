@@ -1,7 +1,7 @@
 define(["knockout"],function(ko) {
     ko.numericObservable = function(initialValue) {
         var _actual = ko.observable(initialValue);
-        var result = ko.dependentObservable({
+        var result = ko.computed({
             read: function() {
                 return _actual();
             },
