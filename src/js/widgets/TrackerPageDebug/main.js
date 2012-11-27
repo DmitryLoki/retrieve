@@ -29,8 +29,7 @@ define([
 			color: "#c00000"
 		}).icon(this.icon).visible(true);
 		this.visibleChecked = ko.observable(true);
-        this.visibleCheckbox = new Checkbox();
-        this.visibleCheckbox.checked = this.visibleChecked;
+        this.visibleCheckbox = new Checkbox({checked:this.visibleChecked});
 		this.color = "#f0f0f0";
 		this.statusOrDist = "test";
 		this.statusText = "flying";

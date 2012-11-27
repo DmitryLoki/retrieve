@@ -14,9 +14,7 @@ define(['knockout','widget!Checkbox'], function(ko, Checkbox){
 	        	});
 	        }
 	    });
-
-        this.allVisibleCheckbox = new Checkbox;
-        this.allVisibleCheckbox.checked = this.allVisibleChecked;
+        this.allVisibleCheckbox = new Checkbox({checked: this.allVisibleChecked, color: 'blue'});
 	};
 
 	UfosTable.prototype.domInit = function(elem, params){
