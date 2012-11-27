@@ -8,14 +8,16 @@ define(['knockout'], function (ko) {
      * @constructor
      */
     var Checkbox = function (params) {
-        window.ko = ko;
+        if(params.checked === undefined || !(params.checked instanceof ko.observable)) {
+            throw new TypeError('params.checked is a required property and must be observable');
+        }
         this.checked = params.checked;
         this.color = params.color || ko.observable('Gray');
     };
 
     Checkbox.prototype.clickHandler = function () {
         this.checked(!this.checked());
-        this.emit('changed');
+        this.emit('changed', this.checked());
     };
 
     Checkbox.prototype.templates = ['main'];
