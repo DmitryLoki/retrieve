@@ -8,7 +8,7 @@ define(['knockout'], function (ko) {
      * @constructor
      */
     var Checkbox = function (params) {
-        if(params.checked === undefined || !(params.checked instanceof ko.observable)) {
+        if(params.checked === undefined || !ko.isObservable(params.checked)) {
             throw new TypeError('params.checked is a required property and must be observable');
         }
         this.checked = params.checked;
