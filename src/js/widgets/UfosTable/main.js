@@ -1,19 +1,20 @@
-define(['knockout'], function(ko){
+define(['knockout','widget!Checkbox'], function(ko, Checkbox){
 	var UfosTable = function(ufos){
 		this.ufos = ufos;
 		var self = this;
 	    this.allVisibleChecked = ko.computed({
 	        read: function(){
 	            return !self.ufos().some(function(item){
-	                return !item.visibleChecked();
+	                return !item.visibleCheckbox.checked();
 	            });
 	        },
 	        write: function(val){
 	        	self.ufos().forEach(function(item){
-	        		item.visibleChecked(val);
+	        		item.visibleCheckbox.checked(val);
 	        	});
 	        }
 	    });
+        this.allVisibleCheckbox = new Checkbox({checked: this.allVisibleChecked, color: 'blue'});
 	};
 
 	UfosTable.prototype.domInit = function(elem, params){
