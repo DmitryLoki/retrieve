@@ -13,6 +13,8 @@ define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 		this.slider = new Slider({enabled:false});
 		this.slider.on("change",function(val) { 
 			self.setTimePos(val);
+		}).on("drop",function(val) {
+			self.emit("drop",val);
 		});
 
 		this._silence = false;
