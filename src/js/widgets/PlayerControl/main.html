@@ -1,16 +1,16 @@
 <div>
 <hr/>
 
-<button data-bind="enable: enabled, click: playClick, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }">PLAY</button>
-<button data-bind="enable: enabled, click: pauseClick, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }">PAUSE</button>
+<button data-bind="enable: enabled, click: play, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }">PLAY</button>
+<button data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }">PAUSE</button>
 
-<button data-bind="enable: enabled, click: speed1Click, css: { 'player-button-on': _speed() == 1, 'player-button-off': _speed() != 1 }">x1</button>
-<button data-bind="enable: enabled, click: speed10Click, css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }">x10</button>
-<button data-bind="enable: enabled, click: speed25Click, css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }">x25</button>
+<button data-bind="enable: enabled, click: changeSpeed.bind($data,1), css: { 'player-button-on': _speed() == 1, 'player-button-off': _speed() != 1 }">x1</button>
+<button data-bind="enable: enabled, click: changeSpeed.bind($data,10), css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }">x10</button>
+<button data-bind="enable: enabled, click: changeSpeed.bind($data,25), css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }">x25</button>
 
 <!-- ko widget: { data: slider, type: 'Slider' } --><!-- /ko -->
 
-<span data-bind="text: filters.formatTime(time())"></span>
+<span data-bind="text: filters.formatTime(new Date(slider.val()))"></span>
 
 <hr/>
 </div>

@@ -25,11 +25,13 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			}
 		});
 
-		// именно изменение внутреннего параметра _val вызывает change,
-		// потому что если привязать на внешнее val, который во внешнем коде будет синхронизироваться и
-		// в итоге опять проставлять val, код зациклится
-		self._val.subscribe(function(val) {
-			self.emit("change",val);
+		// если val менялось снаружи через set-метод, событие change не эмитится
+		// если val поменялось в результате дропа сладера при перетаскивании, происходит эмит
+		self._silence = false;
+
+		self.val.subscribe(function(val) {
+			if (!self._silence)
+				self.emit("change",val);
 		})
 
 		self.min = ko.computed({
@@ -100,6 +102,7 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		}
 
 		self.set = function() {
+			self._silence = true;
 			var data = {};
 			if (arguments.length == 2 && typeof arguments[0] == "string")
 				data[arguments[0]] = arguments[1];
@@ -111,6 +114,7 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			// В итоге нужно перепроставить его после komap-а.
 			if (data.hasOwnProperty("val"))
 				self.val(data.val);
+			self._silence = false;
 		}
 
 		var documentMouseMove = function(e) {
@@ -125,7 +129,6 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 				var percentOffset = self.containerWidth ? pxOffset / self.containerWidth * 100 : 0;
 				// простановка значения относительно max-min
 				self.sliderPercent(percentOffset);
-//				self.val(Math.round(self.min() + percentOffset / 100 * (self.max() - self.min())));
 			}
 		}
 

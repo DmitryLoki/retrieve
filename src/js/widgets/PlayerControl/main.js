@@ -1,86 +1,75 @@
 define(['knockout', 'widget!Slider'], function(ko, Slider){
-	var PlayerControl = function(){
-		this._state = ko.observable('play');
-		this._speed = ko.observable(1);
-		this.time = ko.observable(new Date);
-		this.enabled = ko.observable();
+	var PlayerControl = function() {
 		var self = this;
-		this.enabled.subscribe(function(val){
-			self.slider.set("enabled",!!val);
+
+		this._state = ko.observable("play");
+		this._state.subscribe(function(val) {
+			if (val == "play" || val == "pause")
+				self.emit(val);
 		});
+
+		this._speed = ko.observable(1);
+		this._speed.subscribe(function(val) {
+			self.emit("speed",val);
+		});
+
+		// Событие change вызывается когда делается дроп слайдера, т.е. когда val слайдера меняется изнутри
+		// виджета Slider. В этом случае нужно емитить событие наверх.
+		// Когда val слайдер проставляется сверху из трекер пейджа, по идее слайдер не должен вызывать change.
+		// Но мы вставим дополнительную проверку, чтобы код точно не зациклился.
+		this._silence = false;
 
 		this.slider = new Slider({enabled:false});
-		this.slider.on("change",function(val) { 
-			self.setTimePos(val);
-		}).on("drop",function(val) {
-			self.emit("drop",val);
+		this.slider.on("change",function(val) {
+			if (!self._silence)
+				self.emit("change",val);
 		});
-	};
 
-	PlayerControl.prototype.getState = function(){
+		this.enabled = ko.observable(false);
+		this.enabled.subscribe(function(val) {
+			self.slider.set("enabled",!!val);
+		});
+	}
+
+	PlayerControl.prototype.getState = function() {
 		return this._state();
-	};
+	}
 
-	PlayerControl.prototype.playClick = function(){
-		if(this._state() != 'play'){
-			this._state('play');
-			this.emit('play');
-		}
-	};
+	PlayerControl.prototype.play = function() {
+		this._state("play");
+		return this;
+	}
 	
-	PlayerControl.prototype.pauseClick = function(){
-		if(this._state() != 'pause'){
-			this._state('pause');
-			this.emit('pause');
-		}
-	};
+	PlayerControl.prototype.pause = function() {
+		this._state("pause");
+		return this;
+	}
 
-	PlayerControl.prototype.speed1Click = function(){
-		if(this._speed() != 1){
-			this._speed(1);
-			this.emit('speed', 1);
-		}
-	};
-
-	PlayerControl.prototype.speed10Click = function(){
-		if(this._speed() != 10){
-			this._speed(10);
-			this.emit('speed', 10);
-		}
-	};
-
-	PlayerControl.prototype.speed25Click = function(){
-		if(this._speed() != 25){
-			this._speed(25);
-			this.emit('speed', 25);
-		}
-	};
+	PlayerControl.prototype.changeSpeed = function(newSpeed) {
+		this._speed(Math.round(ko.utils.unwrapObservable(newSpeed)));
+		return this;
+	}
 	
 	PlayerControl.prototype.setTimePos = function(time) { //TODO: сделать через time()
-		this.slider.set("val",time);
-		this.time(new Date(time));
+		this._silence = true;
+		this.slider.set("val",ko.utils.unwrapObservable(time));
+		this._silence = false;
 		return this;
-	};
+	}
 
-	PlayerControl.prototype.initTimeInterval = function(timeStart, timeFinish){
-		this.time(new Date(timeStart));
-		this.enabled(true);
+	PlayerControl.prototype.initTimeInterval = function(timeStart, timeFinish) {
+		timeStart = ko.utils.unwrapObservable(timeStart);
+		timeFinish = ko.utils.unwrapObservable(timeFinish);
 		this.slider.set({
 			min: timeStart,
 			max: timeFinish,
 			val: timeStart
 		});
+		this.enabled(true);
 		return this;
-	};
+	}
 
-	PlayerControl.prototype.domInit = function(elem, params){
-		this.enabled(false);
-	};
-
-	PlayerControl.prototype.domDestroy = function(elem, params){
-	};
-	
-	PlayerControl.prototype.templates = ['main'];
+	PlayerControl.prototype.templates = ["main"];
 
 	return PlayerControl;
 });

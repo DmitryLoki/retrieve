@@ -415,7 +415,7 @@ define([
 				timerHandle = setTimeout(function() {
 					playerCurrentKey += 1000;
 					if (playerCurrentKey > playerEndKey) {
-						self.playerControl._state("pause");
+						self.playerControl.pause();
 						return;
 					}
 					timelineIntervalCycler();
@@ -459,9 +459,11 @@ define([
 		var changeSpeed = function(speed) {
 			playerSpeed = speed;
 		}
-		// У нового слайдера есть drop-событие, которое пробрасывается через playerControl 
-		// Было решено, что перегрузка будет идти после mouseup а не в процессе drag-а
-		var sliderDrop = function(time) {
+
+		// У PlayerControl-а есть событие change - оно вызывается, когда, к примеру, двигаем слайдер. 
+		// Или когда происходят любые изменения PlayerControl.time(), но эти изменения идут изнутри, а не
+		// являются следствием того, что трекер пейдж проставил новое время
+		var playerControlChange = function(time) {
 			setSpecificFrame(time);
 		}
 
@@ -472,9 +474,9 @@ define([
 		.on('play', play)
 		.on('pause', pause)
 		.on('speed', changeSpeed)
-		.on('drop', sliderDrop)
+		.on('change', playerControlChange)
 		.initTimeInterval(playerStartKey,playerEndKey)
-		.pauseClick();
+		.pause();
 	}
 
 
