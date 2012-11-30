@@ -4,7 +4,7 @@
 	<div>val: <input data-bind="value:val"></div>
 	<div>enabled: <input type="checkbox" data-bind="checked:enabled"></div>
 	<div class="slider ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
-		<div class="ui-slider-range ui-widget-header ui-slider-range-min" data-bind="style:{width:percent()+'%'}"></div>
-		<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" data-bind="event: {mousedown:dragStart}, style:{left:percent()+'%'}"></a>
+		<div class="ui-slider-range ui-widget-header ui-slider-range-min" data-bind="style:{width:valPercent()+'%'}"></div>
+		<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" data-bind="event: {mousedown:dragStart}, style:{left:sliderPercent()+'%'}"></a>
 	</div>
 </div>

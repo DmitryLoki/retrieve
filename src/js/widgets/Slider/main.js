@@ -62,24 +62,32 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			}
 		});
 
-		self.percent = ko.computed(function() {
+		self.valPercent = ko.computed(function() {
 			// теперь смещение слайдера будет задаваться в %-х от общей ширины, с точностью до .xx
 			var totalWidth = 100;
 			if (self.max() == self.min()) return totalWidth;
 			return Math.round((self.val()-self.min())/(self.max()-self.min())*totalWidth*100)/100;
 		});
 
+		self.sliderPercent = ko.observable();
+
+		self.valPercent.subscribe(function(val) {
+			if (!self._dragging)
+				self.sliderPercent(val);
+		});
+
 		self.dragStart = function(m,e) {
 			if (!self.enabled()) return false;
 			self.emit("drag",self.val());
 			self._dragging = true;
-			self._dragStartPercent = self.percent();
+			self._dragStartPercent = self.sliderPercent();
 			self._dragStartEvent = e;
 		}
 
 		self.dragEnd = function() {
-			if (self._dragging)
-				self.emit("drop",self.val());
+			if (!self._dragging) return false;
+			self.val(Math.round(self.min() + self.sliderPercent() / 100 * (self.max() - self.min())));
+			self.emit("drop",self.val());
 			self._dragging = false;
 		}
 
@@ -116,7 +124,8 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 				// смещение бегунка в %-х относительно общей ширины контейнера
 				var percentOffset = self.containerWidth ? pxOffset / self.containerWidth * 100 : 0;
 				// простановка значения относительно max-min
-				self.val(Math.round(self.min() + percentOffset / 100 * (self.max() - self.min())));
+				self.sliderPercent(percentOffset);
+//				self.val(Math.round(self.min() + percentOffset / 100 * (self.max() - self.min())));
 			}
 		}
 

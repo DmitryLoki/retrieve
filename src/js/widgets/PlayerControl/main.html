@@ -8,8 +8,6 @@
 <button data-bind="enable: enabled, click: speed10Click, css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }">x10</button>
 <button data-bind="enable: enabled, click: speed25Click, css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }">x25</button>
 
-<div class="player-control-slider"></div>
-
 <!-- ko widget: { data: slider, type: 'Slider' } --><!-- /ko -->
 
 <span data-bind="text: filters.formatTime(time())"></span>

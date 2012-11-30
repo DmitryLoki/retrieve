@@ -1,4 +1,4 @@
-define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
+define(['knockout', 'widget!Slider'], function(ko, Slider){
 	var PlayerControl = function(){
 		this._state = ko.observable('play');
 		this._speed = ko.observable(1);
@@ -6,7 +6,6 @@ define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 		this.enabled = ko.observable();
 		var self = this;
 		this.enabled.subscribe(function(val){
-			self._slider.slider({ disabled: !val });
 			self.slider.set("enabled",!!val);
 		});
 
@@ -16,9 +15,6 @@ define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 		}).on("drop",function(val) {
 			self.emit("drop",val);
 		});
-
-		this._silence = false;
-		this._dragging = false;
 	};
 
 	PlayerControl.prototype.getState = function(){
@@ -60,58 +56,24 @@ define(['knockout', 'jquery-ui', 'widget!Slider'], function(ko, $, Slider){
 		}
 	};
 	
-	PlayerControl.prototype.setTimePos = function(time){ //TODO: сделать через time()
-		if(!this._dragging)
-			this._slider.slider('value', time);
-		this._silence = true;
+	PlayerControl.prototype.setTimePos = function(time) { //TODO: сделать через time()
 		this.slider.set("val",time);
-		this._silence = false;
 		this.time(new Date(time));
 		return this;
 	};
 
 	PlayerControl.prototype.initTimeInterval = function(timeStart, timeFinish){
-		this._slider
-		.slider('option', {
-			min: timeStart,
-			max: timeFinish
-		})
-		.slider('value', timeStart);
 		this.time(new Date(timeStart));
 		this.enabled(true);
-
 		this.slider.set({
 			min: timeStart,
 			max: timeFinish,
 			val: timeStart
-		})
-
+		});
 		return this;
 	};
 
 	PlayerControl.prototype.domInit = function(elem, params){
-		var div = ko.virtualElements.firstChild(elem);
-		while(div && div.nodeType != 1)
-			div = ko.virtualElements.nextSibling(div);
-		var self = this;
-		this._slider = $(div).find('.player-control-slider')
-		.slider({
-			range: 'min',
-			slide: function(event, ui){
-				self.setTimePos(ui.value);
-//				self.time(new Date(ui.value));
-			},
-			change: function(event, ui){
-				if(!self._silence)
-					self.emit('time', ui.value);
-			},
-			start: function(){
-				self._dragging = true;
-			},
-			stop: function(){
-				self._dragging = false;
-			}
-		});
 		this.enabled(false);
 	};
 
