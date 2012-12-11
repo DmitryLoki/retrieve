@@ -1,3 +1,13 @@
-<!-- ko widget: { data: playerControl, type: 'PlayerControl' } --><!-- /ko -->
-<!-- ko widget: { data: ufosTable, type: 'UfosTable' } --><!-- /ko -->
-<!-- ko widget: { data: map, type: 'GoogleMap', width: '787px', height: '640px' } --><!-- /ko -->
+
+<!-- ko widget: { data: playerControlWindow, type: 'Window', title: 'PlayerControl'} -->
+	<div>Here goes some content from TrackerPageDebug template</div>
+	<div><!-- ko widget: { data: playerControl, type: 'PlayerControl' } --><!-- /ko --></div>
+<!-- /ko -->
+
+<!-- ko widget: {data: mapWindow, type: 'Window', title: 'Google Maps Window', left: 400, width: 440} -->
+	<!-- ko widget: { data: map, type: 'GoogleMap', width: '400px', height: '300px' } --><!-- /ko -->
+<!-- /ko -->
+
+<!-- ko widget: {data: ufosTableWindow, type: 'Window', title: 'Ufos Table', left: 200, top: 500} -->
+	<!-- ko widget: { data: ufosTable, type: 'UfosTable' } --><!-- /ko -->
+<!-- /ko -->

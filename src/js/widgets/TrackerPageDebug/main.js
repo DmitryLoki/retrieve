@@ -7,6 +7,7 @@ define([
     'widget!PlayerControl',
     'widget!UfosTable',
     'widget!Checkbox',
+    'widget!Window',
     'knockout.restrictChangeSpeed'
 ], function(
 	utils,
@@ -16,7 +17,8 @@ define([
 	GoogleMap,
 	PlayerControl,
 	UfosTable,
-    Checkbox
+    Checkbox,
+    Window
 ){
 
 	// Все переменные TrackerPageDebug
@@ -77,7 +79,6 @@ define([
 					});
 				}
 			}
-			utils.log("TestServer generateData, pilots, events=",this.pilots,this.events);
 		}
 		// Знаем, что генерация events шла order by dt, т.е. событие с бОльшим индексом имеет бОльший dt
 		// получаем максимальный индекс события, которое шло до dt
@@ -87,7 +88,6 @@ define([
 					return i;
 		} 
 		this.get = function(query) {
-			utils.log("Server get query=",query);
 			var data = {};
 			// TODO: пока не разобрался, какие данные должны приходит при инициализации гонки
 			if (query.type == "race") {
@@ -106,7 +106,6 @@ define([
 				// Находим максимальный индекс массива events с dt <= query.min, будем просматривать все элементы от него
 				// по убыванию, пока не встретим событие для нужного пилота, чтобы заполнить им его start данные 
 				var maxEventsIndex = this.getMaxIndexByDt(query.first);
-				utils.log("Server get maxEventsIndex=",maxEventsIndex,"for dt=",query.first);
 				for (var i = 0; i < this.pilots.length; i++) {
 					for (var ei = maxEventsIndex; ei >= 0; ei--)
 						if (this.events[ei].pilot_id == i) {
@@ -218,7 +217,6 @@ define([
 				// Но при этом хорошо бы делать предзагрузку следующего интервала.
 				// К примеру, если dt > inSize / 2 и на момент dt + inSize загруженного интервала нет, то поставим его на загрузку 
 				if (!query.disablePreload && cachedFrame && (dtOffset > inSize * inOffset + inSize / 2) && !getCachedFrame(this.cache,dtOffset + inSize)) {
-					utils.log("DataSource get, run preload");
 					this.get({
 						type: query.type,
 						dt: query.dt + inSize * 1000,
@@ -231,20 +229,17 @@ define([
 
 				// Если есть кеш, отдадим его значение на момент query.dt
 				if (cachedFrame && cachedFrame.status == "ready") {
-					utils.log("DataSource get, cache found and is ready for use, cachedFrame=",cachedFrame);
 					query.callback(getDataFromFrame(cachedFrame.data,query.dt));
 				}
 				// Интервал сейчас загружается, не нужно запускать новую загрузку
 				// Проставим только, чтобы после окончания загрузки интервала выполнился наш callback
 				else if (cachedFrame && cachedFrame.status == "loading") {
-					utils.log("DataSource get, cache found but is not ready yet");
 					cachedFrame.callback = function(data) {
 						query.callback(getDataFromFrame(data,query.dt));
 					}
 				}
 				// Кеша нет, делаем запрос
 				else {
-					utils.log("DataSource get, cache not found",cachedFrame,"all cache=",this.cache);
 					
 					// Инициализируем новый интервал в кеше
 					if (!self.cache[inSize])
@@ -336,6 +331,10 @@ define([
 		this.ufosTable = new UfosTable(this.ufos);
 		this.playerControl = new PlayerControl();
 
+		this.playerControlWindow = new Window();
+		this.mapWindow = new Window();
+		this.ufosTableWindow = new Window({title:"Pilots Table",width: 700});
+
 		// Делаем тестовый сервер, данные для него - из options.testServerOptions
 		this.server = new TestServer();
 		this.server.generateData(options.testServerOptions);
@@ -377,14 +376,12 @@ define([
 		var tableTimerHandle = null;
 
 		var renderFrame = function(callback) {
-			utils.log("renderFrame for key",playerCurrentKey);
 			self.dataSource.get({
 				type: "timeline",
 				dt: playerCurrentKey,
 				timeMultiplier: playerSpeed,
 				dtStart: playerStartKey,
 				callback: function(data) {
-					utils.log("renderFrame dataSource callback, data:",data);
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.ufos().forEach(function(ufo) {
 						data[ufo.id]["time"] = playerCurrentKey;

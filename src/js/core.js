@@ -1,4 +1,4 @@
-define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(utils, filters, ko, komap, $){
+define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery', 'jquery-ui'], function(utils, filters, ko, komap, $){
 	function koWidgetBindingInit(){ // <!-- ko widget: { data: btn1, type: "Button", title: "button #1" } --><!-- /ko -->
 		function init(elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
 	    	var val = valueAccessor();
@@ -8,6 +8,11 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(
 	    		throw new TypeError('Model property is not widget!');
 	    	if(val.type && val.type != widget._widgetName)
 	    		throw new TypeError('Widget type is not equal to declaration! (' + val.type + ' != ' + widget._widgetName + ')');
+
+	    	if (!widget.savedNodes)
+		    	widget.savedNodes = ko.utils.cloneNodes(ko.virtualElements.childNodes(elem),true);
+		    if (!widget.nodesBindingContext)
+			    widget.nodesBindingContext = bindingContext;
 
 	    	elem._widget = widget;
 	    	ko.renderTemplate('main', bindingContext.extend({
@@ -40,6 +45,51 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(
 		ko.virtualElements.allowedBindings.widget = true;
 	}
 
+	function koWindowBindingInit() {
+		ko.bindingHandlers.domNodes = {
+			init: function() {
+				return { controlsDescendantBindings: true };
+			},
+			update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+				var nodes = ko.utils.unwrapObservable(valueAccessor());
+				ko.virtualElements.setDomNodeChildren(element, ko.utils.cloneNodes(nodes));
+				ko.applyBindingsToDescendants(viewModel.nodesBindingContext,element);
+			}
+		}
+		ko.virtualElements.allowedBindings.domNodes = true;
+
+
+		ko.bindingHandlers.window = {
+			init: function(elem,valueAccessor,allBindingsAccessor,viewModel,bindingContext) {
+				console.log("window",elem);
+				var val = valueAccessor();
+
+				var nodes = $.extend(true,[],ko.virtualElements.childNodes(elem));
+				ko.virtualElements.emptyNode(elem);
+
+				var div = $("<div></div>");
+				for (var i = 0; i < nodes.length; i++)
+					div.append(nodes[i]);
+				if (val.title)
+					div.attr("title",val.title);
+
+				$(elem).append(div);
+				div.dialog();
+//				ko.virtualElements.prepend(elem,div.get(0));
+//				elem.appendChild("<div class='window'></div>");
+//				ko.virtualElements.emptyNode(ko.virtualElements.firstChild(elem));
+//				var child = ko.virtualElements.firstChild(elem);
+//				ko.virtualElements.emptyNode(elem);
+//				ko.virtualElements.prepend(elem,child);
+//
+//				ko.virtualElements.(elem,child);
+//				console.log("init",elem,valueAccessor,allBindingsAccessor,viewModel,bindingContext);
+		    	return { controlsDescendantBindings: true };
+			}
+		}
+		ko.virtualElements.allowedBindings.window = true;
+	}
+
 	function koTemplateEngineInit(){
 		var WidgetTemplate = function(template){
 			this.name = template;
@@ -65,6 +115,7 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(
 
 	function appInit(widget, doc){
 		koWidgetBindingInit();
+		koWindowBindingInit();
 		koTemplateEngineInit();
 		ko.applyBindings(widget, doc.documentElement);
 		if(widget.domInit)
