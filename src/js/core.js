@@ -45,7 +45,7 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery', 'jquery-ui
 		ko.virtualElements.allowedBindings.widget = true;
 	}
 
-	function koWindowBindingInit() {
+	function koDomNodesBindingInit() {
 		ko.bindingHandlers.domNodes = {
 			init: function() {
 				return { controlsDescendantBindings: true };
@@ -57,37 +57,6 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery', 'jquery-ui
 			}
 		}
 		ko.virtualElements.allowedBindings.domNodes = true;
-
-
-		ko.bindingHandlers.window = {
-			init: function(elem,valueAccessor,allBindingsAccessor,viewModel,bindingContext) {
-				console.log("window",elem);
-				var val = valueAccessor();
-
-				var nodes = $.extend(true,[],ko.virtualElements.childNodes(elem));
-				ko.virtualElements.emptyNode(elem);
-
-				var div = $("<div></div>");
-				for (var i = 0; i < nodes.length; i++)
-					div.append(nodes[i]);
-				if (val.title)
-					div.attr("title",val.title);
-
-				$(elem).append(div);
-				div.dialog();
-//				ko.virtualElements.prepend(elem,div.get(0));
-//				elem.appendChild("<div class='window'></div>");
-//				ko.virtualElements.emptyNode(ko.virtualElements.firstChild(elem));
-//				var child = ko.virtualElements.firstChild(elem);
-//				ko.virtualElements.emptyNode(elem);
-//				ko.virtualElements.prepend(elem,child);
-//
-//				ko.virtualElements.(elem,child);
-//				console.log("init",elem,valueAccessor,allBindingsAccessor,viewModel,bindingContext);
-		    	return { controlsDescendantBindings: true };
-			}
-		}
-		ko.virtualElements.allowedBindings.window = true;
 	}
 
 	function koTemplateEngineInit(){
@@ -115,7 +84,7 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery', 'jquery-ui
 
 	function appInit(widget, doc){
 		koWidgetBindingInit();
-		koWindowBindingInit();
+		koDomNodesBindingInit();
 		koTemplateEngineInit();
 		ko.applyBindings(widget, doc.documentElement);
 		if(widget.domInit)
