@@ -78,45 +78,6 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 				self.sliderPercent(val);
 		});
 
-		self.dragStart = function(m,e) {
-			if (!self.enabled()) return false;
-			self.emit("drag",self.val());
-			self._dragging = true;
-			self._dragStartPercent = self.sliderPercent();
-			self._dragStartEvent = e;
-		}
-
-		self.dragEnd = function() {
-			if (!self._dragging) return false;
-			self.val(Math.round(self.min() + self.sliderPercent() / 100 * (self.max() - self.min())));
-			self.emit("drop",self.val());
-			self._dragging = false;
-		}
-
-		self.forward = function() {
-			self.val(self.max());
-		}
-
-		self.backward = function() {
-			self.val(self.min());
-		}
-
-		self.set = function() {
-			self._silence = true;
-			var data = {};
-			if (arguments.length == 2 && typeof arguments[0] == "string")
-				data[arguments[0]] = arguments[1];
-			else if (arguments.length == 1)
-				data = arguments[0];
-			komap.fromJS(data,{},self);
-			// Данные могут прийти в произвольном порядке. Например, первым элементом приходит val. 
-			// Оно проверяется с max, а max в этот момент=0, тогда значение val проставляется в 0 вместо нужного.
-			// В итоге нужно перепроставить его после komap-а.
-			if (data.hasOwnProperty("val"))
-				self.val(data.val);
-			self._silence = false;
-		}
-
 		var documentMouseMove = function(e) {
 			if (self._dragging) {
 				// смещение в пикселях x-положения мыши от того места, где был mousedown
@@ -158,6 +119,46 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		self.domDestroy = function(elem,val) {
 			$(document).off("mousemove",documentMouseMove).off("mouseup",documentMouseUp);
 		}
+
+	}
+
+	Slider.prototype.dragStart = function(m,e) {
+		if (!this.enabled()) return false;
+		this.emit("drag",this.val());
+		this._dragging = true;
+		this._dragStartPercent = this.sliderPercent();
+		this._dragStartEvent = e;
+	}
+
+	Slider.prototype.dragEnd = function() {
+		if (!this._dragging) return false;
+		this.val(Math.round(this.min() + this.sliderPercent() / 100 * (this.max() - this.min())));
+		this.emit("drop",this.val());
+		this._dragging = false;
+	}
+
+	Slider.prototype.forward = function() {
+		this.val(this.max());
+	}
+
+	Slider.prototype.backward = function() {
+		self.val(self.min());
+	}
+
+	Slider.prototype.set = function() {
+		this._silence = true;
+		var data = {};
+		if (arguments.length == 2 && typeof arguments[0] == "string")
+			data[arguments[0]] = arguments[1];
+		else if (arguments.length == 1)
+			data = arguments[0];
+		komap.fromJS(data,{},this);
+		// Данные могут прийти в произвольном порядке. Например, первым элементом приходит val. 
+		// Оно проверяется с max, а max в этот момент=0, тогда значение val проставляется в 0 вместо нужного.
+		// В итоге нужно перепроставить его после komap-а.
+		if (data.hasOwnProperty("val"))
+			this.val(data.val);
+		this._silence = false;
 	}
 
 	Slider.prototype.templates = ["main"];
