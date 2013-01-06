@@ -3,7 +3,8 @@ require.config({
 	paths: {
 		'jquery': 'wild-libs/jquery',
 		'jquery-ui': 'wild-libs/jquery-ui',
-		'setImmediate': 'wild-libs/setImmediate'
+		'setImmediate': 'wild-libs/setImmediate',
+		'owg': 'wild-libs/owg-optimized'
 	},
 	shim: {
     	'jquery': { exports: function(){ return jQuery.noConflict(true); } },
@@ -11,7 +12,7 @@ require.config({
     		deps: [ 'jquery' ],
     		exports: function($){ return $; }
     	},
-    	'setImmediate': { exports: 'window.setImmediate' },
+    	'setImmediate': { exports: 'window.setImmediate' }
 	}
 });
 

@@ -8,7 +8,7 @@ define([
     'widget!UfosTable',
     'widget!Checkbox',
     'widget!Window',
-    'knockout.restrictChangeSpeed'
+    'widget!OwgMap'
 ], function(
 	utils,
 	walk,
@@ -18,7 +18,8 @@ define([
 	PlayerControl,
 	UfosTable,
     Checkbox,
-    Window
+    Window,
+    OwgMap
 ){
 
 	// Все переменные TrackerPageDebug
@@ -327,13 +328,15 @@ define([
 	var TrackerPageDebug = function() {
 		var self = this;
 		this.map = new GoogleMap();
+		this.owgMap = new OwgMap();
 		this.ufos = ko.observableArray();
 		this.ufosTable = new UfosTable(this.ufos);
 		this.playerControl = new PlayerControl();
-
 		this.playerControlWindow = new Window();
 		this.mapWindow = new Window();
 		this.ufosTableWindow = new Window({title:"Pilots Table",width: 700});
+
+		this.owgMap.setCameraPosition({});
 
 		// Делаем тестовый сервер, данные для него - из options.testServerOptions
 		this.server = new TestServer();
