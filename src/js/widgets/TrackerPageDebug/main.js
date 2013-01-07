@@ -34,12 +34,15 @@ define([
 			coords: {
 				center: {
 					lat: 55.75,
-					lng: 37.61
+					lng: 37.61,
+					elevation: 100
 				},
 				// Разброс стартового положения пилотов
 				dispersion: 0.5,
+				elevationDispersion: 50,
 				// Максимальная дистанция, на которую пилот может улететь за 1 шаг
 				maxStep: 0.1,
+				elevationMaxStep: 1,
 				// Вероятность того, что пилот не будет двигаться на текущем шаге
 				holdProbability: 0
 			}
@@ -63,7 +66,8 @@ define([
 					name: "Pilot #" + i,
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
-						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2
+						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
+						elevation: options.coords.center.elevation + Math.random()*options.coords.elevationDispersion - options.coords.elevationDispersion/2;
 					}
 				});
 			for (var dt = options.startKey; dt <= options.endKey; dt += options.dtStep) {
@@ -72,11 +76,13 @@ define([
 					if (Math.random() < options.coords.holdProbability && dt != options.startKey) continue;
 					this.pilots[i].tmp.lat += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
 					this.pilots[i].tmp.lng += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
+					this.pilots[i].tmp.elevation += Math.random()*options.coords.elevationMaxStep - options.coords.elevationMaxStep/2;
 					this.events.push({
 						dt: dt,
 						pilot_id: i,
 						lat: this.pilots[i].tmp.lat,
-						lng: this.pilots[i].tmp.lng
+						lng: this.pilots[i].tmp.lng,
+						elevation: this.pilots[i].tmp.elevation
 					});
 				}
 			}
@@ -94,7 +100,8 @@ define([
 			if (query.type == "race") {
 				data = {
 					startKey: this.options.startKey,
-					endKey: this.options.endKey
+					endKey: this.options.endKey,
+					center: this.options.coords.center
 				}
 			}
 			// Аналог GET /contest/{contestid}/race/{raceid}/pilot из api
@@ -336,8 +343,6 @@ define([
 		this.mapWindow = new Window();
 		this.ufosTableWindow = new Window({title:"Pilots Table",width: 700});
 
-		this.owgMap.setCameraPosition({});
-
 		// Делаем тестовый сервер, данные для него - из options.testServerOptions
 		this.server = new TestServer();
 		this.server.generateData(options.testServerOptions);
@@ -374,6 +379,13 @@ define([
 		var playerEndKey = data.endKey;
 		var playerCurrentKey = data.startKey;
 		var playerSpeed = options.playerSpeed;
+
+		if (this.owgMap && data.center) {
+			this.owgMap.setCameraLookAtPosition({
+				latitude: data.center.lat,
+				longitude: data.center.lng
+			});
+		}
 
 		var timerHandle = null;
 		var tableTimerHandle = null;
