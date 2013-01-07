@@ -2,6 +2,119 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 	var owg = new OWG();
 
+	// requestAnim shim layer by Paul Irish
+    var requestAnimFrame = (function() {
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
+	// Аналог из GoogleMap/UFO, в идеале должен иметь те же методы что там
+	var Ufo = function(params) {
+		this._params = params;
+		this._map = params.map;
+		this._visible = true;
+		this._animating = false;
+		this._model = owg.ogLoadGeometryAsync(this._map._ufosLayer,"/art/models/paraplan.json");
+	}
+
+	utils.extend(Ufo.prototype,EventEmitter.prototype);
+
+	// Иконки не поддерживаются. TODO: можно вставить поддержку перегрузки модели
+	Ufo.prototype.icon = function() {
+		return this;
+	}
+
+	// TODO: еще подписи нужно уметь включать-выключать и треки
+	Ufo.prototype._visibilityUpdate = function() {
+		if (this._visible)
+			owg.ogShowGeometry(this._model);
+		else
+			owg.ogHideGeometry(this._model);
+	}
+
+	Ufo.prototype.move = function(coords,duration) {
+		var self = this;
+		// При инициализации может не быть начального положения, тогда мгновенно туда переставляем и все
+		if (!this._params.lat || !this._params.lng || !this._params.elevation) {
+			owg.ogSetGeometryPositionWGS84(this._model,coords.lng,coords.lat,Math.round(coords.elevation));
+			this._params.lat = coords.lat;
+			this._params.lng = coords.lng;
+			this._params.elevation = coords.elevation;
+			return this;
+		}
+		// Если уже идет анимация, значит она была запущена предыдущим кадром и мы не успели ее закончить.
+		// В этом случае заканчиваем старую анимацию.
+		if (this._animating) {
+			this._animating = false;
+			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation);
+		}
+		// Анимации нет. Если не указан duration, то просто мгновенно переставляем модель на новое положение и все.
+		if (!duration) {
+			this._params.lat = coords.lat;
+			this._params.lng = coords.lng;
+			this._params.elevation = coords.elevation;
+			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation);
+			return this;
+		}
+		// Основной случай. Анимация указана.
+
+		// animationStartCoords - стартовые координаты, с которых начинаем анимацию. 
+		// В данный момент модель должна находится в этих координатах.
+		this._animationStartCoords = {
+			lat: this._params.lat,
+			lng: this._params.lng,
+			elevation: this._params.elevation
+		}
+		// в _params ставим конечные координаты. 
+		// Как бы координаты уже проставлены, но фактическое положение модели запаздывает и придет в них после анимации.
+		this._params.lat = coords.lat;
+		this._params.lng = coords.lng;
+		this._params.elevation = coords.elevation;
+
+		this._animationStartTime = (new Date).getTime();
+
+		var animate = function() {
+			var p = ((new Date).getTime() - self._animationStartTime) / duration;
+			// Заканчиваем анимацию
+			if (p >= 1) {
+				p = 1;
+				self._animating = false;
+			}
+			var coords = {
+				lat: self._animationStartCoords.lat + (self._params.lat - self._animationStartCoords.lat) * p,
+				lng: self._animationStartCoords.lng + (self._params.lng - self._animationStartCoords.lng) * p,
+				elevation: self._animationStartCoords.elevation + (self._params.elevation - self._animationStartCoords.elevation) * p
+			}
+			owg.ogSetGeometryPositionWGS84(self._model,coords.lng,coords.lat,coords.elevation);
+			if (self._animating)
+				requestAnimFrame(animate);
+		}
+
+		this._animating = true;
+		animate();
+
+		return this;
+	}
+	Ufo.prototype.visible = function(flag) {
+		if (this._visible != flag) {
+			this._visible = flag;
+			this._visibilityUpdate();
+		}
+		return this;
+	}
+	Ufo.prototype.destroy = function() {
+		this.emit("destroy");
+	}
+
+
+
+
 	var OwgMap = function() {
 
 /*
@@ -32,6 +145,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			elevation: 0,
 			distance: 1000			
 		}
+		this._ufos = [];
 /*
 		TODO: добавить параметр bgColor, который должен задаваться в rgba(...), а затем парситься и вставляться в owg
 		this.bgColor = ko.observable('rgba(0,0,0.5,1)');
@@ -88,7 +202,16 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		// TODO: связать cameraPosition и cameraLookAtPosition, чтобы при простановке одного второе менялось соответственно
 	}
 
-
+	OwgMap.prototype.ufo = function(params) {
+		var self = this;
+		params.map = self;
+		var ufo = new Ufo(params);
+		this._ufos.push(ufo);
+		ufo.on("destroy",function() {
+			self._ufos.splice(self._ufos.indexOf(ufo),1);
+		});
+		return ufo;
+	}
 
 	OwgMap.prototype.domInit = function(elem,params) {
 //		params.width && this.width(params.width);
@@ -108,13 +231,15 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		// Следующие две строки нельзя менять местами! this._scene = -1 если не создан globe (2 часа дебага)
 		this._globe = owg.ogCreateGlobe(this._ctx);
 		this._scene = owg.ogGetScene(this._ctx);
+		this._world = owg.ogGetWorld(this._scene);
 		this._camera = owg.ogGetActiveCamera(this._scene);
+		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
 		this.setCameraPosition();
 	}
 
-	OwgMap.prototype.templates = ['main'];
+	OwgMap.prototype.templates = ["main"];
 
 	return OwgMap;
 });

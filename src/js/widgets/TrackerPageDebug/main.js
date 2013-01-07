@@ -26,7 +26,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 5,
+			pilotsCnt: 10,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
 			dtStep: 1000,
@@ -35,13 +35,13 @@ define([
 				center: {
 					lat: 55.75,
 					lng: 37.61,
-					elevation: 100
+					elevation: 200
 				},
 				// Разброс стартового положения пилотов
-				dispersion: 0.5,
+				dispersion: 0.02,
 				elevationDispersion: 50,
 				// Максимальная дистанция, на которую пилот может улететь за 1 шаг
-				maxStep: 0.1,
+				maxStep: 0.005,
 				elevationMaxStep: 1,
 				// Вероятность того, что пилот не будет двигаться на текущем шаге
 				holdProbability: 0
@@ -67,7 +67,7 @@ define([
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
-						elevation: options.coords.center.elevation + Math.random()*options.coords.elevationDispersion - options.coords.elevationDispersion/2;
+						elevation: options.coords.center.elevation + Math.random()*options.coords.elevationDispersion - options.coords.elevationDispersion/2
 					}
 				});
 			for (var dt = options.startKey; dt <= options.endKey; dt += options.dtStep) {
@@ -117,7 +117,7 @@ define([
 				for (var i = 0; i < this.pilots.length; i++) {
 					for (var ei = maxEventsIndex; ei >= 0; ei--)
 						if (this.events[ei].pilot_id == i) {
-							data.start[i] = {lat:this.events[ei].lat,lng:this.events[ei].lng};
+							data.start[i] = {lat:this.events[ei].lat,lng:this.events[ei].lng,elevation:this.events[ei].elevation};
 							break;
 						}
 				}
@@ -125,7 +125,7 @@ define([
 					if (this.events[i].dt >= query.first && this.events[i].dt <= query.last) {
 						if (!data.timeline[this.events[i].dt])
 							data.timeline[this.events[i].dt] = {};
-						data.timeline[this.events[i].dt][this.events[i].pilot_id] = {lat:this.events[i].lat,lng: this.events[i].lng};
+						data.timeline[this.events[i].dt][this.events[i].pilot_id] = {lat:this.events[i].lat,lng: this.events[i].lng, elevation: this.events[i].elevation};
 					}
 				}
 			}
@@ -291,12 +291,14 @@ define([
 		var p = this;
 		this.id = options.id;
 		this.name = options.name;
+
 		this.map = options.map;
 		this.icon = options.icon;		
 		this._ufo = this.map.ufo({
 			title: this.name,
 			color: "#c00000"
 		}).icon(this.icon).visible(true);
+
 		this.visibleChecked = ko.observable(true);
         this.visibleCheckbox = new Checkbox({checked:this.visibleChecked});
 		this.color = "#f0f0f0";
@@ -309,8 +311,8 @@ define([
 			gSpd: ko.observable(0),
 			vSpd: ko.observable(0)
 		}
-		this.coordsUpdate = function(data) {
-			this._ufo.move(data);
+		this.coordsUpdate = function(data,duration) {
+			this._ufo.move(data,duration);
 		}
 		this.updateTableData = function() {
 			// пока выключим, непонятно, как считать скорость
@@ -363,7 +365,8 @@ define([
 					var p = new Pilot({
 						id: data[i].id,
 						name: data[i].name,
-						map: self.map,
+//						map: self.map,
+						map: self.owgMap,
 						icon: {url: "/img/ufoFly.png", width: 32, height: 35, x: 15, y: 32}
 					});
 					self.ufos.push(p);
@@ -400,7 +403,8 @@ define([
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.ufos().forEach(function(ufo) {
 						data[ufo.id]["time"] = playerCurrentKey;
-						ufo.coordsUpdate(data[ufo.id]);
+						// Здесь вторым параметром прокидываем duration, чтобы маркер ufo мог плавно двигаться
+						ufo.coordsUpdate(data[ufo.id],1000/playerSpeed);
 					});
 					// Передвинем бегунок в playerControl-е
 					self.playerControl.setTimePos(playerCurrentKey);
