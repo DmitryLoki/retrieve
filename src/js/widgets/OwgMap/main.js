@@ -41,41 +41,54 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 	Ufo.prototype.move = function(coords,duration) {
 		var self = this;
 		// При инициализации может не быть начального положения, тогда мгновенно туда переставляем и все
+		// В owg перепутаны yaw и pitch. На самом деле yaw нужно указывать вторым параметром в setPosition и setOrientation
 		if (!this._params.lat || !this._params.lng || !this._params.elevation) {
-			owg.ogSetGeometryPositionWGS84(this._model,coords.lng,coords.lat,Math.round(coords.elevation));
 			this._params.lat = coords.lat;
 			this._params.lng = coords.lng;
 			this._params.elevation = coords.elevation;
+			this._params.yaw = coords.yaw;
+
+			//owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation,0,0,0);
+			//owg.ogSetGeometryOrientation(self._model,0,this._params.yaw,0);
+			// TODO: дебагить owg. почему-то если много моделей, команды подряд setPosition + setOrientation, то вторая не срабатывает. 
+			// Все парапланы в результате расположены параллельно с 0-м углом yaw.
+			// А вот если сделать через таймаут, то почему-то работает.
+			setTimeout(function() {
+				self.move(coords);
+			},1000);
 			return this;
 		}
 		// Если уже идет анимация, значит она была запущена предыдущим кадром и мы не успели ее закончить.
 		// В этом случае заканчиваем старую анимацию.
 		if (this._animating) {
 			this._animating = false;
-			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation);
+			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation,0,0,0);
 		}
 		// Анимации нет. Если не указан duration, то просто мгновенно переставляем модель на новое положение и все.
-		if (!duration) {
+		if (!duration || duration == 0) {
 			this._params.lat = coords.lat;
 			this._params.lng = coords.lng;
 			this._params.elevation = coords.elevation;
-			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation);
+			this._params.yaw = coords.yaw;
+			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation,0,0,0);
+			owg.ogSetGeometryOrientation(self._model,0,this._params.yaw,0);
 			return this;
 		}
 		// Основной случай. Анимация указана.
-
 		// animationStartCoords - стартовые координаты, с которых начинаем анимацию. 
 		// В данный момент модель должна находится в этих координатах.
 		this._animationStartCoords = {
 			lat: this._params.lat,
 			lng: this._params.lng,
-			elevation: this._params.elevation
+			elevation: this._params.elevation,
+			yaw: this._params.yaw
 		}
 		// в _params ставим конечные координаты. 
 		// Как бы координаты уже проставлены, но фактическое положение модели запаздывает и придет в них после анимации.
 		this._params.lat = coords.lat;
 		this._params.lng = coords.lng;
 		this._params.elevation = coords.elevation;
+		this._params.yaw = coords.yaw;
 
 		this._animationStartTime = (new Date).getTime();
 
@@ -86,12 +99,20 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 				p = 1;
 				self._animating = false;
 			}
+
+			var yawDelta = self._params.yaw - self._animationStartCoords.yaw;
+			if (yawDelta > 180) yawDelta -= 360;
+			if (yawDelta < -180) yawDelta += 360;
+
 			var coords = {
 				lat: self._animationStartCoords.lat + (self._params.lat - self._animationStartCoords.lat) * p,
 				lng: self._animationStartCoords.lng + (self._params.lng - self._animationStartCoords.lng) * p,
-				elevation: self._animationStartCoords.elevation + (self._params.elevation - self._animationStartCoords.elevation) * p
+				elevation: self._animationStartCoords.elevation + (self._params.elevation - self._animationStartCoords.elevation) * p,
+				yaw: self._animationStartCoords.yaw + yawDelta * p
 			}
-			owg.ogSetGeometryPositionWGS84(self._model,coords.lng,coords.lat,coords.elevation);
+
+			owg.ogSetGeometryPositionWGS84(self._model,coords.lng,coords.lat,coords.elevation,0,0,0);
+			owg.ogSetGeometryOrientation(self._model,0,coords.yaw,0);
 			if (self._animating)
 				requestAnimFrame(animate);
 		}

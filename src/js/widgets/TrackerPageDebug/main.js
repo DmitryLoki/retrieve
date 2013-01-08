@@ -26,7 +26,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 10,
+			pilotsCnt: 50,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
 			dtStep: 1000,
@@ -74,14 +74,57 @@ define([
 				for (var i = 0; i < this.pilots.length; i++) {
 					// С некоторой вероятностью пилот не двигается
 					if (Math.random() < options.coords.holdProbability && dt != options.startKey) continue;
+
+					// l - last - предыдущее значение
+					var l = {
+						lat: this.pilots[i].tmp.lat,
+						lng: this.pilots[i].tmp.lng
+					}
+
 					this.pilots[i].tmp.lat += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
 					this.pilots[i].tmp.lng += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
-					this.pilots[i].tmp.elevation += Math.random()*options.coords.elevationMaxStep - options.coords.elevationMaxStep/2;
+//					this.pilots[i].tmp.elevation += Math.random()*options.coords.elevationMaxStep - options.coords.elevationMaxStep/2;
+
+
+					// Вставим вычисление yaw-оси прямо в сервер, это угол, под которым смотрит параплан, относительно севера
+					// Против часовой стрелки в градусах от 0 до 360
+					// Угол параплана вообще-то не зависит от координат (может сносить ветром как угодно), но мы будем считать, 
+					// что параплан всегда повернут передом в направлении своего движения
+
+					var t = this.pilots[i].tmp;
+					var yaw = 0;
+					if (l.lat != t.lat || l.lng != t.lng) {
+						if (l.lng == t.lng)
+							yaw = l.lat < t.lat ? 90 : -90;
+						else {
+							yaw = Math.atan((t.lat - l.lat) / (t.lng - l.lng)) / Math.PI * 180;
+							if (t.lng < l.lng) yaw = yaw + 180;
+						}
+					}
+					if (yaw > 180) yaw = yaw - 360;
+
+/*
+					var t = this.pilots[i].tmp;
+					var yaw = 0;
+					if (l.lat != t.lat || l.lng != t.lng) {
+						if (l.lat == t.lat)
+							yaw = l.lng < t.lng ? 270 : 90;
+						else {
+							yaw = Math.abs(Math.atan((t.lng - l.lng) / (t.lat - l.lat))) / Math.PI * 90;
+							if (t.lng < l.lng && t.lat < l.lat) yaw = 180 - yaw;
+							if (t.lng > l.lng && t.lat < l.lat) yaw = 180 + yaw;
+							if (t.lng > l.lng && t.lat > l.lat) yaw = 360 - yaw;
+						}
+					}
+					if (yaw > 180) yaw = yaw - 360;
+*/
+
 					this.events.push({
 						dt: dt,
 						pilot_id: i,
 						lat: this.pilots[i].tmp.lat,
 						lng: this.pilots[i].tmp.lng,
+						yaw: yaw,
 						elevation: this.pilots[i].tmp.elevation
 					});
 				}
@@ -117,7 +160,7 @@ define([
 				for (var i = 0; i < this.pilots.length; i++) {
 					for (var ei = maxEventsIndex; ei >= 0; ei--)
 						if (this.events[ei].pilot_id == i) {
-							data.start[i] = {lat:this.events[ei].lat,lng:this.events[ei].lng,elevation:this.events[ei].elevation};
+							data.start[i] = {lat:this.events[ei].lat,lng:this.events[ei].lng,elevation:this.events[ei].elevation,yaw:this.events[ei].yaw};
 							break;
 						}
 				}
@@ -125,7 +168,7 @@ define([
 					if (this.events[i].dt >= query.first && this.events[i].dt <= query.last) {
 						if (!data.timeline[this.events[i].dt])
 							data.timeline[this.events[i].dt] = {};
-						data.timeline[this.events[i].dt][this.events[i].pilot_id] = {lat:this.events[i].lat,lng: this.events[i].lng, elevation: this.events[i].elevation};
+						data.timeline[this.events[i].dt][this.events[i].pilot_id] = {lat:this.events[i].lat,lng:this.events[i].lng,elevation:this.events[i].elevation,yaw:this.events[i].yaw};
 					}
 				}
 			}
@@ -393,7 +436,9 @@ define([
 		var timerHandle = null;
 		var tableTimerHandle = null;
 
-		var renderFrame = function(callback) {
+		// Добавился параметр duraion. Этим параметром сообщаем, сколько времени есть у ufo для проигрывания анимации,
+		// т.е. когда примерно будет запрошен renderFrame снова.
+		var renderFrame = function(duration,callback) {
 			self.dataSource.get({
 				type: "timeline",
 				dt: playerCurrentKey,
@@ -403,8 +448,7 @@ define([
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.ufos().forEach(function(ufo) {
 						data[ufo.id]["time"] = playerCurrentKey;
-						// Здесь вторым параметром прокидываем duration, чтобы маркер ufo мог плавно двигаться
-						ufo.coordsUpdate(data[ufo.id],1000/playerSpeed);
+						ufo.coordsUpdate(data[ufo.id],duration);
 					});
 					// Передвинем бегунок в playerControl-е
 					self.playerControl.setTimePos(playerCurrentKey);
@@ -418,23 +462,23 @@ define([
 		// При этом ессно обновлять данные таблицы, а то вдруг у нас состояние pause, при котором данные не обновляются автоматически
 		var setSpecificFrame = function(time) {
 			playerCurrentKey = time;
-			renderFrame(function() {
+			renderFrame(0,function() {
 				renderTableData();
 			});
 		}
 
 		// TODO: придумать нормальное название
 		// эта функция вызывает renderFrame и в его callback-е c задержкой в 1000/playerSpeed вызывает сама себя
-		var timelineIntervalCycler = function() {
+		var timelineIntervalCycler = function(duration) {
 			clearTimeout(timerHandle);
-			renderFrame(function() {
+			renderFrame(duration,function() {
 				timerHandle = setTimeout(function() {
 					playerCurrentKey += 1000;
 					if (playerCurrentKey > playerEndKey) {
 						self.playerControl.pause();
 						return;
 					}
-					timelineIntervalCycler();
+					timelineIntervalCycler(1000/playerSpeed);
 				},1000/playerSpeed);
 			});
 		}
