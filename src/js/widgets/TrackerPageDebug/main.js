@@ -22,6 +22,18 @@ define([
     OwgMap
 ){
 
+	// requestAnim shim layer by Paul Irish
+    var requestAnimFrame = (function() {
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
 	// Все переменные TrackerPageDebug
 	var options = {
 		// Настройки тестового сервера
@@ -45,12 +57,13 @@ define([
 				elevationMaxStep: 1,
 				// Вероятность того, что пилот не будет двигаться на текущем шаге
 				holdProbability: 0
-			}
+			},
+			// Задержка, с которой тестовый сервер отдает ответ
+			testDelay: 1000
 		},
 		// Установленная по умолчанию скорость в плеере
 		playerSpeed: 1,
 		// Задержка, с которой обновляются данные в таблице
-		renderTableDataInterval: 1000
 	}
 
 
@@ -83,14 +96,12 @@ define([
 
 					this.pilots[i].tmp.lat += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
 					this.pilots[i].tmp.lng += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
-//					this.pilots[i].tmp.elevation += Math.random()*options.coords.elevationMaxStep - options.coords.elevationMaxStep/2;
+					this.pilots[i].tmp.elevation += Math.random()*options.coords.elevationMaxStep - options.coords.elevationMaxStep/2;
 
-
-					// Вставим вычисление yaw-оси прямо в сервер, это угол, под которым смотрит параплан, относительно севера
-					// Против часовой стрелки в градусах от 0 до 360
+					// Вставим вычисление yaw-оси прямо в сервер, это угол, под которым смотрит параплан, относительно востока
+					// Против часовой стрелки в градусах от 0 до 180, по часовой - от 0 до -180
 					// Угол параплана вообще-то не зависит от координат (может сносить ветром как угодно), но мы будем считать, 
 					// что параплан всегда повернут передом в направлении своего движения
-
 					var t = this.pilots[i].tmp;
 					var yaw = 0;
 					if (l.lat != t.lat || l.lng != t.lng) {
@@ -102,22 +113,6 @@ define([
 						}
 					}
 					if (yaw > 180) yaw = yaw - 360;
-
-/*
-					var t = this.pilots[i].tmp;
-					var yaw = 0;
-					if (l.lat != t.lat || l.lng != t.lng) {
-						if (l.lat == t.lat)
-							yaw = l.lng < t.lng ? 270 : 90;
-						else {
-							yaw = Math.abs(Math.atan((t.lng - l.lng) / (t.lat - l.lat))) / Math.PI * 90;
-							if (t.lng < l.lng && t.lat < l.lat) yaw = 180 - yaw;
-							if (t.lng > l.lng && t.lat < l.lat) yaw = 180 + yaw;
-							if (t.lng > l.lng && t.lat > l.lat) yaw = 360 - yaw;
-						}
-					}
-					if (yaw > 180) yaw = yaw - 360;
-*/
 
 					this.events.push({
 						dt: dt,
@@ -160,7 +155,8 @@ define([
 				for (var i = 0; i < this.pilots.length; i++) {
 					for (var ei = maxEventsIndex; ei >= 0; ei--)
 						if (this.events[ei].pilot_id == i) {
-							data.start[i] = {lat:this.events[ei].lat,lng:this.events[ei].lng,elevation:this.events[ei].elevation,yaw:this.events[ei].yaw};
+							data.start[i] = utils.extend({},this.events[ei]);
+//							data.start[i] = {lat:this.events[ei].lat,lng:this.events[ei].lng,elevation:this.events[ei].elevation,yaw:this.events[ei].yaw};
 							break;
 						}
 				}
@@ -168,7 +164,8 @@ define([
 					if (this.events[i].dt >= query.first && this.events[i].dt <= query.last) {
 						if (!data.timeline[this.events[i].dt])
 							data.timeline[this.events[i].dt] = {};
-						data.timeline[this.events[i].dt][this.events[i].pilot_id] = {lat:this.events[i].lat,lng:this.events[i].lng,elevation:this.events[i].elevation,yaw:this.events[i].yaw};
+						data.timeline[this.events[i].dt][this.events[i].pilot_id] = utils.extend({},this.events[i]);
+//						data.timeline[this.events[i].dt][this.events[i].pilot_id] = {dt:this.events[i].dt,lat:this.events[i].lat,lng:this.events[i].lng,elevation:this.events[i].elevation,yaw:this.events[i].yaw};
 					}
 				}
 			}
@@ -180,7 +177,7 @@ define([
 			var self = this;
 			setTimeout(function() {
 				self.get(query);
-			},delay);
+			},delay || this.options.testDelay);
 		}
 	}
 
@@ -211,9 +208,11 @@ define([
 				// TODO: придумать название
 				// Фрейм - это то, что приходит с сервера и складывается в кеш, т.е. start data + список events
 				// Функция по данному frame вычисляет мгновенные данные всех объектов на момент dt
+				// При этом известно, что данные достаточны, т.е. обязательно есть для всех пилотов хотя бы стартовое положение.
 				// Как работает: сначала пробегает по timeline по убыванию времени и складывает в data[pilot_id] 
 				// первое найденое значение для каждого пилота.
 				// Потом пробегает по start-данным, и проставляет значения пилотам, для которых не нашлось событий в timeline
+				/*
 				var getDataFromFrame = function(frame,dt) {
 					var data = {}, keys = [];
 					for (var i in frame.timeline)
@@ -232,8 +231,56 @@ define([
 							data[pilot_id] = frame.start[pilot_id];
 					return data;
 				}
+				*/
+				// Значит эта вся логика остается. И добавляется логика, нужная для анимации. 
+				// Нам нужны не только координаты "до" dt, но и ближайшие "после".
+				// Для каждого пилота нужно первое событие (по изменению его координат), которое произойдет после dt. 
+				// Тогда построим линейное соотношение и получим текущее линейно анимированное положение.
+				// При этом данные одного фрейма достаточны. т.е. если нет события "после", то параплан неподвижен. 
+				// Очевидно, что при переходе в следующий фрейм он "не прыгнет", потому что если бы он прыгнул, 
+				// было бы событие по изменению координат.
+				var getDataFromFrame = function(frame,dt) {
+					var data = {}, dataBefore = {}, dataAfter = {}, keys = [];
+					for (var i in frame.timeline)
+						if (frame.timeline.hasOwnProperty(i))
+							for (var pilot_id in frame.timeline[i])
+								if (frame.timeline[i].hasOwnProperty(pilot_id)) {
+									if ((i <= dt) && (!dataBefore[pilot_id] || dataBefore[pilot_id].dt < i))
+										dataBefore[pilot_id] = frame.timeline[i][pilot_id];
+									if ((i >= dt) && (!dataAfter[pilot_id] || dataAfter[pilot_id].dt > i))
+										dataAfter[pilot_id] = frame.timeline[i][pilot_id];
+								}
+					for (var pilot_id in frame.start)
+						if (frame.start.hasOwnProperty(pilot_id)) {
+							if (!dataBefore[pilot_id]) dataBefore[pilot_id] = frame.start[pilot_id];
+							if (!dataAfter[pilot_id]) dataAfter[pilot_id] = dataBefore[pilot_id];
+						}
+					for (var pilot_id in dataBefore)
+						if (dataBefore.hasOwnProperty(pilot_id)) {
+							var d1 = dataBefore[pilot_id], d2 = dataAfter[pilot_id];
+							if (d1.dt == d2.dt) {
+								data[pilot_id] = dataBefore[pilot_id];
+							}
+							else {
+								var p = (dt - d1.dt) / (d2.dt - d1.dt);
+								var yawDelta = d2.yaw - d1.yaw;
+								if (yawDelta > 180) yawDelta -= 360;
+								if (yawDelta < -180) yawDelta += 360;
+								data[pilot_id] = {
+									lat: d1.lat + (d2.lat - d1.lat) * p,
+									lng: d1.lng + (d2.lng - d1.lng) * p,
+									elevation: d1.elevation + (d2.elevation - d1.elevation) * p,
+									yaw: d1.yaw + yawDelta * p
+								}
+							}
+						}
+					return data;
+				}
 
 				// Возвращает первый кеш, который в себя включает время dtOffset - количество секунд с начала гонки
+				// То есть любой кеш, для любого интервала. Сначала могли крутить со скоростью x25, и в кеш попал интервал
+				// cache[25][0], а потом переключили скорость и перекрутили на начало - cache[25][0] нам вернется,
+				// он будет подходить, потому что будет включать в себя момент времени dtOffset
 				var getCachedFrame = function(cache,dtOffset) {
 					for (var inSize in cache) {
 						if (cache.hasOwnProperty(inSize)) {
@@ -244,7 +291,6 @@ define([
 					}
 					return null;
 				}
-
 
 				// Количество секунд, прошедших с начала гонки
 				var dtOffset = Math.floor((query.dt - query.dtStart) / 1000);
@@ -291,7 +337,6 @@ define([
 				}
 				// Кеша нет, делаем запрос
 				else {
-					
 					// Инициализируем новый интервал в кеше
 					if (!self.cache[inSize])
 						self.cache[inSize] = {};
@@ -305,7 +350,6 @@ define([
 							query.callback(getDataFromFrame(data,query.dt));
 						}
 					}
-
 					this.options.server.getWithDelay({
 						type: "timeline",
 						first: first,
@@ -313,13 +357,10 @@ define([
 						callback: function(data) {
 							self.cache[inSize][inOffset].status = "ready";
 							self.cache[inSize][inOffset].data = data;
-							if (self.cache[inSize][inOffset].callback) {
-								self.cache[inSize][inOffset].callback(data);
-								delete self.cache[inSize][inOffset].callback;
-							}
-//							query.callback(getDataFromFrame(data,query.dt));
+							self.cache[inSize][inOffset].callback(data);
+							self.cache[inSize][inOffset].callback = function(data) { };
 						}
-					},1000);
+					});
 				}
 			}
 			// В остальных случаях будем просто запрашивать данные у сервера без кеширования
@@ -419,6 +460,122 @@ define([
 	}
 
 
+	// Новая версия playerInit отличается другим подходам к таймаутам.
+	// Раньше тик зависел от скорости, на speed=1 тикал раз в секунду, запрашивал через dataSource данные, двигал маркеры
+	// Теперь попробуем тикать независимо от скорости с тиком, подходящим для анимации.
+	// Будем гораздо чаще запрашивать у dataSource данные, но на то он и кеш. 
+	// dataSource должен будет внутри себя интерполировать данные, и для дробной секунды выдавать хотя бы линейное среднее 
+	// между окружающими ее целыми секундами.
+	TrackerPageDebug.prototype.playerInitNew = function(data) {
+		var self = this;
+
+		// Даннные в милисекундах, время начала и конца гонки. Текущее время плеера устанавливается на начало гонки
+		var playerStartKey = data.startKey;
+		var playerEndKey = data.endKey;
+		var playerCurrentKey = data.startKey;
+		var playerSpeed = options.playerSpeed;
+
+		// Текущее актуальное время
+		var playerCurrentTime = (new Date).getTime();
+
+		if (this.owgMap && data.center) {
+			this.owgMap.setCameraLookAtPosition({
+				latitude: data.center.lat,
+				longitude: data.center.lng
+			});
+		}
+
+		var timerHandle = null;
+		var tableTimerHandle = null;
+
+		var renderFrame = function(callback) {
+			self.dataSource.get({
+				type: "timeline",
+				dt: playerCurrentKey,
+				timeMultiplier: playerSpeed,
+				dtStart: playerStartKey,
+				callback: function(data) {
+					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
+					self.ufos().forEach(function(ufo) {
+						data[ufo.id]["time"] = playerCurrentKey;
+						ufo.coordsUpdate(data[ufo.id]);
+					});
+					// Передвинем бегунок в playerControl-е
+					self.playerControl.setTimePos(playerCurrentKey);
+					if (callback)
+						callback(data);
+				}
+			});
+		}
+
+		// Следующие 3 метода - обновление данных таблицы. 
+		// Обновление должно происходить со своей задержкой, независимо от скорости обновления данных 
+		var renderTableData = function() {
+			self.ufos().forEach(function(ufo) {
+				ufo.updateTableData();
+			});
+		}
+		var playTableData = function() {
+			renderTableData();
+			tableTimerHandle = setTimeout(playTableData,options.renderTableDataInterval);
+		}
+		var pauseTableData = function() {
+			renderTableData();
+			clearTimeout(tableTimerHandle);
+		}
+
+		// При инициализации и когда вручную тащим бегунок слайдера, нужно уметь задавать положение на определенное время
+		// При этом ессно обновлять данные таблицы, а то вдруг у нас состояние pause, при котором данные не обновляются автоматически
+		var setSpecificFrame = function(time) {
+			playerCurrentKey = time;
+			renderFrame(function() {
+				renderTableData();
+			});
+		}
+
+		var timelineIntervalCycler = function() {
+			renderFrame(function() {
+				if (self.playerControl.getState() != "play") return;
+				playerCurrentTime = (new Date).getTime();
+				requestAnimFrame(function() {
+					var t = (new Date).getTime();
+					playerCurrentKey += (t - playerCurrentTime) * playerSpeed;
+					playerCurrentTime = t;
+					if (playerCurrentKey >= playerEndKey) {
+						playerCurrentKey = playerEndKey;
+						self.playerControl.pause();
+						return;
+					}
+					timelineIntervalCycler();
+				});
+			});
+		}
+
+		// Нужно проставить маркеры, для этого нужно получить их начальное положение и после этого проставить данные в таблице
+		setSpecificFrame(playerStartKey);
+
+		self.playerControl
+		.on("play",function() {
+			timelineIntervalCycler();
+			playTableData();
+		})
+		.on("pause",function() {
+			pauseTableData();
+		})
+		.on("speed",function(speed) {
+			playerSpeed = speed;
+		})
+		.on("change",function(time) {
+			setSpecificFrame(time);
+		})
+		.initTimeInterval(playerStartKey,playerEndKey)
+		.pause();
+	}
+
+
+
+
+/*
 	TrackerPageDebug.prototype.playerInit = function(data) {
 		var self = this;
 		var playerStartKey = data.startKey;
@@ -436,7 +593,7 @@ define([
 		var timerHandle = null;
 		var tableTimerHandle = null;
 
-		// Добавился параметр duraion. Этим параметром сообщаем, сколько времени есть у ufo для проигрывания анимации,
+		// Добавился параметр duration. Этим параметром сообщаем, сколько времени есть у ufo для проигрывания анимации,
 		// т.е. когда примерно будет запрошен renderFrame снова.
 		var renderFrame = function(duration,callback) {
 			self.dataSource.get({
@@ -538,7 +695,7 @@ define([
 		.initTimeInterval(playerStartKey,playerEndKey)
 		.pause();
 	}
-
+*/
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		var self = this;
@@ -547,12 +704,12 @@ define([
 			type: "race",
 			callback: function(data) {
 				self.loadPilots();
-				self.playerInit(data);
+				self.playerInitNew(data);
 			}
 		});
 	}
 
-	TrackerPageDebug.prototype.templates = ['main'];
+	TrackerPageDebug.prototype.templates = ["main"];
 
 	return TrackerPageDebug;
 });
