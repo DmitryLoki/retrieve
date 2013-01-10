@@ -88,6 +88,8 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 				var pxOffset = pxStartOffset + pxMouseOffset;
 				// смещение бегунка в %-х относительно общей ширины контейнера
 				var percentOffset = self.containerWidth ? pxOffset / self.containerWidth * 100 : 0;
+				if (percentOffset > 100) percentOffset = 100;
+				if (percentOffset < 0) percentOffset = 0;
 				// простановка значения относительно max-min
 				self.sliderPercent(percentOffset);
 			}
