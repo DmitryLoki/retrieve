@@ -136,6 +136,102 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 
 
+	var Waypoint = function(params) {
+		params.color = "0,0,0,0.5";
+		if (params.type == "start")
+			params.color = "255,0,0,0.5";
+		else if (params.type == "finish")
+			params.color = "00,00,255,0.5";
+		this._params = params;
+		this._map = params.map;
+		this._model = this.createCylinderGeometry();
+	}
+
+	utils.extend(Waypoint.prototype,EventEmitter.prototype);
+
+	Waypoint.prototype.createCylinderGeometry = function() {
+		var vertices = [], triangles = [];
+		var color = this._params.color.split(",");
+		for (var i = 0, step = 5; i < 360; i+= step) {
+			var x = this._params.radius * Math.sin(i/180*Math.PI);
+			var z = this._params.radius * Math.cos(i/180*Math.PI);
+			vertices.push(x,this._params.height,z);
+			for (var j = 0; j < color.length; j++)
+				vertices.push(color[j]);
+			vertices.push(x,0,z);
+			for (var j = 0; j < color.length; j++)
+				vertices.push(color[j]);
+			if (i > 0) {
+				var n = i/step*2;
+				triangles.push(n-2,n-1,n,n-1,n+1,n);
+			}
+		}
+		triangles.push(n,n+1,0,n+1,0,1);
+		var geometry = [[{
+			"Center": [this._params.lng,this._params.lat,0],
+			"VertexSemantic": "pc",
+			"Vertices": vertices,
+			"IndexSemantic": "TRIANGLES",
+			"Indices": triangles
+		}]]
+
+
+/*
+         "Vertices"  :  [-100,-100,-100,1.0,1.0,1.0,0.0,
+                         -100,-100, 100,1.0,0.0,0.0,0.2,
+                          100,-100,-100,0.0,1.0,0.0,0.2,
+                          100,-100, 100,0.0,0.0,1.0,0.2,
+                          100, 100,-100,1.0,1.0,0.0,1.0,
+                          100, 100, 100,0.0,1.0,1.0,1.0,
+                         -100, 100,-100,1.0,0.0,1.0,1.0,
+                         -100, 100, 100,0.0,0.0,0.0,1.0
+                        ],
+var cube = [
+      [
+        {   
+         "id"  :  "1",
+         "Center"  :  [this._params.lng,this._params.lat,0],
+         "VertexSemantic"  :  "pc",
+         "Vertices"  :  [-100,-100,-100,1.0,0.0,0.0,0.0,
+                         -100,-100, 100,1.0,0.0,0.0,0.0,
+                          100,-100,-100,1.0,0.0,0.0,0.0,
+                          100,-100, 100,1.0,0.0,0.0,0.0,
+                          100, 100,-100,1.0,0.0,0.0,1.0,
+                          100, 100, 100,1.0,0.0,0.0,1.0,
+                         -100, 100,-100,1.0,0.0,0.0,1.0,
+                         -100, 100, 100,1.0,0.0,0.0,1.0
+                        ],
+         "IndexSemantic"  :  "TRIANGLES",
+         "Indices"  :  [3,1,0,
+                        5,3,2,
+                        7,5,4,
+                        1,7,6,
+                        5,7,1,
+                        2,0,6,
+                        2,3,0,
+                        4,5,2,
+                        6,7,4,
+                        0,1,6,
+                        3,5,1,
+                        4,2,6]
+         
+        }
+      ]
+   ];
+*/
+    	var cylinder = owg.ogCreateGeometry(this._map._waypointsLayer,geometry);
+ 	  	return cylinder;
+	}
+
+	Waypoint.prototype.destroy = function() {
+		this.emit("destroy");
+	}
+
+
+
+
+
+
 	var OwgMap = function() {
 
 /*
@@ -167,6 +263,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			distance: 1000			
 		}
 		this._ufos = [];
+		this._waypoints = [];
 /*
 		TODO: добавить параметр bgColor, который должен задаваться в rgba(...), а затем парситься и вставляться в owg
 		this.bgColor = ko.observable('rgba(0,0,0.5,1)');
@@ -234,6 +331,17 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		return ufo;
 	}
 
+	OwgMap.prototype.waypoint = function(params) {
+		var self = this;
+		params.map = self;
+		var waypoint = new Waypoint(params);
+		this._waypoints.push(waypoint);
+		waypoint.on("destroy",function() {
+			self._waypoints.splice(self._waypoints.indexOf(waypoint),1);
+		});
+		return waypoint;
+	}
+
 	OwgMap.prototype.domInit = function(elem,params) {
 //		params.width && this.width(params.width);
 //		params.height && this.height(params.height);
@@ -255,6 +363,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._world = owg.ogGetWorld(this._scene);
 		this._camera = owg.ogGetActiveCamera(this._scene);
 		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
+		this._waypointsLayer = owg.ogCreateGeometryLayer(this._world,"waypoints");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
 		this.setCameraPosition();

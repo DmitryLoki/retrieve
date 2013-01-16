@@ -39,6 +39,7 @@ define([
 		// Настройки тестового сервера
 		testServerOptions: {
 			pilotsCnt: 50,
+			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
 			dtStep: 1000,
@@ -51,12 +52,18 @@ define([
 				},
 				// Разброс стартового положения пилотов
 				dispersion: 0.02,
-				elevationDispersion: 50,
+				elevationDispersion: 100,
 				// Максимальная дистанция, на которую пилот может улететь за 1 шаг
 				maxStep: 0.005,
-				elevationMaxStep: 1,
+				elevationMaxStep: 100,
 				// Вероятность того, что пилот не будет двигаться на текущем шаге
 				holdProbability: 0
+			},
+			waypoints: {
+				dispersion: 0.05,
+				maxRadius: 500,
+				minRadius: 100,
+				height: 500,
 			},
 			// Задержка, с которой тестовый сервер отдает ответ
 			testDelay: 1000
@@ -73,6 +80,19 @@ define([
 			this.options = options;
 			this.pilots = [];
 			this.events = [];
+			this.waypoints = [];
+			for (var i = 0; i < options.waypointsCnt; i++) {
+				this.waypoints.push({
+					id: i,
+					name: "Waypoint #" + i,
+					type: (i==0?"start":(i==options.waypointsCnt-1?"finish":"waypoint")),
+					lat: options.coords.center.lat + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
+					lng: options.coords.center.lng + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
+					radius: options.waypoints.minRadius + Math.random()*(options.waypoints.maxRadius-options.waypoints.minRadius),
+					height: options.waypoints.height
+				});
+			}
+
 			for (var i = 0; i < options.pilotsCnt; i++)
 				this.pilots.push({
 					id: i,
@@ -139,7 +159,8 @@ define([
 				data = {
 					startKey: this.options.startKey,
 					endKey: this.options.endKey,
-					center: this.options.coords.center
+					center: this.options.coords.center,
+					waypoints: this.waypoints
 				}
 			}
 			// Аналог GET /contest/{contestid}/race/{raceid}/pilot из api
@@ -423,6 +444,7 @@ define([
 		this.map = new GoogleMap();
 		this.owgMap = new OwgMap();
 		this.ufos = ko.observableArray();
+		this.waypoints = ko.observableArray();
 		this.ufosTable = new UfosTable(this.ufos);
 		this.playerControl = new PlayerControl();
 		this.playerControlWindow = new Window();
@@ -478,11 +500,18 @@ define([
 		// Текущее актуальное время
 		var playerCurrentTime = (new Date).getTime();
 
+		// Центрируем карту, с сервера должны прийти дефолтные координаты камеры
 		if (this.owgMap && data.center) {
 			this.owgMap.setCameraLookAtPosition({
 				latitude: data.center.lat,
 				longitude: data.center.lng
 			});
+		}
+
+		// Рисуем цилиндры
+		if (this.owgMap && data.waypoints) {
+			for (var i = 0; i < data.waypoints.length; i++)
+				this.waypoints.push(this.owgMap.waypoint(data.waypoints[i]));
 		}
 
 		var timerHandle = null;
