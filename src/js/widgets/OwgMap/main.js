@@ -20,10 +20,19 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._map = params.map;
 		this._visible = true;
 		this._animating = false;
-		this._model = owg.ogLoadGeometryAsync(this._map._ufosLayer,"/art/models/paraplan.json");
+		this.hasAsyncInit = true;
 	}
 
 	utils.extend(Ufo.prototype,EventEmitter.prototype);
+
+	Ufo.prototype.asyncInit = function(callback) {
+		var self = this;
+		require([this._params.owgModelUrl],function(data) {
+			self._params.owgModelJson = data.model;
+			self._model = owg.ogCreateGeometry(self._map._waypointsLayer,data.model);
+			callback();
+		});
+	}
 
 	// Иконки не поддерживаются. TODO: можно вставить поддержку перегрузки модели
 	Ufo.prototype.icon = function() {
@@ -137,11 +146,11 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 
 	var Waypoint = function(params) {
-		params.color = "0,0,0,0.5";
+		params.color = "0,0,0,0.1";
 		if (params.type == "start")
-			params.color = "255,0,0,0.5";
+			params.color = "255,0,0,0.1";
 		else if (params.type == "finish")
-			params.color = "00,00,255,0.5";
+			params.color = "0,0,255,0.1";
 		this._params = params;
 		this._map = params.map;
 		this._model = this.createCylinderGeometry();
@@ -175,50 +184,6 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			"Indices": triangles
 		}]]
 
-
-/*
-         "Vertices"  :  [-100,-100,-100,1.0,1.0,1.0,0.0,
-                         -100,-100, 100,1.0,0.0,0.0,0.2,
-                          100,-100,-100,0.0,1.0,0.0,0.2,
-                          100,-100, 100,0.0,0.0,1.0,0.2,
-                          100, 100,-100,1.0,1.0,0.0,1.0,
-                          100, 100, 100,0.0,1.0,1.0,1.0,
-                         -100, 100,-100,1.0,0.0,1.0,1.0,
-                         -100, 100, 100,0.0,0.0,0.0,1.0
-                        ],
-var cube = [
-      [
-        {   
-         "id"  :  "1",
-         "Center"  :  [this._params.lng,this._params.lat,0],
-         "VertexSemantic"  :  "pc",
-         "Vertices"  :  [-100,-100,-100,1.0,0.0,0.0,0.0,
-                         -100,-100, 100,1.0,0.0,0.0,0.0,
-                          100,-100,-100,1.0,0.0,0.0,0.0,
-                          100,-100, 100,1.0,0.0,0.0,0.0,
-                          100, 100,-100,1.0,0.0,0.0,1.0,
-                          100, 100, 100,1.0,0.0,0.0,1.0,
-                         -100, 100,-100,1.0,0.0,0.0,1.0,
-                         -100, 100, 100,1.0,0.0,0.0,1.0
-                        ],
-         "IndexSemantic"  :  "TRIANGLES",
-         "Indices"  :  [3,1,0,
-                        5,3,2,
-                        7,5,4,
-                        1,7,6,
-                        5,7,1,
-                        2,0,6,
-                        2,3,0,
-                        4,5,2,
-                        6,7,4,
-                        0,1,6,
-                        3,5,1,
-                        4,2,6]
-         
-        }
-      ]
-   ];
-*/
     	var cylinder = owg.ogCreateGeometry(this._map._waypointsLayer,geometry);
  	  	return cylinder;
 	}
@@ -324,12 +289,28 @@ var cube = [
 		var self = this;
 		params.map = self;
 		var ufo = new Ufo(params);
-		this._ufos.push(ufo);
+		self._ufos.push(ufo);
 		ufo.on("destroy",function() {
 			self._ufos.splice(self._ufos.indexOf(ufo),1);
 		});
 		return ufo;
 	}
+
+	OwgMap.prototype.loadUfoAsync = function(params) {
+		var self = this;
+		params.map = self;
+		require(params.owgModelUrl,function(json) {
+			params.owgModelJson = json;
+			var ufo = new Ufo(params);
+			self._ufos.push(ufo);
+			ufo.on("destroy",function() {
+				self._ufos.splice(self._ufos.indexOf(ufo),1);
+			});
+			if (params.callback)
+				params.callback(ufo);
+		});
+	}
+
 
 	OwgMap.prototype.waypoint = function(params) {
 		var self = this;
@@ -362,8 +343,8 @@ var cube = [
 		this._scene = owg.ogGetScene(this._ctx);
 		this._world = owg.ogGetWorld(this._scene);
 		this._camera = owg.ogGetActiveCamera(this._scene);
-		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
 		this._waypointsLayer = owg.ogCreateGeometryLayer(this._world,"waypoints");
+		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
 		this.setCameraPosition();

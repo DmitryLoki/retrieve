@@ -3,6 +3,7 @@ define([
     'walk',
     'knockout',
     'knockout.mapping',
+    'EventEmitter',
     'widget!GoogleMap',
     'widget!PlayerControl',
     'widget!UfosTable',
@@ -14,6 +15,7 @@ define([
 	walk,
 	ko,
 	komap,
+	EventEmitter,
 	GoogleMap,
 	PlayerControl,
 	UfosTable,
@@ -33,6 +35,7 @@ define([
                 window.setTimeout(callback, 1000 / 60);
               };
     })();
+
 
 	// Все переменные TrackerPageDebug
 	var options = {
@@ -74,6 +77,8 @@ define([
 	}
 
 
+
+
 	// Тестовый сервер со случайными данными
 	var TestServer = function() {
 		this.generateData = function(options) {
@@ -97,6 +102,7 @@ define([
 				this.pilots.push({
 					id: i,
 					name: "Pilot #" + i,
+					owgModelUrl: "/art/models/paraplan.json.amd",
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
@@ -201,6 +207,8 @@ define([
 			},delay || this.options.testDelay);
 		}
 	}
+
+
 
 
 	// Источник данных, типа кеширующего прокси, все данные должны запрашиваться через него, а не напрямую у server-а
@@ -392,17 +400,15 @@ define([
 	}
 
 
+
+
 	var Pilot = function(options) {
-		var p = this;
 		this.id = options.id;
 		this.name = options.name;
-
 		this.map = options.map;
-		this.icon = options.icon;		
-		this._ufo = this.map.ufo({
-			title: this.name,
-			color: "#c00000"
-		}).icon(this.icon).visible(true);
+		this.icon = options.icon;
+
+		this._ufo = this.map.ufo(options).icon(this.icon).visible(true);
 
 		this.visibleChecked = ko.observable(true);
         this.visibleCheckbox = new Checkbox({checked:this.visibleChecked});
@@ -415,14 +421,6 @@ define([
 		this.tableData = {
 			gSpd: ko.observable(0),
 			vSpd: ko.observable(0)
-		}
-		this.coordsUpdate = function(data,duration) {
-			this._ufo.move(data,duration);
-		}
-		this.updateTableData = function() {
-			// пока выключим, непонятно, как считать скорость
-			// this.tableData.gSpd(this.gSpd());
-			// this.tableData.vSpd(this.vSpd());
 		}
 //		this.calculateSpeed = function(step) {
 //			var prevStep = (step > 0 ? step : this.route.length) - 1;
@@ -437,6 +435,30 @@ define([
 			this._ufo.visible(val);
 		},this);
 	}
+
+	utils.extend(Pilot.prototype,EventEmitter.prototype);
+
+	Pilot.prototype.initialize = function() {
+		var self = this;
+		if (this._ufo.hasAsyncInit)
+			this._ufo.asyncInit(function() {
+				self.emit("loaded",self);
+			});
+		else
+			self.emit("loaded",self);
+	}
+ 
+	Pilot.prototype.coordsUpdate = function(data,duration) {
+		this._ufo.move(data,duration);
+	}
+
+	Pilot.prototype.updateTableData = function() {
+			// пока выключим, непонятно, как считать скорость
+			// this.tableData.gSpd(this.gSpd());
+			// this.tableData.vSpd(this.vSpd());
+	}
+
+
 
 
 	var TrackerPageDebug = function() {
@@ -460,25 +482,41 @@ define([
 		});
 	}
 
-
-	TrackerPageDebug.prototype.loadPilots = function() {
-		var self = this;
+	TrackerPageDebug.prototype.loadPilots = function(callback) {
+		var self = this, loadedPilots = 0;
 		this.ufos([]);
 		this.dataSource.get({
 			type: "pilots",
 			callback: function(data) {
 				for (var i = 0; i < data.length; i++) {
-					var p = new Pilot({
+					var pilot = new Pilot({
 						id: data[i].id,
 						name: data[i].name,
+						owgModelUrl: data[i].owgModelUrl,
 //						map: self.map,
 						map: self.owgMap,
 						icon: {url: "/img/ufoFly.png", width: 32, height: 35, x: 15, y: 32}
 					});
-					self.ufos.push(p);
+					pilot.on("loaded",function(p) {
+						self.ufos.push(p);
+						loadedPilots++;
+						if (loadedPilots == data.length && callback)
+							callback();
+					});
+					pilot.initialize();
 				}
 			}
 		});
+	}
+
+	TrackerPageDebug.prototype.loadWaypoints = function(data,callback) {
+		// Рисуем цилиндры
+		if (this.owgMap && data.waypoints) {
+			for (var i = 0; i < data.waypoints.length; i++)
+				this.waypoints.push(this.owgMap.waypoint(data.waypoints[i]));
+		}
+		if (callback)
+			callback();
 	}
 
 
@@ -506,12 +544,6 @@ define([
 				latitude: data.center.lat,
 				longitude: data.center.lng
 			});
-		}
-
-		// Рисуем цилиндры
-		if (this.owgMap && data.waypoints) {
-			for (var i = 0; i < data.waypoints.length; i++)
-				this.waypoints.push(this.owgMap.waypoint(data.waypoints[i]));
 		}
 
 		var timerHandle = null;
@@ -601,139 +633,16 @@ define([
 		.pause();
 	}
 
-
-
-
-/*
-	TrackerPageDebug.prototype.playerInit = function(data) {
-		var self = this;
-		var playerStartKey = data.startKey;
-		var playerEndKey = data.endKey;
-		var playerCurrentKey = data.startKey;
-		var playerSpeed = options.playerSpeed;
-
-		if (this.owgMap && data.center) {
-			this.owgMap.setCameraLookAtPosition({
-				latitude: data.center.lat,
-				longitude: data.center.lng
-			});
-		}
-
-		var timerHandle = null;
-		var tableTimerHandle = null;
-
-		// Добавился параметр duration. Этим параметром сообщаем, сколько времени есть у ufo для проигрывания анимации,
-		// т.е. когда примерно будет запрошен renderFrame снова.
-		var renderFrame = function(duration,callback) {
-			self.dataSource.get({
-				type: "timeline",
-				dt: playerCurrentKey,
-				timeMultiplier: playerSpeed,
-				dtStart: playerStartKey,
-				callback: function(data) {
-					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
-					self.ufos().forEach(function(ufo) {
-						data[ufo.id]["time"] = playerCurrentKey;
-						ufo.coordsUpdate(data[ufo.id],duration);
-					});
-					// Передвинем бегунок в playerControl-е
-					self.playerControl.setTimePos(playerCurrentKey);
-					if (callback)
-						callback(data);
-				}
-			});
-		}
-
-		// При инициализации и когда вручную тащим бегунок слайдера, нужно уметь задавать положение на определенное время
-		// При этом ессно обновлять данные таблицы, а то вдруг у нас состояние pause, при котором данные не обновляются автоматически
-		var setSpecificFrame = function(time) {
-			playerCurrentKey = time;
-			renderFrame(0,function() {
-				renderTableData();
-			});
-		}
-
-		// TODO: придумать нормальное название
-		// эта функция вызывает renderFrame и в его callback-е c задержкой в 1000/playerSpeed вызывает сама себя
-		var timelineIntervalCycler = function(duration) {
-			clearTimeout(timerHandle);
-			renderFrame(duration,function() {
-				timerHandle = setTimeout(function() {
-					playerCurrentKey += 1000;
-					if (playerCurrentKey > playerEndKey) {
-						self.playerControl.pause();
-						return;
-					}
-					timelineIntervalCycler(1000/playerSpeed);
-				},1000/playerSpeed);
-			});
-		}
-		var playTimeline = function() {
-			pauseTimeline();
-			timelineIntervalCycler();
-		}
-		var pauseTimeline = function() {
-			clearTimeout(timerHandle);
-			// TODO: может висеть недогруженный ajax-запрос в server-е. Нужно его отменить
-		}
-
-		// Следующие 3 метода - обновление данных таблицы. 
-		// Обновление должно происходить со своей задержкой, независимо от скорости обновления данных 
-		var renderTableData = function() {
-			self.ufos().forEach(function(ufo) {
-				ufo.updateTableData();
-			});
-		}
-		var playTableData = function() {
-			clearTimeout(tableTimerHandle);
-			renderTableData();
-			tableTimerHandle = setTimeout(playTableData,options.renderTableDataInterval);
-		}
-		var pauseTableData = function() {
-			playTableData();
-			clearTimeout(tableTimerHandle);
-		}
-
-		var play = function() {
-			playTimeline();
-			playTableData();
-		}
-		var pause = function() {
-			pauseTimeline();
-			pauseTableData();
-		}
-		var changeSpeed = function(speed) {
-			playerSpeed = speed;
-		}
-
-		// У PlayerControl-а есть событие change - оно вызывается, когда, к примеру, двигаем слайдер. 
-		// Или когда происходят любые изменения PlayerControl.time(), но эти изменения идут изнутри, а не
-		// являются следствием того, что трекер пейдж проставил новое время
-		var playerControlChange = function(time) {
-			setSpecificFrame(time);
-		}
-
-		// Нужно проставить маркеры, для этого нужно получить их начальное положение и после этого проставить данные в таблице
-		setSpecificFrame(playerStartKey);
-
-		self.playerControl
-		.on('play', play)
-		.on('pause', pause)
-		.on('speed', changeSpeed)
-		.on('change', playerControlChange)
-		.initTimeInterval(playerStartKey,playerEndKey)
-		.pause();
-	}
-*/
-
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		var self = this;
 		// Все запросы к тестовому серверу считаются асинхронными с callback-ом
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {
-				self.loadPilots();
-				self.playerInitNew(data);
+				self.loadPilots(function() {
+					self.loadWaypoints(data);
+					self.playerInitNew(data);
+				});
 			}
 		});
 	}
