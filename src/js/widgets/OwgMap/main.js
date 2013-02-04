@@ -209,10 +209,15 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		// owg не поддерживает передачу канваса в виде dom, обязательно нужен глобальный id
 		this.canvasId = ko.observable("owgMapCanvasId");
 		this.imgMap = { 
-//			url: ["http://maps.kosmosnimki.ru/TileService.ashx?request=getTile&apikey=P8DQBF1TBW&LayerName=C9458F2DCB754CEEACC54216C7D1EB0A&lala=1"],
-			url: ["https://khms1.google.com/kh/v=123&src=app&s=Gal"], 
+			url: ["http://maps.kosmosnimki.ru/TileService.ashx?request=getTile&apikey=P8DQBF1TBW&LayerName=C9458F2DCB754CEEACC54216C7D1EB0A&lala=1"],
+//			url: ["https://khms1.google.com/kh/v=123&src=app&s=Gal"], 
 			service: "goo"
-		};
+		}
+		this.elevMap = {
+		    url: ["http://data.openwebglobe.org/mapcache/owg"],
+    		layer: "srtm-json",
+    		service: "owg"
+		}
 		this.cameraPosition = {
 			latitude: 55.75,
 			longitude: 37.60,
@@ -347,6 +352,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
+		owg.ogAddElevationLayer(this._globe,this.elevMap);
 		this.setCameraPosition();
 	}
 
