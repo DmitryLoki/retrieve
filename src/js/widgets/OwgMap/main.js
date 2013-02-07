@@ -19,8 +19,12 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._params = params;
 		this._map = params.map;
 		this._visible = true;
+		this._titleVisible = true;
+		this._trackVisible = true;
 		this._animating = false;
 		this.hasAsyncInit = true;
+		if (!this._params.titleElevation) 
+			this._params.titleElevation = 10;
 	}
 
 	utils.extend(Ufo.prototype,EventEmitter.prototype);
@@ -29,7 +33,14 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		var self = this;
 		require([this._params.owgModelUrl],function(data) {
 			self._params.owgModelJson = data.model;
-			self._model = owg.ogCreateGeometry(self._map._waypointsLayer,data.model);
+			self._model = owg.ogCreateGeometry(self._map._ufosLayer,data.model);
+			self._titleModel = owg.ogCreatePOI(self._map._ufosTitlesLayer,{
+//		        icon: "art/models/marker.png",
+	         	text: self._params.name,
+	         	position: [self._params.lng,self._params.lat,self._params.elevation+self._params.titleElevation],
+				size: 0.5,
+				flagpole : false
+			});
 			callback();
 		});
 	}
@@ -39,12 +50,16 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		return this;
 	}
 
-	// TODO: еще подписи нужно уметь включать-выключать и треки
+	// TODO: еще треки нужно уметь включать-выключать
 	Ufo.prototype._visibilityUpdate = function() {
 		if (this._visible)
 			owg.ogShowGeometry(this._model);
 		else
 			owg.ogHideGeometry(this._model);
+		if (this._titleVisible && this._visible)
+			owg.ogShowPOI(this._titleModel);
+		else
+			owg.ogHidePOI(this._titleModel);
 	}
 
 	Ufo.prototype.move = function(coords,duration) {
@@ -72,7 +87,9 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		if (this._animating) {
 			this._animating = false;
 			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation,0,0,0);
+			owg.ogChangePOIPositionWGS84(this._titleModel,this._params.lng,this._params.lat,this._params.elevation+this._params.titleElevation);
 		}
+
 		// Анимации нет. Если не указан duration, то просто мгновенно переставляем модель на новое положение и все.
 		if (!duration || duration == 0) {
 			this._params.lat = coords.lat;
@@ -81,6 +98,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			this._params.yaw = coords.yaw;
 			owg.ogSetGeometryPositionWGS84(this._model,this._params.lng,this._params.lat,this._params.elevation,0,0,0);
 			owg.ogSetGeometryOrientation(self._model,0,this._params.yaw,0);
+			owg.ogChangePOIPositionWGS84(this._titleModel,this._params.lng,this._params.lat,this._params.elevation+this._params.titleElevation);
 			return this;
 		}
 		// Основной случай. Анимация указана.
@@ -122,6 +140,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 			owg.ogSetGeometryPositionWGS84(self._model,coords.lng,coords.lat,coords.elevation,0,0,0);
 			owg.ogSetGeometryOrientation(self._model,0,coords.yaw,0);
+			owg.ogChangePOIPositionWGS84(this._titleModel,coords.lng,coords.lat,coords.elevation+this._params.titleElevation);
 			if (self._animating)
 				requestAnimFrame(animate);
 		}
@@ -134,6 +153,13 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 	Ufo.prototype.visible = function(flag) {
 		if (this._visible != flag) {
 			this._visible = flag;
+			this._visibilityUpdate();
+		}
+		return this;
+	}
+	Ufo.prototype.titleVisible = function(flag) {
+		if(this._titleVisible != flag){
+			this._titleVisible = flag;
 			this._visibilityUpdate();
 		}
 		return this;
@@ -350,6 +376,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._camera = owg.ogGetActiveCamera(this._scene);
 		this._waypointsLayer = owg.ogCreateGeometryLayer(this._world,"waypoints");
 		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
+		this._ufosTitlesLayer = owg.ogCreatePOILayer(this._world,"ufosTitles");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
 		owg.ogAddElevationLayer(this._globe,this.elevMap);

@@ -41,7 +41,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 50,
+			pilotsCnt: 10,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
@@ -60,7 +60,9 @@ define([
 				maxStep: 0.005,
 				elevationMaxStep: 100,
 				// Вероятность того, что пилот не будет двигаться на текущем шаге
-				holdProbability: 0
+				holdProbability: 0,
+				// угол в градусах, на который максимум может повернуться параплан
+				directionMaxStep: 30
 			},
 			waypoints: {
 				dispersion: 0.05,
@@ -98,14 +100,17 @@ define([
 				});
 			}
 
+			var startDirection = Math.random()*360;
+
 			for (var i = 0; i < options.pilotsCnt; i++)
 				this.pilots.push({
 					id: i,
 					name: "Pilot #" + i,
-					owgModelUrl: "/art/models/paraplan.json.amd",
+					owgModelUrl: "/art/models/paraplan5.json.amd",
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
+						direction: startDirection + (Math.random()-0.5)*options.coords.directionMaxStep,
 						elevation: options.coords.center.elevation + Math.random()*options.coords.elevationDispersion - options.coords.elevationDispersion/2
 					}
 				});
@@ -117,11 +122,20 @@ define([
 					// l - last - предыдущее значение
 					var l = {
 						lat: this.pilots[i].tmp.lat,
-						lng: this.pilots[i].tmp.lng
+						lng: this.pilots[i].tmp.lng,
+						direction: this.pilots[i].tmp.direction
 					}
 
-					this.pilots[i].tmp.lat += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
-					this.pilots[i].tmp.lng += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
+					// Направление меняется на +- 30 градусов
+					this.pilots[i].tmp.direction += (Math.random()-0.5) * options.coords.directionMaxStep;
+
+					var tmpDistance = Math.random()*options.coords.maxStep;
+
+					this.pilots[i].tmp.lat += tmpDistance*Math.cos(this.pilots[i].tmp.direction/180*Math.PI);
+					this.pilots[i].tmp.lng += tmpDistance*Math.sin(this.pilots[i].tmp.direction/180*Math.PI);
+
+//					this.pilots[i].tmp.lat += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
+//					this.pilots[i].tmp.lng += Math.random()*options.coords.maxStep - options.coords.maxStep/2;
 					this.pilots[i].tmp.elevation += Math.random()*options.coords.elevationMaxStep - options.coords.elevationMaxStep/2;
 
 					// Вставим вычисление yaw-оси прямо в сервер, это угол, под которым смотрит параплан, относительно востока
