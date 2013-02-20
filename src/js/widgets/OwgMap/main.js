@@ -34,13 +34,16 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		require([this._params.owgModelUrl],function(data) {
 			self._params.owgModelJson = data.model;
 			self._model = owg.ogCreateGeometry(self._map._ufosLayer,data.model);
-			self._titleModel = owg.ogCreatePOI(self._map._ufosTitlesLayer,{
+			self._titleModel = owg.ogCreatePOI(self._map._titlesLayer,{
 //		        icon: "art/models/marker.png",
 	         	text: self._params.name,
 	         	position: [self._params.lng,self._params.lat,self._params.elevation+self._params.titleElevation],
-				size: 0.5,
+				size: self._params.textSize,
 				flagpole : false
 			});
+			self._trackModel = null;
+			// по переменной trackDtPosition будем отслеживать, нужно ли перерисовывать трек (перешло ли время в следующий фрейм)
+			self._trackDtPosition = null;
 			callback();
 		});
 	}
@@ -60,10 +63,21 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			owg.ogShowPOI(this._titleModel);
 		else
 			owg.ogHidePOI(this._titleModel);
+		if (this._trackVisible && this._visible)
+			owg.ogShowGeometry(this._trackModel);
+		else
+			owg.ogHideGeometry(this._trackModel);
 	}
 
 	Ufo.prototype.move = function(coords,duration) {
 		var self = this;
+
+		// Перерисовка трека
+		if (this._trackVisible && (!this._trackModel || coords.track[0].dt != this._trackDtPosition)) {
+			this.redrawTrack(coords.track);
+			this._trackDtPosition = coords.track[0].dt;
+		}
+
 		// При инициализации может не быть начального положения, тогда мгновенно туда переставляем и все
 		// В owg перепутаны yaw и pitch. На самом деле yaw нужно указывать вторым параметром в setPosition и setOrientation
 		if (!this._params.lat || !this._params.lng || !this._params.elevation) {
@@ -164,22 +178,46 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		}
 		return this;
 	}
+	Ufo.prototype.trackVisible = function(flag) {
+		if(this._trackVisible != flag){
+			this._trackVisible = flag;
+			this._visibilityUpdate();
+		}
+		return this;
+	}
 	Ufo.prototype.destroy = function() {
 		this.emit("destroy");
 	}
-
-
+	Ufo.prototype.redrawTrack = function(data) {
+		if (this._trackModel)
+			owg.ogDestroyGeometry(this._trackModel);
+		var coords = [];
+		for (var i = 0; i < data.length; i++)
+			coords.push([data[i].lng,data[i].lat,data[i].elevation]);
+		var options = {
+			color: [1,0,0,1],
+			linewidth: 5
+		}
+		console.log("redrawTrack",coords,options);
+		this._trackModel = owg.ogCreatePolylineWGS84(this._map._tracksLayer,coords,options);
+	}
 
 
 	var Waypoint = function(params) {
-		params.color = "0,0,0,0.1";
+		params.color = "0,0,0,0.2";
 		if (params.type == "start")
-			params.color = "255,0,0,0.1";
+			params.color = "255,0,0,0.2";
 		else if (params.type == "finish")
-			params.color = "0,0,255,0.1";
+			params.color = "0,0,255,0.2";
 		this._params = params;
 		this._map = params.map;
 		this._model = this.createCylinderGeometry();
+		this._titleModel = owg.ogCreatePOI(this._map._titlesLayer,{
+         	text: this._params.name,
+         	position: [this._params.lng,this._params.lat,this._params.height],
+			size: this._params.textSize,
+			flagpole : false
+		});
 	}
 
 	utils.extend(Waypoint.prototype,EventEmitter.prototype);
@@ -187,7 +225,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 	Waypoint.prototype.createCylinderGeometry = function() {
 		var vertices = [], triangles = [];
 		var color = this._params.color.split(",");
-		for (var i = 0, step = 5; i < 360; i+= step) {
+		for (var i = 0, step = 10; i < 360; i+= step) {
 			var x = this._params.radius * Math.sin(i/180*Math.PI);
 			var z = this._params.radius * Math.cos(i/180*Math.PI);
 			vertices.push(x,this._params.height,z);
@@ -239,6 +277,12 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 //			url: ["https://khms1.google.com/kh/v=123&src=app&s=Gal"], 
 			service: "goo"
 		}
+
+		this.imgMap = {
+			url: ["http://a.tile.openstreetmap.org", "http://b.tile.openstreetmap.org", "http://c.tile.openstreetmap.org" ],
+ 		    service: "osm"
+		}
+
 		this.elevMap = {
 		    url: ["http://data.openwebglobe.org/mapcache/owg"],
     		layer: "srtm-json",
@@ -342,7 +386,6 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		});
 	}
 
-
 	OwgMap.prototype.waypoint = function(params) {
 		var self = this;
 		params.map = self;
@@ -354,7 +397,27 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		return waypoint;
 	}
 
+	// Изменения размера текста подписей в зависимости от элевации камеры
+	OwgMap.prototype.resizeTitles = function() {
+		var position = owg.ogGetPosition(this._scene);
+		if (!this.cameraOldPosition || this.cameraOldPosition.elevation != position.elevation) {
+			// Пока что руками устанавливаем единичный коэффициент, при котором подписи имеют size=1
+			var defaultElevation = 300;
+			var zoom = position.elevation / defaultElevation / 4 + 0.75;
+
+			$.each(this._ufos,function(i,ufo) {
+				owg.ogChangePOISize(ufo._titleModel,zoom*ufo._params.textSize);
+			});
+			$.each(this._waypoints,function(i,waypoint) {
+				owg.ogChangePOISize(waypoint._titleModel,zoom*waypoint._params.textSize);
+			});
+
+			this.cameraOldPosition = position;
+		}
+	}
+
 	OwgMap.prototype.domInit = function(elem,params) {
+		var self = this;
 //		params.width && this.width(params.width);
 //		params.height && this.height(params.height);
 
@@ -376,11 +439,17 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._camera = owg.ogGetActiveCamera(this._scene);
 		this._waypointsLayer = owg.ogCreateGeometryLayer(this._world,"waypoints");
 		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
-		this._ufosTitlesLayer = owg.ogCreatePOILayer(this._world,"ufosTitles");
+		this._titlesLayer = owg.ogCreatePOILayer(this._world,"titles");
+		this._tracksLayer = owg.ogCreateGeometryLayer(this._world,"tracks");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
-		owg.ogAddElevationLayer(this._globe,this.elevMap);
+//		owg.ogAddElevationLayer(this._globe,this.elevMap);
+
 		this.setCameraPosition();
+
+		owg.ogSetRenderFunction(this._ctx,function(mesh_id,pass) {
+			self.resizeTitles();
+		});
 	}
 
 	OwgMap.prototype.templates = ["main"];

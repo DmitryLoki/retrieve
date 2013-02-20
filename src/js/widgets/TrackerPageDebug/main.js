@@ -41,7 +41,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 10,
+			pilotsCnt: 2,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
@@ -68,7 +68,7 @@ define([
 				dispersion: 0.05,
 				maxRadius: 500,
 				minRadius: 100,
-				height: 500,
+				height: 250,
 			},
 			// Задержка, с которой тестовый сервер отдает ответ
 			testDelay: 1000
@@ -96,7 +96,8 @@ define([
 					lat: options.coords.center.lat + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
 					lng: options.coords.center.lng + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
 					radius: options.waypoints.minRadius + Math.random()*(options.waypoints.maxRadius-options.waypoints.minRadius),
-					height: options.waypoints.height
+					height: options.waypoints.height,
+					textSize: 1
 				});
 			}
 
@@ -107,6 +108,7 @@ define([
 					id: i,
 					name: "Pilot #" + i,
 					owgModelUrl: "/art/models/paraplan5.json.amd",
+					textSize: 0.5,
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
@@ -284,6 +286,8 @@ define([
 				// было бы событие по изменению координат.
 				var getDataFromFrame = function(frame,dt) {
 					var data = {}, dataBefore = {}, dataAfter = {}, keys = [];
+
+					// Пробегаем по всем событиям фрейма и ищем ближайшие события до и после dt
 					for (var i in frame.timeline)
 						if (frame.timeline.hasOwnProperty(i))
 							for (var pilot_id in frame.timeline[i])
@@ -293,11 +297,15 @@ define([
 									if ((i >= dt) && (!dataAfter[pilot_id] || dataAfter[pilot_id].dt > i))
 										dataAfter[pilot_id] = frame.timeline[i][pilot_id];
 								}
+
+					// Если у какого-то пилота не нашлось события до или после, проставляем его по данным frame.start
 					for (var pilot_id in frame.start)
 						if (frame.start.hasOwnProperty(pilot_id)) {
 							if (!dataBefore[pilot_id]) dataBefore[pilot_id] = frame.start[pilot_id];
 							if (!dataAfter[pilot_id]) dataAfter[pilot_id] = dataBefore[pilot_id];
 						}
+
+					// По событиям до и после строим линейную пропорцию и получаем мгновенные координаты пилота
 					for (var pilot_id in dataBefore)
 						if (dataBefore.hasOwnProperty(pilot_id)) {
 							var d1 = dataBefore[pilot_id], d2 = dataAfter[pilot_id];
@@ -317,6 +325,21 @@ define([
 								}
 							}
 						}
+
+					// Upd. теперь нужна еще и траектория. Ограничимся опять-таки текущим фреймом.
+					// Собственно, это значит, что весь фрейм и нужно вернуть.
+					// Пока что не будем наворачивать логику в этом методе выше, и так сложная, еще раз по массивам пробежимся.
+					for (var pilot_id in frame.start)
+						if (frame.start.hasOwnProperty(pilot_id) && data[pilot_id]) {
+							data[pilot_id].track = [];
+							data[pilot_id].track.push(frame.start[pilot_id]);
+						}
+					for (var i in frame.timeline)
+						if (frame.timeline.hasOwnProperty(i)) 
+							for (var pilot_id in frame.timeline[i])
+								if (frame.timeline[i].hasOwnProperty(pilot_id) && data[pilot_id])
+									data[pilot_id].track.push(frame.timeline[i][pilot_id]);
+
 					return data;
 				}
 
@@ -507,6 +530,7 @@ define([
 						id: data[i].id,
 						name: data[i].name,
 						owgModelUrl: data[i].owgModelUrl,
+						textSize: data[i].textSize,
 //						map: self.map,
 						map: self.owgMap,
 						icon: {url: "/img/ufoFly.png", width: 32, height: 35, x: 15, y: 32}
