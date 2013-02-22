@@ -3,6 +3,8 @@
 	<thead>
 		<tr>
 			<th><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></th>
+			<th><!-- ko widget: { data: allTitleVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></th>
+			<th><!-- ko widget: { data: allTrackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></th>
 			<th>#</th>
 			<th>Pilot name</th>
 			<th>Dist to goal, km</th>
@@ -17,6 +19,12 @@
 		<tr>
 			<td data-bind="style: { backgroundColor: color }">
                 <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
+			</td>
+			<td data-bind="style: { backgroundColor: color }">
+                <!-- ko widget: { data: titleVisibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
+			</td>
+			<td data-bind="style: { backgroundColor: color }">
+                <!-- ko widget: { data: trackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
 			</td>
 			<td data-bind="text: $index() + 1"></td>
 			<td data-bind="text: name"></td>

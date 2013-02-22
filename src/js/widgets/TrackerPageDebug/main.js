@@ -429,6 +429,68 @@ define([
 					});
 				}
 			}
+			else if (query.type == "tracks") {
+				// Здесь мы запрашиваем данные о треках. Ради треков мы не делаем дополнительных запросов, рисуем
+				// по тем данным, которые имеем в кеше. Однако это НЕ один фрейм, просматриваем все связанные фреймы и рисуем
+				// максимальный связанный участок трека, такой, что для него есть данные
+
+				// Количество секунд, прошедших с начала гонки
+				var dtOffset = Math.floor((query.dt - query.dtStart) / 1000);
+
+				var data = {};
+
+				var addStartData = function(ar) {
+					for (var pilot_id in ar)
+						if (ar.hasOwnProperty(pilot_id)) {
+							if (!data[pilot_id]) data[pilot_id] = {};
+								if (!data[pilot_id][ar[pilot_id].dt])
+									data[pilot_id][ar[pilot_id].dt] = ar[pilot_id];
+						}
+				}
+
+				var addData = function(ar) {
+					for (var dt in ar)
+						if (ar.hasOwnProperty(dt))
+							for (var pilot_id in ar[dt])
+								if (ar[dt].hasOwnProperty(pilot_id)) {
+									if (!data[pilot_id]) data[pilot_id] = {};
+									if (!data[pilot_id][dt])
+										data[pilot_id][dt] = ar[dt][pilot_id];
+								}
+				}
+
+				for (var inSize in this.cache) {
+					if (this.cache.hasOwnProperty(inSize)) {
+						var inOffset = Math.floor(dtOffset / inSize);
+						if (this.cache[inSize][inOffset] && this.cache[inSize][inOffset].status == "ready") {
+							// получаем в inOffset индекс первого интервала с загруженными данными
+							while(this.cache[inSize][inOffset-1] && this.cache[inSize][inOffset-1].status == "ready")
+								inOffset--;
+							// грузим стартовые данные (из start) на из первого связного загруженного интервала
+							addStartData(this.cache[inSize][inOffset].data.start);
+							// грузим события из timeline-ов всех загруженных фреймов начиная с первого пока они есть
+							while(this.cache[inSize][inOffset] && this.cache[inSize][inOffset].status == "ready") {
+								addData(this.cache[inSize][inOffset].data.timeline);
+								inOffset++;
+							}
+						}
+					}
+				}
+
+				// сортируем data, это может понадобиться когда разные куски грузились в разных inSize-ах и накладываются
+				var out = {};
+				for (var pilot_id in data)
+					if (data.hasOwnProperty(pilot_id)) {
+						var keys = [];
+						for (var i in data[pilot_id])
+							if (data[pilot_id].hasOwnProperty(i))
+								keys.push(i);
+						out[pilot_id] = {data:{},start:keys[0],end:keys[keys.length-1]};
+						for (var i = 0; i < keys.length; i++)
+							out[pilot_id].data[keys[i]] = data[pilot_id][keys[i]];
+					}
+				query.callback(out);
+			}
 			// В остальных случаях будем просто запрашивать данные у сервера без кеширования
 			else {
 				this.options.server.get(query);
@@ -449,6 +511,11 @@ define([
 
 		this.visibleChecked = ko.observable(true);
         this.visibleCheckbox = new Checkbox({checked:this.visibleChecked});
+		this.titleVisibleChecked = ko.observable(true);
+        this.titleVisibleCheckbox = new Checkbox({checked:this.titleVisibleChecked});
+		this.trackVisibleChecked = ko.observable(true);
+        this.trackVisibleCheckbox = new Checkbox({checked:this.trackVisibleChecked});
+
 		this.color = "#f0f0f0";
 		this.statusOrDist = "test";
 		this.statusText = "flying";
@@ -471,6 +538,12 @@ define([
 		this.visibleChecked.subscribe(function(val){
 			this._ufo.visible(val);
 		},this);
+		this.titleVisibleChecked.subscribe(function(val) {
+			this._ufo.titleVisible(val);
+		},this);
+		this.trackVisibleChecked.subscribe(function(val) {
+			this._ufo.trackVisible(val);
+		},this);
 	}
 
 	utils.extend(Pilot.prototype,EventEmitter.prototype);
@@ -487,6 +560,10 @@ define([
  
 	Pilot.prototype.coordsUpdate = function(data,duration) {
 		this._ufo.move(data,duration);
+	}
+
+	Pilot.prototype.trackUpdate = function(data) {
+		this._ufo.trackUpdate(data);
 	}
 
 	Pilot.prototype.updateTableData = function() {
@@ -603,6 +680,19 @@ define([
 					self.playerControl.setTimePos(playerCurrentKey);
 					if (callback)
 						callback(data);
+
+					// Теперь здесь сделаем запрос на получение инфы о треке
+					// потому что если делать отдельно, вначале при загрузке еще нет данных в кеше
+					self.dataSource.get({
+						type: "tracks",
+						dt: playerCurrentKey,
+						dtStart: playerStartKey,
+						callback: function(data) {
+							self.ufos().forEach(function(ufo) {
+								ufo.trackUpdate(data[ufo.id]);
+							});
+						}
+					});
 				}
 			});
 		}

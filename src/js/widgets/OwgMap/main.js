@@ -65,18 +65,14 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			owg.ogHidePOI(this._titleModel);
 		if (this._trackVisible && this._visible)
 			owg.ogShowGeometry(this._trackModel);
-		else
+		else {
 			owg.ogHideGeometry(this._trackModel);
+			console.log("hide track");
+		}
 	}
 
 	Ufo.prototype.move = function(coords,duration) {
 		var self = this;
-
-		// Перерисовка трека
-		if (this._trackVisible && (!this._trackModel || coords.track[0].dt != this._trackDtPosition)) {
-			this.redrawTrack(coords.track);
-			this._trackDtPosition = coords.track[0].dt;
-		}
 
 		// При инициализации может не быть начального положения, тогда мгновенно туда переставляем и все
 		// В owg перепутаны yaw и pitch. На самом деле yaw нужно указывать вторым параметром в setPosition и setOrientation
@@ -188,17 +184,20 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 	Ufo.prototype.destroy = function() {
 		this.emit("destroy");
 	}
-	Ufo.prototype.redrawTrack = function(data) {
+	Ufo.prototype.trackUpdate = function(data) {
+		if (this._trackModel && data.start == this._trackCurrentStart && data.end == this._trackCurrentEnd) return;
 		if (this._trackModel)
 			owg.ogDestroyGeometry(this._trackModel);
+		this._trackCurrentStart = data.start;
+		this._trackCurrentEnd = data.end;
 		var coords = [];
-		for (var i = 0; i < data.length; i++)
-			coords.push([data[i].lng,data[i].lat,data[i].elevation]);
+		for (var i in data.data)
+			if (data.data.hasOwnProperty(i))
+				coords.push([data.data[i].lng,data.data[i].lat,data.data[i].elevation]);
 		var options = {
 			color: [1,0,0,1],
 			linewidth: 5
 		}
-		console.log("redrawTrack",coords,options);
 		this._trackModel = owg.ogCreatePolylineWGS84(this._map._tracksLayer,coords,options);
 	}
 
