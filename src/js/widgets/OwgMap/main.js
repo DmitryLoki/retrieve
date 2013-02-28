@@ -63,11 +63,13 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			owg.ogShowPOI(this._titleModel);
 		else
 			owg.ogHidePOI(this._titleModel);
+
+		// TODO: сокрытие треков не работает. Если это глюк owg, переделывать на ogDestroyGeometry,
+		// если я накосячил - исправлять косяк
 		if (this._trackVisible && this._visible)
 			owg.ogShowGeometry(this._trackModel);
 		else {
 			owg.ogHideGeometry(this._trackModel);
-			console.log("hide track");
 		}
 	}
 
@@ -277,10 +279,10 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			service: "goo"
 		}
 
-		this.imgMap = {
-			url: ["http://a.tile.openstreetmap.org", "http://b.tile.openstreetmap.org", "http://c.tile.openstreetmap.org" ],
- 		    service: "osm"
-		}
+//		this.imgMap = {
+//			url: ["http://a.tile.openstreetmap.org", "http://b.tile.openstreetmap.org", "http://c.tile.openstreetmap.org" ],
+//		    service: "osm"
+//		}
 
 		this.elevMap = {
 		    url: ["http://data.openwebglobe.org/mapcache/owg"],
@@ -415,6 +417,34 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		}
 	}
 
+	// Изменение размера текста подписей в зависимости от расстояния до камеры
+	OwgMap.prototype.resizeTitlesOnDistance = function() {
+		var p = owg.ogGetPosition(this._scene);
+		$.each(this._ufos,function(i,ufo) {
+			var t = owg.ogGetObjectPosition(ufo._titleModel);
+			var distance = owg.ogCalcDistanceWGS84(p.longitude,p.latitude,t.longitude,t.latitude);
+			var distance = Math.sqrt(Math.pow(distance,2)+Math.pow(p.elevation-t.elevation,2));
+			if (!isNaN(distance) && ufo.titleDistance != distance) {
+				ufo.titleDistance = distance;
+				var defaultDistance = 300;
+				var zoom = distance / defaultDistance / 4 + 0.75;
+				owg.ogChangePOISize(ufo._titleModel,zoom*ufo._params.textSize);
+			}
+		});
+		$.each(this._waypoints,function(i,ufo) {
+			var t = owg.ogGetObjectPosition(ufo._titleModel);
+			var distance = owg.ogCalcDistanceWGS84(p.longitude,p.latitude,t.longitude,t.latitude);
+			var distance = Math.sqrt(Math.pow(distance,2)+Math.pow(p.elevation-t.elevation,2));
+			if (!isNaN(distance) && ufo.titleDistance != distance) {
+				ufo.titleDistance = distance;
+				var defaultDistance = 300;
+				var zoom = distance / defaultDistance / 4 + 0.75;
+				owg.ogChangePOISize(ufo._titleModel,zoom*ufo._params.textSize);
+			}
+		});
+	}
+
+
 	OwgMap.prototype.domInit = function(elem,params) {
 		var self = this;
 //		params.width && this.width(params.width);
@@ -442,12 +472,13 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._tracksLayer = owg.ogCreateGeometryLayer(this._world,"tracks");
 
 		owg.ogAddImageLayer(this._globe,this.imgMap);
-//		owg.ogAddElevationLayer(this._globe,this.elevMap);
+		owg.ogAddElevationLayer(this._globe,this.elevMap);
 
 		this.setCameraPosition();
 
 		owg.ogSetRenderFunction(this._ctx,function(mesh_id,pass) {
-			self.resizeTitles();
+//			self.resizeTitles();
+			self.resizeTitlesOnDistance();
 		});
 	}
 
