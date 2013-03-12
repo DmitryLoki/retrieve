@@ -51,7 +51,7 @@ define([
 				center: {
 					lat: 55.75,
 					lng: 37.61,
-					elevation: 200
+					elevation: 500
 				},
 				// Разброс стартового положения пилотов
 				dispersion: 0.02,
@@ -67,8 +67,8 @@ define([
 			waypoints: {
 				dispersion: 0.05,
 				maxRadius: 500,
-				minRadius: 100,
-				height: 250,
+				minRadius: 300,
+				height: 500,
 			},
 			// Задержка, с которой тестовый сервер отдает ответ
 			testDelay: 1000
@@ -484,11 +484,14 @@ define([
 						var keys = [];
 						for (var i in data[pilot_id])
 							if (data[pilot_id].hasOwnProperty(i))
-								keys.push(i);
-						out[pilot_id] = {data:{},start:keys[0],end:keys[keys.length-1]};
+								if (i <= query.dt)
+									keys.push(i);
+//						out[pilot_id] = {data:{},start:keys[0],end:keys[keys.length-1]};
+						out[pilot_id] = {data:{},start:keys[0],end:query.dt};
 						for (var i = 0; i < keys.length; i++)
 							out[pilot_id].data[keys[i]] = data[pilot_id][keys[i]];
 					}
+
 				query.callback(out);
 			}
 			// В остальных случаях будем просто запрашивать данные у сервера без кеширования

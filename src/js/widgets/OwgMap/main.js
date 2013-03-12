@@ -143,7 +143,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			if (yawDelta > 180) yawDelta -= 360;
 			if (yawDelta < -180) yawDelta += 360;
 
-			var coords = {
+			coords = {
 				lat: self._animationStartCoords.lat + (self._params.lat - self._animationStartCoords.lat) * p,
 				lng: self._animationStartCoords.lng + (self._params.lng - self._animationStartCoords.lng) * p,
 				elevation: self._animationStartCoords.elevation + (self._params.elevation - self._animationStartCoords.elevation) * p,
@@ -152,7 +152,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 			owg.ogSetGeometryPositionWGS84(self._model,coords.lng,coords.lat,coords.elevation,0,0,0);
 			owg.ogSetGeometryOrientation(self._model,0,coords.yaw,0);
-			owg.ogChangePOIPositionWGS84(this._titleModel,coords.lng,coords.lat,coords.elevation+this._params.titleElevation);
+			owg.ogChangePOIPositionWGS84(self._titleModel,coords.lng,coords.lat,coords.elevation+self._params.titleElevation);
 			if (self._animating)
 				requestAnimFrame(animate);
 		}
@@ -200,6 +200,8 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			color: [1,0,0,1],
 			linewidth: 5
 		}
+		if (this._params)
+			coords.push([this._params.lng,this._params.lat,this._params.elevation]);
 		this._trackModel = owg.ogCreatePolylineWGS84(this._map._tracksLayer,coords,options);
 	}
 
@@ -301,7 +303,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			latitude: 55.75,
 			longitude: 37.60,
 			elevation: 0,
-			distance: 1000			
+			distance: 5000			
 		}
 		this._ufos = [];
 		this._waypoints = [];
