@@ -66,11 +66,15 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 		// TODO: сокрытие треков не работает. Если это глюк owg, переделывать на ogDestroyGeometry,
 		// если я накосячил - исправлять косяк
+		/*
 		if (this._trackVisible && this._visible)
 			owg.ogShowGeometry(this._trackModel);
 		else {
 			owg.ogHideGeometry(this._trackModel);
 		}
+		*/
+		// пока что для сокрытия и отрисовки треков будем дергать trackUpdate
+		this.trackUpdate();
 	}
 
 	Ufo.prototype.move = function(coords,duration) {
@@ -187,7 +191,14 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this.emit("destroy");
 	}
 	Ufo.prototype.trackUpdate = function(data) {
-		if (this._trackModel && data.start == this._trackCurrentStart && data.end == this._trackCurrentEnd) return;
+		if (!this._trackVisible && this._trackModel) {
+			owg.ogDestroyGeometry(this._trackModel);
+			return;
+		}
+		if (this._trackModel && data && data.start == this._trackCurrentStart && data.end == this._trackCurrentEnd) return;
+		if (data) this._trackLastData = data;
+		else if (this._trackLastData) data = this._trackLastData;
+		else return;
 		if (this._trackModel)
 			owg.ogDestroyGeometry(this._trackModel);
 		this._trackCurrentStart = data.start;
@@ -197,8 +208,8 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 			if (data.data.hasOwnProperty(i))
 				coords.push([data.data[i].lng,data.data[i].lat,data.data[i].elevation]);
 		var options = {
-			color: [1,0,0,1],
-			linewidth: 5
+			color: this._params.trackColor,
+			linewidth: this._params.trackWidth,
 		}
 		if (this._params)
 			coords.push([this._params.lng,this._params.lat,this._params.elevation]);
@@ -228,28 +239,52 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 	Waypoint.prototype.createCylinderGeometry = function() {
 		var vertices = [], triangles = [];
 		var color = this._params.color.split(",");
+		var texture = this._params.texture;
+
 		for (var i = 0, step = 10; i < 360; i+= step) {
 			var x = this._params.radius * Math.sin(i/180*Math.PI);
 			var z = this._params.radius * Math.cos(i/180*Math.PI);
 			vertices.push(x,this._params.height,z);
-			for (var j = 0; j < color.length; j++)
+
+			var t = i/30 - Math.floor(i/30);
+			if (Math.floor(i/30)%2) t = 1 - t;
+
+			if (texture) vertices.push(t,1);
+			else for (var j = 0; j < color.length; j++)
 				vertices.push(color[j]);
+
 			vertices.push(x,0,z);
-			for (var j = 0; j < color.length; j++)
+
+			if (texture) vertices.push(t,0);
+			else for (var j = 0; j < color.length; j++)
 				vertices.push(color[j]);
+
 			if (i > 0) {
 				var n = i/step*2;
 				triangles.push(n-2,n-1,n,n-1,n+1,n);
 			}
 		}
 		triangles.push(n,n+1,0,n+1,0,1);
-		var geometry = [[{
-			"Center": [this._params.lng,this._params.lat,0],
-			"VertexSemantic": "pc",
-			"Vertices": vertices,
-			"IndexSemantic": "TRIANGLES",
-			"Indices": triangles
-		}]]
+
+		if (texture)
+			var geometry = [[{
+				"Center": [this._params.lng,this._params.lat,0],
+				"VertexSemantic": "pt",
+				"Vertices": vertices,
+				"DiffuseMap": texture,
+				"IndexSemantic": "TRIANGLES",
+				"Indices": triangles
+			}]];
+		else
+			var geometry = [[{
+				"Center": [this._params.lng,this._params.lat,0],
+				"VertexSemantic": "pc",
+				"Vertices": vertices,
+				"IndexSemantic": "TRIANGLES",
+				"Indices": triangles
+			}]];
+
+		console.log("cylinder geometry",geometry);
 
     	var cylinder = owg.ogCreateGeometry(this._map._waypointsLayer,geometry);
  	  	return cylinder;

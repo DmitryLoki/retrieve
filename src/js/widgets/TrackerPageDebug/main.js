@@ -41,7 +41,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 2,
+			pilotsCnt: 20,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
@@ -97,11 +97,20 @@ define([
 					lng: options.coords.center.lng + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
 					radius: options.waypoints.minRadius + Math.random()*(options.waypoints.maxRadius-options.waypoints.minRadius),
 					height: options.waypoints.height,
-					textSize: 1
+					textSize: 1,
+					texture: "/art/redbull4.png"
 				});
 			}
 
 			var startDirection = Math.random()*360;
+
+			// Цвета в формате [r,g,b,alpha] для owg. alpha пока не работает, должна быть = 1, но если owg пофиксят, будет поддерживаться
+			var colors = [[0,0,0,1],[1,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1],[1,0,1,1],[0,1,1,1],[1,1,1,1]];
+
+			var toRGB = function(ar) {
+				var decColor = 0x1000000 + Math.floor(255*ar[2]) + 0x100 * Math.floor(ar[1]*255) + 0x10000 * Math.floor(ar[0]*255);
+			    return "#" + decColor.toString(16).substr(1);
+			}
 
 			for (var i = 0; i < options.pilotsCnt; i++)
 				this.pilots.push({
@@ -109,6 +118,10 @@ define([
 					name: "Pilot #" + i,
 					owgModelUrl: "/art/models/paraplan5.json.amd",
 					textSize: 0.5,
+					trackColor: colors[i%colors.length],
+					trackWidth: 2,
+					color: toRGB(colors[i%colors.length]),
+					icon: {url: "/img/ufoFly.png", width: 32, height: 35, x: 15, y: 32},
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
@@ -509,6 +522,8 @@ define([
 		this.name = options.name;
 		this.map = options.map;
 		this.icon = options.icon;
+		this.trackColor = options.trackColor;
+		this.color = options.color;
 
 		this._ufo = this.map.ufo(options).icon(this.icon).visible(true);
 
@@ -517,9 +532,8 @@ define([
 		this.titleVisibleChecked = ko.observable(true);
         this.titleVisibleCheckbox = new Checkbox({checked:this.titleVisibleChecked});
 		this.trackVisibleChecked = ko.observable(true);
-        this.trackVisibleCheckbox = new Checkbox({checked:this.trackVisibleChecked});
+        this.trackVisibleCheckbox = new Checkbox({checked:this.trackVisibleChecked,color:this.color});
 
-		this.color = "#f0f0f0";
 		this.statusOrDist = "test";
 		this.statusText = "flying";
 		this.alt = "test";
@@ -606,15 +620,9 @@ define([
 			type: "pilots",
 			callback: function(data) {
 				for (var i = 0; i < data.length; i++) {
-					var pilot = new Pilot({
-						id: data[i].id,
-						name: data[i].name,
-						owgModelUrl: data[i].owgModelUrl,
-						textSize: data[i].textSize,
-//						map: self.map,
-						map: self.owgMap,
-						icon: {url: "/img/ufoFly.png", width: 32, height: 35, x: 15, y: 32}
-					});
+					var pilot = new Pilot(utils.extend(data[i],{
+						map: self.owgMap
+					}));
 					pilot.on("loaded",function(p) {
 						self.ufos.push(p);
 						loadedPilots++;
