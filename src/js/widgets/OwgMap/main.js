@@ -296,6 +296,28 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 
 
 
+	var OptWay = function(params) {
+		this._map = params.map;
+		this._data = params.data;
+		this.redraw();
+	}
+	OptWay.prototype.redraw = function() {
+		if (this._model)
+			owg.ogDestroyGeometry(this._model);
+		var coords = [];
+		for (var i = 0; i < this._data.length; i++)
+			coords.push([this._data[i].lng,this._data[i].lat,500]);
+		var options = {
+			color: "#ff0000",
+			linewidth: 10,
+		}
+		console.log("create OptWay",coords,options);
+		this._model = owg.ogCreatePolylineWGS84(this._map._optwayLayer,coords,options);
+	}
+
+
+
+
 
 
 
@@ -435,6 +457,10 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		return waypoint;
 	}
 
+	OwgMap.prototype.setOptWay = function(data) {
+		this._optWay = new OptWay({data:data,map:this});
+	}
+
 	// Изменения размера текста подписей в зависимости от элевации камеры
 	OwgMap.prototype.resizeTitles = function() {
 		var position = owg.ogGetPosition(this._scene);
@@ -504,6 +530,7 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		this._world = owg.ogGetWorld(this._scene);
 		this._camera = owg.ogGetActiveCamera(this._scene);
 		this._waypointsLayer = owg.ogCreateGeometryLayer(this._world,"waypoints");
+		this._optwayLayer = owg.ogCreateGeometryLayer(this._world,"optway");
 		this._ufosLayer = owg.ogCreateGeometryLayer(this._world,"ufos");
 		this._titlesLayer = owg.ogCreatePOILayer(this._world,"titles");
 		this._tracksLayer = owg.ogCreateGeometryLayer(this._world,"tracks");

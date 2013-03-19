@@ -41,7 +41,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 20,
+			pilotsCnt: 2,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
@@ -65,7 +65,7 @@ define([
 				directionMaxStep: 30
 			},
 			waypoints: {
-				dispersion: 0.05,
+				dispersion: 0.1,
 				maxRadius: 500,
 				minRadius: 300,
 				height: 500,
@@ -93,8 +93,8 @@ define([
 					id: i,
 					name: "Waypoint #" + i,
 					type: (i==0?"start":(i==options.waypointsCnt-1?"finish":"waypoint")),
-					lat: options.coords.center.lat + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
-					lng: options.coords.center.lng + Math.random()*options.waypoints.dispersion - options.waypoints.dispersion/2,
+					lat: options.coords.center.lat + (Math.random()-0.5)*options.waypoints.dispersion,
+					lng: options.coords.center.lng + (Math.random()-0.5)*options.waypoints.dispersion,
 					radius: options.waypoints.minRadius + Math.random()*(options.waypoints.maxRadius-options.waypoints.minRadius),
 					height: options.waypoints.height,
 					textSize: 1,
@@ -191,11 +191,19 @@ define([
 			var data = {};
 			// TODO: пока не разобрался, какие данные должны приходит при инициализации гонки
 			if (query.type == "race") {
+				optWay = [];
+				for (var i = 0; i < this.waypoints.length; i++) {
+					optWay.push({
+						lat: this.waypoints[i].lat,
+						lng: this.waypoints[i].lng
+					});
+				}
 				data = {
 					startKey: this.options.startKey,
 					endKey: this.options.endKey,
 					center: this.options.coords.center,
-					waypoints: this.waypoints
+					waypoints: this.waypoints,
+					optWay: optWay
 				}
 			}
 			// Аналог GET /contest/{contestid}/race/{raceid}/pilot из api
@@ -645,6 +653,17 @@ define([
 			callback();
 	}
 
+	TrackerPageDebug.prototype.loadOptWay = function(data,callback) {
+		// Рисуем оптимальный путь
+		if (this.owgMap && data.optWay) {
+			this.owgMap.setOptWay(data.optWay);
+		}
+		if (callback)
+			callback();
+	}
+
+
+
 
 	// Новая версия playerInit отличается другим подходам к таймаутам.
 	// Раньше тик зависел от скорости, на speed=1 тикал раз в секунду, запрашивал через dataSource данные, двигал маркеры
@@ -780,6 +799,7 @@ define([
 			callback: function(data) {
 				self.loadPilots(function() {
 					self.loadWaypoints(data);
+					self.loadOptWay(data);
 					self.playerInitNew(data);
 				});
 			}
