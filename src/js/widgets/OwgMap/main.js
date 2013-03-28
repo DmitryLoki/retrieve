@@ -1,5 +1,6 @@
 define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,utils,EventEmitter,OWG) {
 
+	// здесь owg - это набор объектов из wild-libs/owg-optimized
 	var owg = new OWG();
 
 	// requestAnim shim layer by Paul Irish
@@ -188,6 +189,12 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 		return this;
 	}
 	Ufo.prototype.destroy = function() {
+		if (this._model)
+			owg.ogDestroyGeometry(this._model);
+		if (this._titleModel)
+			owg.ogDestroyGeometry(this._titleModel);
+		if (this._trackModel)
+			owg.ogDestroyGeometry(this._trackModel);
 		this.emit("destroy");
 	}
 	Ufo.prototype.trackUpdate = function(data) {
@@ -490,21 +497,6 @@ console.log("OptWay",geometry);
 			self._ufos.splice(self._ufos.indexOf(ufo),1);
 		});
 		return ufo;
-	}
-
-	OwgMap.prototype.loadUfoAsync = function(params) {
-		var self = this;
-		params.map = self;
-		require(params.owgModelUrl,function(json) {
-			params.owgModelJson = json;
-			var ufo = new Ufo(params);
-			self._ufos.push(ufo);
-			ufo.on("destroy",function() {
-				self._ufos.splice(self._ufos.indexOf(ufo),1);
-			});
-			if (params.callback)
-				params.callback(ufo);
-		});
 	}
 
 	OwgMap.prototype.waypoint = function(params) {

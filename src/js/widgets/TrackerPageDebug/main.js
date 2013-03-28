@@ -41,7 +41,7 @@ define([
 	var options = {
 		// Настройки тестового сервера
 		testServerOptions: {
-			pilotsCnt: 2,
+			pilotsCnt: 10,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
 			endKey: (new Date).getTime(),
@@ -66,7 +66,7 @@ define([
 			},
 			waypoints: {
 				dispersion: 0.1,
-				maxRadius: 500,
+				maxRadius: 800,
 				minRadius: 300,
 				height: 500,
 			},
@@ -533,7 +533,7 @@ define([
 		this.trackColor = options.trackColor;
 		this.color = options.color;
 
-		this._ufo = this.map.ufo(options).icon(this.icon).visible(true);
+		this._ufo = this.map.ufo(options);
 
 		this.visibleChecked = ko.observable(true);
         this.visibleCheckbox = new Checkbox({checked:this.visibleChecked});
@@ -577,10 +577,17 @@ define([
 		var self = this;
 		if (this._ufo.hasAsyncInit)
 			this._ufo.asyncInit(function() {
+				self.initialized();
 				self.emit("loaded",self);
 			});
-		else
+		else {
+			self.initialized();
 			self.emit("loaded",self);
+		}
+	}
+
+	Pilot.prototype.initialized = function() {
+		this._ufo.icon(this.icon).visible(true);
 	}
  
 	Pilot.prototype.coordsUpdate = function(data,duration) {
@@ -602,8 +609,14 @@ define([
 
 	var TrackerPageDebug = function() {
 		var self = this;
-		this.map = new GoogleMap();
-		this.owgMap = new OwgMap();
+
+		this.mapType = "GoogleMap"; // OwgMap или GoogleMap
+
+		if (this.mapType == "GoogleMap")
+			this.map = new GoogleMap();
+		else if (this.mapType == "OwgMap")
+			this.map = new OwgMap();
+
 		this.ufos = ko.observableArray();
 		this.waypoints = ko.observableArray();
 		this.ufosTable = new UfosTable(this.ufos);
@@ -629,7 +642,7 @@ define([
 			callback: function(data) {
 				for (var i = 0; i < data.length; i++) {
 					var pilot = new Pilot(utils.extend(data[i],{
-						map: self.owgMap
+						map: self.map
 					}));
 					pilot.on("loaded",function(p) {
 						self.ufos.push(p);
@@ -645,9 +658,9 @@ define([
 
 	TrackerPageDebug.prototype.loadWaypoints = function(data,callback) {
 		// Рисуем цилиндры
-		if (this.owgMap && data.waypoints) {
+		if (this.map && data.waypoints) {
 			for (var i = 0; i < data.waypoints.length; i++)
-				this.waypoints.push(this.owgMap.waypoint(data.waypoints[i]));
+				this.waypoints.push(this.map.waypoint(data.waypoints[i]));
 		}
 		if (callback)
 			callback();
@@ -655,8 +668,8 @@ define([
 
 	TrackerPageDebug.prototype.loadOptWay = function(data,callback) {
 		// Рисуем оптимальный путь
-		if (this.owgMap && data.optWay) {
-			this.owgMap.setOptWay(data.optWay);
+		if (this.map && data.optWay) {
+			this.map.setOptWay(data.optWay);
 		}
 		if (callback)
 			callback();
@@ -684,8 +697,8 @@ define([
 		var playerCurrentTime = (new Date).getTime();
 
 		// Центрируем карту, с сервера должны прийти дефолтные координаты камеры
-		if (this.owgMap && data.center) {
-			this.owgMap.setCameraLookAtPosition({
+		if (this.map && data.center) {
+			this.map.setCameraLookAtPosition({
 				latitude: data.center.lat,
 				longitude: data.center.lng
 			});
