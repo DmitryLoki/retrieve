@@ -304,15 +304,76 @@ define(['jquery','knockout','utils','EventEmitter','owg'],function(jquery,ko,uti
 	OptWay.prototype.redraw = function() {
 		if (this._model)
 			owg.ogDestroyGeometry(this._model);
-		var coords = [];
-		for (var i = 0; i < this._data.length; i++)
+
+		for (var i = 0; i < this._data.length; i++) {
+			var d = this._data[i];
+			var p = owg.ogToCartesian(this._map._scene,d.lng,d.lat,500);
+			console.log("OptWay",i,d,p);
+		}
+
+		// Задача - есть точки в wgs84 системе координат, из них нужно сделать объект во внутренних координатах, типа в метрах
+		// ogToCartesian какой-то глючный, но зато есть ogCalcDistanceWGS84. + мы знаем угол, потому что lat-lng система координат сохраняет углы
+
+		var vertices = [], triangles = [];
+		var c = [0,0,0,1];
+
+		vertices.push(0,500,0);
+		for (var j = 0; j < c.length; j++) vertices.push(c[j]);
+		vertices.push(0,600,0);
+		for (var j = 0; j < c.length; j++) vertices.push(c[j]);
+
+		for (var i = 1; i < this._data.length; i++) {
+			var d1 = this._data[i];
+			var d0 = this._data[0];
+			var dist = owg.ogCalcDistanceWGS84(d0.lng,d0.lat,d1.lng,d1.lat);
+
+/*
+var y = Math.sin(dLon) * Math.cos(lat2);
+var x = Math.cos(lat1)*Math.sin(lat2) -
+        Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+var brng = Math.atan2(y, x).toDeg();
+*/
+			var dr0lat = d0.lat*Math.PI/180;
+			var dr0lng = d0.lng*Math.PI/180;
+			var dr1lat = d1.lat*Math.PI/180;
+			var dr1lng = d1.lng*Math.PI/180;
+			var y1 = Math.sin(dr1lng-dr0lng)*Math.cos(dr1lng);
+			var x1 = Math.cos(dr0lat)*Math.sin(dr1lat)-Math.sin(dr0lat)*Math.cos(dr1lat)*Math.cos(dr1lng-dr0lng);
+			var alpha = Math.atan2(y1,x1);
+
+			var x = dist * Math.cos(alpha);
+			var z = dist * Math.sin(alpha);
+			vertices.push(x,500,z);
+			for (var j = 0; j < c.length; j++) vertices.push(c[j]);
+			vertices.push(x,600,z);
+			for (var j = 0; j < c.length; j++) vertices.push(c[j]);
+			triangles.push(2*i-2,2*i-1,2*i);
+		}
+
+		var geometry = [[{
+			"Center": [this._data[0].lng,this._data[0].lat,500],
+			"VertexSemantic": "pc",
+			"Vertices": vertices,
+			"IndexSemantic": "TRIANGLES",
+			"Indices": triangles
+		}]];
+
+console.log("OptWay",geometry);
+
+		this._model = owg.ogCreateGeometry(this._map._optwayLayer,geometry);
+
+/*
+			var distance = owg.ogCalcDistanceWGS84(p.longitude,p.latitude,t.longitude,t.latitude);
+
 			coords.push([this._data[i].lng,this._data[i].lat,500]);
 		var options = {
 			color: "#ff0000",
 			linewidth: 10,
 		}
+		owg.ogToCartesian(this._map._scene,lng,lat,elevation);
 		console.log("create OptWay",coords,options);
 		this._model = owg.ogCreatePolylineWGS84(this._map._optwayLayer,coords,options);
+*/
 	}
 
 
