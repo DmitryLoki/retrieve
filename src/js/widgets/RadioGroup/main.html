@@ -1,0 +1,8 @@
+<!-- ko foreach: displayValues -->
+	<span class="airvis-radio-container" data-bind="click:click,css:{'airvis-radio-checked':checked}">
+		<span class="airvis-radio" data-bind="style: {backgroundColor: color}">
+			<span class="airvis-radio-inner" data-bind="visible:checked"></span>
+		</span>
+		<!-- ko text: title --><!-- /ko -->
+	</span>
+<!-- /ko -->

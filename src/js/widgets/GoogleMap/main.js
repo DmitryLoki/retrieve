@@ -76,7 +76,12 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 				color: self._params.color
 			}
 		});
-		this._trackModel = null;
+		this._trackModel = new gmaps.Polyline({
+			strokeColor: self._params.color,
+			strokeOpacity: 1,
+			strokeWeight: 1,
+			map: self._params.map._map
+		});
 		self._trackDtPosition = null;
 		callback();
 	}
@@ -213,8 +218,49 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 	}
 
 	Ufo.prototype.trackUpdate = function(data) {
-	}
+		if (!this._trackVisible || !data || !this._trackModel) return;
+		if (data && this._trackLastData && data.start == this._trackLastData.start && data.end == this._trackLastData.end) return;
 
+		var path = this._trackModel.getPath();
+
+		// Удаляем точки из трека, которых уже нет в новой data
+		var i2destroy = {};
+		if (this._trackLastData) {
+			for (var i in this._trackLastData.data)
+				if (this._trackLastData.data.hasOwnProperty(i) && !data.data[i]) {
+					i2destroy[i] = true; 
+					// todo: удалить из path координаты на время i
+				}
+		}
+		for (var i = 0; i < path.getLength(); i++) {
+			var elem = path.getAt(i);
+			if (elem.dtIndex && i2destroy[elem.dtIndex]) {
+				path.removeAt(i);
+				i--;
+			}
+		}
+
+		// Удаляем последнюю точку из path, потому что она - текущее положение параплана, которое поменялось
+		var n = path.getLength();
+		if (n > 0) path.removeAt(n-1);
+
+		// Добавляем точки из data, которых нет в _trackLastData
+		var ind = 0;
+		for (var i in data.data) {
+			if (data.data.hasOwnProperty(i)) {
+				if (!this._trackLastData || !this._trackLastData.data[i]) {
+					var latLng = new gmaps.LatLng(data.data[i].lat,data.data[i].lng);
+					latLng.dtIndex = i;
+					path.insertAt(ind,latLng);
+				}
+				ind++;
+			}
+		}
+
+		// добавляем в конец текущее положение параплана
+		path.push(new gmaps.LatLng(this._params.lat,this._params.lng));
+		this._trackLastData = data;
+	}
 
 	var Waypoint = function(params) {
 		params.color = "#00ff00";
@@ -225,29 +271,42 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		this._params = params;
 		this._map = params.map;
 
-		this._model = new gmaps.Circle({
-			strokeColor: params.color,
-			strokeOpacity: 0.8,
-			strokeWeight: 1,
-			fillColor: params.color,
-			fillOpacity: 0.2,
-			map: params.map._map,
-			center: new gmaps.LatLng(this._params.lat,this._params.lng),
-			radius: params.radius
-		});
-		
-		this._titleModel = new MapFloatElem({
-			template: params.titleTemplate,
-			data: {
-				title: params.name,
-				color: params.color
-			}
-		});
-		this._titleModel.setMap(params.map._map);
-		this._titleModel.move(this._model.getBounds().getNorthEast());
+		this.redraw();
 	}
 
 	utils.extend(Waypoint.prototype,EventEmitter.prototype);
+
+	Waypoint.prototype.redraw = function() {
+		if (!this._model) 
+			this._model = new gmaps.Circle({
+			strokeColor: this._params.color,
+			strokeOpacity: 0.8,
+			strokeWeight: 1,
+			fillColor: this._params.color,
+			fillOpacity: 0.2,
+			map: this._map._map,
+			center: new gmaps.LatLng(this._params.lat,this._params.lng),
+			radius: this._params.radius
+		});
+		if (!this._titleModel)
+			this._titleModel = new MapFloatElem({
+			template: this._params.titleTemplate,
+			data: {
+				title: this._params.name,
+				color: this._params.color
+			}
+		});
+		if (this._map.cylindersVisualMode() == "off") {
+			this._model.setMap(null);
+			this._titleModel.setMap(null);
+		}
+		else {
+			this._model.set("fillOpacity",this._map.cylindersVisualMode() == "full" ? 0.2 : 0);
+			this._model.setMap(this._map._map);
+			this._titleModel.setMap(this._map._map);
+			this._titleModel.move(this._model.getBounds().getNorthEast());
+		}
+	}
 
 	Waypoint.prototype.destroy = function() {
 		if (this._model)
@@ -270,6 +329,31 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		
 		this._ufos = [];
 		this._waypoints = [];
+
+		this.tracksVisualMode = ko.observable();
+		this.cylindersVisualMode = ko.observable();
+		this.modelsVisualMode = ko.observable();
+		this.shortWayVisualMode = ko.observable();
+	}
+
+	GoogleMap.prototype.setTracksVisualMode = function(v) {
+		this.tracksVisualMode(v);
+	}
+
+	GoogleMap.prototype.setCylindersVisualMode = function(v) {
+		this.cylindersVisualMode(v);
+		this._waypoints.forEach(function(waypoint) {
+			waypoint.redraw();
+		});
+	}
+
+	GoogleMap.prototype.setModelsVisualMode = function(v) {
+		this.modelsVisualMode(v);
+	}
+
+	GoogleMap.prototype.setShortWayVisualMode = function(v) {
+		this.shortWayVisualMode(v);
+		this.redrawShortWay();
 	}
 
 	GoogleMap.prototype.setCameraPosition = function(p) {
@@ -309,7 +393,27 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		return waypoint;
 	}
 
-	GoogleMap.prototype.setOptWay = function(data) {
+	GoogleMap.prototype.setShortWay = function(ar) {
+		this._shortWay = ar.data;
+		this._shortWayOptions = ar.options;
+		this.redrawShortWay();
+	}
+
+	GoogleMap.prototype.redrawShortWay = function() {
+		if (!this._shortWay) return;
+		if (!this._shortWayModel)
+			this._shortWayModel = new gmaps.Polyline(this._shortWayOptions.wide);
+		if (this.shortWayVisualMode() == "off") {
+			this._shortWayModel.setMap(null);
+			return;
+		}
+		this._shortWayModel.setOptions(this._shortWayOptions[this.shortWayVisualMode()]);
+		this._shortWayModel.setMap(this._map);
+		var ar = [];
+		this._shortWay.forEach(function(rw) {
+			ar.push(new gmaps.LatLng(rw.lat,rw.lng));
+		});
+		this._shortWayModel.setPath(ar);
 	}
 
 	GoogleMap.prototype.domInit = function(elem,params) {

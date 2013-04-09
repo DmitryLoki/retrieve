@@ -4,10 +4,14 @@
 </div>
 
 
-<!-- ko widget: { data: playerControlWindow, type: 'Window', title: 'PlayerControl', top: 40, left: 40} -->
+<!-- ko widget: { data: mainMenuWindow, type: 'Window', contentCss: 'airvis-transparent'} -->
+	<!-- ko widget: {data: mainMenu, type: 'MainMenu'} --><!-- /ko -->
+<!-- /ko -->
+
+<!-- ko widget: { data: playerControlWindow, type: 'Window'} -->
 	<!-- ko widget: { data: playerControl, type: 'PlayerControl' } --><!-- /ko -->
 <!-- /ko -->
 
-<!-- ko widget: {data: ufosTableWindow, type: 'Window', title: 'Ufos Table', left: 400, top: 40} -->
+<!-- ko widget: {data: ufosTableWindow, type: 'Window'} -->
 	<!-- ko widget: { data: ufosTable, type: 'UfosTable' } --><!-- /ko -->
 <!-- /ko -->

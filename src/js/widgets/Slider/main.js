@@ -78,6 +78,7 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 				self.sliderPercent(val);
 		});
 
+/*
 		var documentMouseMove = function(e) {
 			if (self._dragging) {
 				// смещение в пикселях x-положения мыши от того места, где был mousedown
@@ -137,6 +138,51 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		this.val(Math.round(this.min() + this.sliderPercent() / 100 * (this.max() - this.min())));
 		this.emit("drop",this.val());
 		this._dragging = false;
+	}
+*/
+	}
+
+	Slider.prototype.domInit = function(element, params, parentElement) {
+		var div = ko.virtualElements.firstChild(element);
+		while (div && div.nodeType != 1)
+			div = ko.virtualElements.nextSibling(div);
+		this.container = $(div).find(".slider");
+	}
+
+	Slider.prototype.dragStart = function(self,e) {
+		this._dragging = true;
+		var containerWidth = this.container.width();
+		var startE = e;
+		var startPercent = this.sliderPercent();
+		e.target.setCapture();
+		var mouseMove = function(e) {
+			// смещение в пикселях x-положения мыши от того места, где был mousedown
+			var pxMouseOffset = e.pageX - startE.pageX;
+			// стартовое смещение бегунка в пикселях
+			var pxStartOffset = startPercent*containerWidth/100;
+			// смещение бегунка, какое оно теперь должно быть, но в пикселях
+			var pxOffset = pxStartOffset + pxMouseOffset;
+			// смещение бегунка в %-х относительно общей ширины контейнера
+			var percentOffset = containerWidth ? pxOffset / containerWidth * 100 : 0;
+			if (percentOffset > 100) percentOffset = 100;
+			if (percentOffset < 0) percentOffset = 0;
+			// простановка значения относительно max-min
+			self.sliderPercent(percentOffset);
+		}
+		$(e.target).on("mousemove",mouseMove).one("mouseup",function(e) {
+			$(e.target).off("mousemove",mouseMove);
+			self.val(Math.round(self.min() + self.sliderPercent() / 100 * (self.max() - self.min())));
+			self._dragging = false;
+		});
+	}
+
+	Slider.prototype.clickSlider = function(self,e) {
+		var w = this.container.width();
+		if (!w || !(w>0)) return;
+		var p = (e.pageX - this.container.offset().left) / w;
+		if (p > 1) p = 1;
+		if (p < 0) p = 0;
+		self.val(self.min() + (self.max()-self.min()) * p);
 	}
 
 	Slider.prototype.forward = function() {

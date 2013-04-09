@@ -4,21 +4,36 @@ define(["jquery","knockout","jquery-ui"],function($,ko) {
 		var self = this;
 
 		var defaults = {
+			showHeader: true,
+			visible: true,
+			resizable: true, 
+			contentCss: "",
 			title: "",
 			nodes: [],
 			width: 300,
 			height: "auto",
 			top: 0,
-			left: 0
+			left: 0,
+			minWidth: 100,
+			minHeight: 50
 		}
+
 		if (!options) options = {};
 
-		self.width = ko.observable(defaults.width);
-		self.height = ko.observable(defaults.height);
-		self.top = ko.observable(defaults.top);
-		self.left = ko.observable(defaults.left);
-		self.title = ko.observable(defaults.title);
+		self.showHeader = this.asObservable(options.showHeader,defaults.showHeader);
+		self.visible = this.asObservable(options.visible,defaults.visible);
+		self.resizable = this.asObservable(options.resizable,defaults.resizable);
+		self.contentCss = this.asObservable(options.contentCss,defaults.contentCss);
+		self.title = this.asObservable(options.title,defaults.title);
+		self.width = this.asObservable(options.width,defaults.width);
+		self.height = this.asObservable(options.height,defaults.height);
+		self.top = this.asObservable(options.top,defaults.top);
+		self.left = this.asObservable(options.left,defaults.left);
+		self.minWidth = this.asObservable(options.minWidth,defaults.minWidth);
+		self.minHeight = this.asObservable(options.minHeight,defaults.minHeight);
+
 		self.nodes = ko.observableArray(defaults.nodes);
+		self.css = ko.observable({});
 
 		self.cssPosition = ko.computed(function() {
 			var out = {};
@@ -32,41 +47,43 @@ define(["jquery","knockout","jquery-ui"],function($,ko) {
 				out.left = self.left() + (self.left()=="auto"?"":"px");
 			return out;
 		});
+	}
 
-		var documentMouseMove = function(e) {
-			if (self._dragging) {
-				self.top(self._dragStartPosition.top + e.pageY - self._dragStartEvent.pageY);
-				self.left(self._dragStartPosition.left + e.pageX - self._dragStartEvent.pageX);
-			}
-		}
+	Window.prototype.hide = function() {
+		this.visible(false);
+	}
 
-		var  documentMouseUp = function(e) {
-			self.dragEnd();
-		}
+	Window.prototype.domInit = function(element,params,parentElement) {
+		if (params.data.savedNodes)
+			this.nodes(params.data.savedNodes);
+		if (params.contentCss)
+			this.contentCss(params.contentCss);
 
-		self.domInit = function(elem,params,parentElement) {
-			self.width(options.width || params.width || defaults.width);
-			self.height(options.height || params.height || defaults.height);
-			self.top(options.top || params.top || defaults.top);
-			self.left(options.left || params.left || defaults.left);
-			self.title(options.title || params.title || defaults.title);
-			self.nodes(options.nodes || params.data.savedNodes || defaults.nodes);
-			$(document).on("mousemove",documentMouseMove).on("mouseup",documentMouseUp);
-		}
+		var div = ko.virtualElements.firstChild(element);
+		while (div && div.nodeType != 1)
+			div = ko.virtualElements.nextSibling(div);
 
-		self.domDestroy = function(elem,val) {
-			$(document).off("mousemove",documentMouseMove).off("mouseup",documentMouseUp);
+		if (div) {
+			var obj = $(div);
+			this.width(obj.width());
+			this.height(obj.height());
+			var content = obj.find(".airvis-window-content");
+			var position = content.position();
+			content.addClass("airvis-window-content-absolute").css({top:position.top+"px",left:position.left+"px"});
 		}
 	}
 
-	Window.prototype.dragStart = function(m,e) {
-		this._dragging = true;
-		this._dragStartEvent = e;
-		this._dragStartPosition = {top: this.top(), left: this.left()};
+	Window.prototype.asObservable = function(v,defaultV) {
+		if (ko.isObservable(v) || ko.isComputed(v)) return v;
+		return ko.observable(typeof v == "function" ? v() : (typeof v == "undefined" ? defaultV : v));
 	}
 
-	Window.prototype.dragEnd = function(m,e) {
-		this._dragging = false;
+	Window.prototype.dragStart = function(self,e) {
+		this.emit("dragStart",self,e);
+	}
+
+	Window.prototype.resizeStart = function(dir,self,e) {
+		this.emit("resizeStart",dir,self,e);
 	}
 
 	Window.prototype.templates = ["main"];

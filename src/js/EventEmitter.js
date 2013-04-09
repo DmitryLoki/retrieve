@@ -11,6 +11,10 @@ define(function(){
 	EventsEmitter.prototype.removeListener = function(type, proc){
 		if(!this._listeners || !this._listeners[type])
 			return this;
+		if (!proc) {
+			delete this._listeners[type];
+			return this;
+		}
 		var listeners = this._listeners[type];
 		var i = listeners.indexOf(proc);
 		if(i != -1)
@@ -26,6 +30,10 @@ define(function(){
 		this._listeners[type].push(proc);
 		return this;
 	};
+
+	EventsEmitter.prototype.off = function(type, proc){
+		return this.removeListener(type,proc);
+	}
 
 	EventsEmitter.prototype.emit = function(type){
 		if(this._listeners && this._listeners[type]){

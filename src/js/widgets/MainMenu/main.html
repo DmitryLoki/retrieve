@@ -1,0 +1,10 @@
+<div class="airvis-main-menu">
+	<div class="airvis-logo-container airvis-clearfix">
+		<a class="airvis-logo" href="/"></a>
+	</div>
+	<ul class="airvis-items airvis-clearfix" data-bind="foreach:items">
+		<li>
+			<a href="#" data-bind="css:{'airvis-checked':visible},click:$parent.switchVisibility,text:title"></a>
+		</li>
+	</ul>
+</div>

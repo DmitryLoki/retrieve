@@ -1,4 +1,4 @@
-define(['knockout', 'widget!Slider'], function(ko, Slider){
+define(['knockout', 'widget!Slider', 'widget!RadioGroup'], function(ko, Slider, RadioGroup){
 	var PlayerControl = function() {
 		var self = this;
 
@@ -29,6 +29,45 @@ define(['knockout', 'widget!Slider'], function(ko, Slider){
 		this.enabled.subscribe(function(val) {
 			self.slider.set("enabled",!!val);
 		});
+
+		this.tracksVisualMode = ko.observable();
+		this.cylindersVisualMode = ko.observable();
+		this.modelsVisualMode = ko.observable();
+		this.shortWayVisualMode = ko.observable();
+
+		this.trackVisualRadioGroup = new RadioGroup({data:this.tracksVisualMode,values:[{value:"10min",title:"10 min"},{value:"full",title:"Full"}]});
+		this.cylindersVisualRadioGroup = new RadioGroup({data:this.cylindersVisualMode,values:[{value:"full",title:"Full"},{value:"empty",title:"Empty"},{value:"off",title:"Off"}]});
+		this.modelsVisualRadioGroup = new RadioGroup({data:this.modelsVisualMode,values:[{value:"large",title:"Large"},{value:"medium",title:"Medium"},{value:"small",title:"Small"}]});
+		this.shortWayVisualRadioGroup = new RadioGroup({data:this.shortWayVisualMode,values:[{value:"wide",title:"Wide"},{value:"thin",title:"Thin"},{value:"off",title:"Off"}]});
+
+		this.tracksVisualMode.subscribe(function(v) {
+			self.emit("setTracksVisualMode",v);
+		});
+		this.cylindersVisualMode.subscribe(function(v) {
+			self.emit("setCylindersVisualMode",v);
+		});
+		this.modelsVisualMode.subscribe(function(v) {
+			self.emit("setModelsVisualMode",v);
+		});
+		this.shortWayVisualMode.subscribe(function(v) {
+			self.emit("setShortWayVisualMode",v);
+		});
+	}
+
+	PlayerControl.prototype.setTracksVisualMode = function(v) {
+		this.tracksVisualMode(v);
+	}
+
+	PlayerControl.prototype.setCylindersVisualMode = function(v) {
+		this.cylindersVisualMode(v);
+	}
+
+	PlayerControl.prototype.setModelsVisualMode = function(v) {
+		this.modelsVisualMode(v);
+	}
+
+	PlayerControl.prototype.setShortWayVisualMode = function(v) {
+		this.shortWayVisualMode(v);
 	}
 
 	PlayerControl.prototype.getState = function() {

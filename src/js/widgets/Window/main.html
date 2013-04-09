@@ -1,7 +1,10 @@
-<div class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="position:absolute;display:block;" data-bind="style:cssPosition">
-	<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" data-bind="event: {mousedown:dragStart}">
-		<span class="ui-dialog-title" data-bind="text:title"></span>
+<div class="airvis-window" data-bind="visible:visible,style:cssPosition">
+	<div class="airvis-window-header airvis-clearfix" data-bind="visible:showHeader,event:{mousedown:dragStart}">
+		<div class="airvis-window-title" data-bind="text:title"></div>
+		<a class="airvis-window-close" href="#" data-bind="click:hide">_</a>
 	</div>
-	<div class="ui-dialog-content ui-widget-content" data-bind="domNodes:nodes">
-	</div>
+	<div class="airvis-window-content" data-bind="css:css,domNodes:nodes"></div>
+	<div class="airvis-window-resize airvis-resize-right" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'right')}"></div>
+	<div class="airvis-window-resize airvis-resize-bottom" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'bottom')}"></div>
+	<div class="airvis-window-resize airvis-resize-bottom-right" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'bottom-right')}"></div>
 </div>
