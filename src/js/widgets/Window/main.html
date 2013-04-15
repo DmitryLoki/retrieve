@@ -1,10 +1,11 @@
 <div class="airvis-window" data-bind="visible:visible,style:cssPosition">
 	<div class="airvis-window-header airvis-clearfix" data-bind="visible:showHeader,event:{mousedown:dragStart}">
 		<div class="airvis-window-title" data-bind="text:title"></div>
-		<a class="airvis-window-close" href="#" data-bind="click:hide">_</a>
+		<a class="airvis-window-close" href="#" data-bind="click:hide"></a>
 	</div>
-	<div class="airvis-window-content" data-bind="css:css,domNodes:nodes"></div>
+	<div class="airvis-window-content" data-bind="css:css,domNodes:nodes,event:{mousedown:dragStart}"></div>
 	<div class="airvis-window-resize airvis-resize-right" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'right')}"></div>
 	<div class="airvis-window-resize airvis-resize-bottom" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'bottom')}"></div>
 	<div class="airvis-window-resize airvis-resize-bottom-right" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'bottom-right')}"></div>
+	<a href="#" class="airvis-window-close-absolute" data-bind="visible:absoluteCloseIcon,click:hide"></a>
 </div>

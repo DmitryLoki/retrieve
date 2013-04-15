@@ -150,11 +150,14 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 	}
 
 	Slider.prototype.dragStart = function(self,e) {
+		e.stopPropagation();
+		e.preventDefault();
 		this._dragging = true;
 		var containerWidth = this.container.width();
 		var startE = e;
 		var startPercent = this.sliderPercent();
-		e.target.setCapture();
+
+//		e.target.setCapture();
 		var mouseMove = function(e) {
 			// смещение в пикселях x-положения мыши от того места, где был mousedown
 			var pxMouseOffset = e.pageX - startE.pageX;
@@ -169,8 +172,10 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			// простановка значения относительно max-min
 			self.sliderPercent(percentOffset);
 		}
-		$(e.target).on("mousemove",mouseMove).one("mouseup",function(e) {
-			$(e.target).off("mousemove",mouseMove);
+		$("body").addClass("airvis-document-overwrite-cursor-pointer");
+		$(document).on("mousemove",mouseMove).one("mouseup mouseleave",function(e) {
+			$("body").removeClass("airvis-document-overwrite-cursor-pointer");
+			$(document).off("mousemove",mouseMove);
 			self.val(Math.round(self.min() + self.sliderPercent() / 100 * (self.max() - self.min())));
 			self._dragging = false;
 		});

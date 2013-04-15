@@ -1,12 +1,10 @@
 define(["utils","knockout"],function(utils,ko) {
 	var MainMenu = function() {
-		var self = this;
+		this.titles = ko.observable({});
+	}
 
-		this.items = ko.observableArray();
-
-		this.switchVisibility = function(item,e) {
-			item.visible(!item.visible());
-		}
+	MainMenu.prototype.setTitles = function(titles) {
+		this.titles(titles);
 	}
 
 	MainMenu.prototype.templates = ["main"];

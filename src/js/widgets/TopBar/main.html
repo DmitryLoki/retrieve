@@ -1,0 +1,10 @@
+<div class="airvis-topbar">
+	<div class="airvis-topbar-container">
+		<a class="airvis-topbar-logo" href="/"></a>
+		<ul class="airvis-topbar-items" data-bind="foreach:{data:items,afterRender:registerSwitch,beforeRemove:unregisterSwitch}">
+			<li>
+				<a href="#" data-bind="css:{'airvis-checked':visible},click:$parent.switchVisibility,text:title"></a>
+			</li>
+		</ul>
+	</div>
+</div>

@@ -12,6 +12,7 @@ define([
     'widget!Window',
     'widget!OwgMap',
     'widget!MainMenu',
+    'widget!TopBar',
     'TestServer',
     'DataSource',
     'ShortWay'
@@ -29,6 +30,7 @@ define([
     Window,
     OwgMap,
     MainMenu,
+    TopBar,
     TestServer,
     DataSource,
     ShortWay
@@ -43,6 +45,10 @@ define([
 		mapType: "GoogleMap",
 		// Настройки тестового сервера
 		testServerOptions: {
+			mainTitle: "52th FAI european paragliding championship",
+			taskTitle: "Task1 - 130km",
+			dateTitle: "22 Sep, 2012",
+			placeTitle: "France, Saint Andre les Alpes",
 			pilotsCnt: 2,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 60000,
@@ -90,18 +96,21 @@ define([
 			},
 			playerControl: {
 				visible: true,
-				title: "Livetracking",
+				title: "Player",
 				width: 340,
 				top: 160,
 				left: 90
 			},
 			mainMenu: {
 				visible: true,
+				title: "Title",
 				showHeader: false,
 				resizable: false,
-				width: 700,
-				top: 20,
-				left: 90
+				absoluteCloseIcon: true,
+				width: 800,
+				top: 50,
+				left: 90,
+				height: 100
 			}
 		},
 		tracksVisualMode: "full",
@@ -240,8 +249,10 @@ define([
 
 		this.mainMenu = new MainMenu();
 		this.mainMenuWindow = new Window(this.options.windows.mainMenu);
-		this.mainMenu.items.push(this.ufosTableWindow,this.playerControlWindow);
 
+		this.topBar = new TopBar();
+		this.topBar.items.push(this.mainMenuWindow,this.ufosTableWindow,this.playerControlWindow);
+		
 		this.windowManager = new WindowManager();
 		this.windowManager.items.push(this.ufosTableWindow,this.playerControlWindow,this.mainMenuWindow);
 
@@ -288,6 +299,11 @@ define([
 		this.dataSource = new DataSource({
 			server: this.server
 		});
+	}
+
+	TrackerPageDebug.prototype.setTitles = function(data) {
+		if (this.mainMenu)
+			this.mainMenu.setTitles(data.titles);
 	}
 
 	TrackerPageDebug.prototype.loadPilots = function(callback) {
@@ -471,6 +487,7 @@ define([
 			type: "race",
 			callback: function(data) {
 				self.loadPilots(function() {
+					self.setTitles(data);
 					self.loadWaypoints(data);
 					self.loadShortWay(data);
 					self.playerInitNew(data);

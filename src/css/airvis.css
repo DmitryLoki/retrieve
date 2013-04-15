@@ -1,4 +1,17 @@
 
+/* overall container */
+document,body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+.airvis-container {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+
 /* clearfix */
 .airvis-clearfix {
     *zoom: 1;
@@ -24,6 +37,23 @@
 	margin-left: 20px;
 }
 
+/* setCapture does not work in some browsers, so instead of using it we overwrite cursor over the whole body while dragging an object */
+.airvis-document-overwrite-cursor-pointer {
+	cursor: pointer !important;
+}
+.airvis-document-overwrite-cursor-move {
+	cursor: move !important;
+}
+.airvis-document-overwrite-cursor-e-resize {
+	cursor: e-resize !important;
+}
+.airvis-document-overwrite-cursor-se-resize {
+	cursor: se-resize !important;
+}
+.airvis-document-overwrite-cursor-s-resize {
+	cursor: s-resize !important;
+}
+
 /* common window widget styles */
 .airvis-window {
 	color: #333333;
@@ -34,9 +64,8 @@
 	position: absolute;
 }
 .airvis-window-header {
-	background-color: rgba(50,50,50,.8);
+	background-color: rgba(8,55,72,.95);
 	padding: 3px 3px;
-	cursor: move;
 }
 .airvis-window-title {
 	color: #ffffff;
@@ -50,19 +79,29 @@
 	text-rendering: optimizelegibility;
 }
 .airvis-window-close {
-	color: #ffffff;
-	font-family: Arial;
 	float: right;
 	outline: 0 none;
-	padding: 0 3px;
-	text-decoration: underline;
+	display: block;
+	width: 20px;
+	height: 20px;
+	background: url("icon-close.png") 0 0 no-repeat;
+}
+.airvis-window-close-absolute {
+	position: absolute;
+	outline: 0 none;
+	display: block;
+	top: 5px;
+	right: 5px;
+	width: 20px;
+	height: 20px;
+	background: url("icon-close.png") 0 0 no-repeat;
 }
 .airvis-window-close:hover {
 	background-color: #303030;
 	text-decoration: underline;
 }
 .airvis-window-content {
-	background-color: rgba(255,255,255,.8);
+	background-color: rgba(8,55,72,.8);
 	position: relative;
 	overflow: auto;
 }
@@ -100,7 +139,6 @@
 	right: -8px;
 	width: 10px;
 }
-
 
 
 
@@ -189,6 +227,7 @@
 .airvis-slider-container {
 	padding: 5px;
 	padding-top: 0;
+	overflow: hidden;
 }
 .airvis-slider-handle {
 	background-color: #a4a4a4;
@@ -202,6 +241,7 @@
 	margin-top: -4px;
 	width: 15px;
 	position: absolute;
+	overflow: hidden;
 }
 .airvis-slider-range {
 	background-color: #ececec;
@@ -251,50 +291,88 @@
 	background-color: #f0f0f0;
 }
 
-
-/* MainMenu */
-.airvis-logo-container {
-	background-color: rgba(255,255,255,.7);
+/* sq animation border */
+.airvis-slideSq {
+	border: 1px solid #000000;
+	position: absolute;
 }
-.airvis-logo {
-	background: transparent url("logo_0.png") 20px 20px no-repeat;
-	border-right: 1px solid #7d7c7a;
+
+/* TopBar */
+.airvis-topbar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 35px;
+	background-color: #083748;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+.airvis-topbar-container {
+	margin: 0 auto;
+	width: 800px;
+}
+.airvis-topbar-logo {
+	background: transparent url("logo_0.png") 0 0 no-repeat;
 	display: block;
 	float: left;
 	height: 31px;
-	margin: 10px;
-	padding: 20px 25px;
+	margin: 2px;
 	width: 223px;
 }
-
-.airvis-main-menu ul {
-	background-color: rgba(170,170,170,.4);
-	border-top: 1px solid #dedede;
+.airvis-topbar-items {
+	display: block;
+	float: left;
 	margin: 0;
 	padding: 0;
-	height: 30px;
+	margin-left: 70px;
 }
-.airvis-main-menu li {
+.airvis-topbar-items li {
+	display: block;
 	float: left;
 	list-style: none outside none;
 }
-.airvis-main-menu li > a {
-	color: #323230;
+.airvis-topbar-items a {
 	display: block;
-	font-weight: bold;
-	outline: 0 none;
-	padding: 5px 10px;
+	margin-top: 5px;
+	margin-left: 10px;
+	padding: 2px 5px;
+	background-color: #c3ced0;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	color: #002a38;
 	text-decoration: none;
-	text-transform: uppercase;
+	font-size: 10pt;
+	font-weight: bold;
 }
-.airvis-main-menu li > a:hover {
-	background-color: rgba(30,30,30,.1);
-}
-.airvis-main-menu li > a.airvis-checked {
-	background-color: rgba(0,0,0,.3);
+.airvis-topbar-items a.airvis-checked {
+	background-color: transparent;
 	color: #ffffff;
 }
-.airvis-main-menu li > a.airvis-checked:hover {
-	background-color: rgba(0,0,0,.5);
+
+/* Title */
+.airvis-title {
+	padding: 20px;
 	color: #ffffff;
+	font-size: 16px;
+	font-weight: bold;
+	position: relative;
+}
+.airvis-title h1 {
+	font-size: 28px;
+	line-height: 28px;
+	margin: 0;
+	padding: 0;
+}
+.airvis-title .airvis-title-place {
+	float: left;
+	margin: 10px 30px 0 0;
+}
+.airvis-title .airvis-title-date {
+	float: left;
+	margin: 10px 30px 0 0;
+}
+.airvis-title .airvis-title-task {
+	float: left;
+	margin: 10px 30px 0 0;
 }

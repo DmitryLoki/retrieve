@@ -1,10 +1,11 @@
-define(["jquery","knockout","jquery-ui"],function($,ko) {
+define(["jquery","knockout"],function($,ko) {
 
 	var Window = function(options) {
 		var self = this;
 
 		var defaults = {
 			showHeader: true,
+			absoluteCloseIcon: false,
 			visible: true,
 			resizable: true, 
 			contentCss: "",
@@ -21,6 +22,7 @@ define(["jquery","knockout","jquery-ui"],function($,ko) {
 		if (!options) options = {};
 
 		self.showHeader = this.asObservable(options.showHeader,defaults.showHeader);
+		self.absoluteCloseIcon = this.asObservable(options.absoluteCloseIcon,defaults.absoluteCloseIcon);
 		self.visible = this.asObservable(options.visible,defaults.visible);
 		self.resizable = this.asObservable(options.resizable,defaults.resizable);
 		self.contentCss = this.asObservable(options.contentCss,defaults.contentCss);
@@ -49,8 +51,8 @@ define(["jquery","knockout","jquery-ui"],function($,ko) {
 		});
 	}
 
-	Window.prototype.hide = function() {
-		this.visible(false);
+	Window.prototype.hide = function(self,e) {
+		this.slideUp(e);
 	}
 
 	Window.prototype.domInit = function(element,params,parentElement) {
@@ -84,6 +86,65 @@ define(["jquery","knockout","jquery-ui"],function($,ko) {
 
 	Window.prototype.resizeStart = function(dir,self,e) {
 		this.emit("resizeStart",dir,self,e);
+	}
+
+	Window.prototype.registerSwitch = function(node) {
+		this.switchNode = node;
+	}
+
+	Window.prototype.unregisterSwitch = function() {
+		delete this.switchNode;
+	}
+
+	Window.prototype.slideSwitch = function() {
+		if (this.visible()) this.slideUp();
+		else this.slideDown();
+	}
+
+	Window.prototype.slideUp = function() {
+		var self = this;
+		this.visible(false);
+		if (this.switchNode) {
+			var target = $(this.switchNode);
+			var sq = $("<div class='airvis-slideSq'></div>").appendTo("body");
+			sq.css({
+				top: this.top() + "px",
+				left: this.left() + "px",
+				width: this.width() + "px",
+				height: this.height() + "px"
+			}).animate({
+				top: target.offset().top + "px",
+				left: target.offset().left + "px",
+				width: target.outerWidth() + "px",
+				height: target.outerHeight() + "px"
+			},400,function() {
+				sq.remove();
+			});
+		}
+	}
+
+	Window.prototype.slideDown = function() {
+		var self = this;
+		if (this.switchNode) {
+			var target = $(this.switchNode);
+			var sq = $("<div class='airvis-slideSq'></div>").appendTo("body");
+			sq.css({
+				top: target.offset().top + "px",
+				left: target.offset().left + "px",
+				width: target.outerWidth() + "px",
+				height: target.outerHeight() + "px"
+			}).animate({
+				top: this.top() + "px",
+				left: this.left() + "px",
+				width: this.width() + "px",
+				height: this.height() + "px"
+			},400,function() {
+				sq.remove();
+				self.visible(true);
+			});
+		}
+		else
+			self.visible(true);
 	}
 
 	Window.prototype.templates = ["main"];

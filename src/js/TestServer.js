@@ -122,7 +122,13 @@ define(["utils"],function(utils) {
 					endKey: this.options.endKey,
 					center: this.options.coords.center,
 					waypoints: this.waypoints,
-					optWay: optWay
+					optWay: optWay,
+					titles: {
+						mainTitle: this.options.mainTitle,
+						taskTitle: this.options.taskTitle,
+						dateTitle: this.options.dateTitle,
+						placeTitle: this.options.placeTitle
+					}
 				}
 			}
 			// Аналог GET /contest/{contestid}/race/{raceid}/pilot из api
