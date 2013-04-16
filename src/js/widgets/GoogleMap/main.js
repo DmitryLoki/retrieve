@@ -279,27 +279,42 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 	}
 
 	var Waypoint = function(params) {
-		params.color = "#00ff00";
-		if (params.type == "start")
-			params.color = "#ff0000";
-		else if (params.type == "finish")
-			params.color = "#0000ff";
 		this._params = params;
 		this._map = params.map;
-
+		this._currentKey = 0;
 		this.redraw();
 	}
 
 	utils.extend(Waypoint.prototype,EventEmitter.prototype);
 
+	Waypoint.prototype.setCurrentKey = function(key) {
+		this._currentKey = key;
+	}
+
+	// Облегченная версия redraw, которая только красит цилиндры, если их состояние изменилось
+	Waypoint.prototype.recolor = function() {
+		var state = this._params.openTime < this._currentKey ? "opened" : "closed";
+		if (this._state == state) return;
+		this._state = state;
+		var colors = this._map._options.waypointsColors[this._params.type || "default"];
+		var color = colors ? colors[state] : "#000000";
+		if (this._model) {
+			this._model.set("strokeColor",color);
+			this._model.set("fillColor",color);
+		}
+		if (this._titleModel)
+			this._titleModel.set("color",color);
+	}
+
 	Waypoint.prototype.redraw = function() {
+		var state = this._params.openTime < this._currentKey ? "opened" : "closed";
 		if (!this._model) 
 			this._model = new gmaps.Circle({
-			strokeColor: this._params.color,
+			strokeColor: "#000000",
 			strokeOpacity: 0.8,
 			strokeWeight: 1,
-			fillColor: this._params.color,
 			fillOpacity: 0.2,
+			fillColor: "#ffffff",
 			map: this._map._map,
 			center: new gmaps.LatLng(this._params.lat,this._params.lng),
 			radius: this._params.radius
@@ -309,7 +324,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 			template: this._params.titleTemplate,
 			data: {
 				title: this._params.name,
-				color: this._params.color
+				color: "#000000"
 			}
 		});
 		if (this._map.cylindersVisualMode() == "off") {
@@ -321,6 +336,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 			this._model.setMap(this._map._map);
 			this._titleModel.setMap(this._map._map);
 			this._titleModel.move(this._model.getBounds().getNorthEast());
+			this.recolor();
 		}
 	}
 

@@ -136,7 +136,21 @@ define([
 			strokeOpacity: 1,
 			strokeWeight: 2
 		},
-		namesVisualAutoMinZoom: 12
+		namesVisualAutoMinZoom: 12,
+		waypointsColors: {
+			start: {
+				closed: "#ff0000",
+				opened: "#00ff00"
+			},
+			waypoint: {
+				closed: "#909090",
+				opened: "#909090"
+			},
+			finish: {
+				closed: "#0000ff",
+				opened: "#0000ff"
+			}
+		}
 	}
 
 
@@ -414,6 +428,11 @@ define([
 						data[ufo.id]["time"] = playerCurrentKey;
 						ufo.coordsUpdate(data[ufo.id]);
 					});
+					// Цилиндры нужно перекрасить если пришло время
+					self.waypoints().forEach(function(waypoint) {
+						waypoint.setCurrentKey(playerCurrentKey);
+						waypoint.recolor();
+					});
 					// Передвинем бегунок в playerControl-е
 					self.playerControl.setTimePos(playerCurrentKey);
 					if (callback)
@@ -511,7 +530,6 @@ define([
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {
-				console.log("dataSource race data:",data);
 				self.loadPilots(function() {
 					self.setTitles(data);
 					self.setRaceStartKey(data);
