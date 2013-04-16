@@ -51,8 +51,8 @@ define([
 			placeTitle: "France, Saint Andre les Alpes",
 			pilotsCnt: 2,
 			waypointsCnt: 5,
-			startKey: (new Date).getTime() - 60000,
-			endKey: (new Date).getTime(),
+			startKey: (new Date).getTime() - 120000,
+			endKey: (new Date).getTime() - 60000,
 			dtStep: 1000,
 			// Данные для генератора координат
 			coords: {
@@ -79,7 +79,15 @@ define([
 				height: 500,
 			},
 			// Задержка, с которой тестовый сервер отдает ответ
-			testDelay: 1000
+			testDelay: 1000,
+			icons: {
+				"flymedium": {url: "/img/ufoFlyMedium.png", width: 32, height: 35, x: 16, y: 35},
+				"landmedium": {url: "/img/ufoLandMedium.png", width: 32, height: 28, x: 16, y: 28},
+				"flysmall": {url: "/img/ufoFlySmall.png", width: 16, height: 17, x: 8, y: 8},
+				"landsmall": {url: "/img/ufoLandSmall.png", width: 16, height: 14, x: 8, y: 7},
+				"flylarge": {url: "/img/ufoFlyLarge.png", width: 64, height: 70, x: 32, y: 70},
+				"landlarge": {url: "/img/ufoLandLarge.png", width: 64, height: 56, x: 32, y: 56}
+			}
 		},
 		// Установленная по умолчанию скорость в плеере
 		playerSpeed: 1,
@@ -97,7 +105,7 @@ define([
 			playerControl: {
 				visible: true,
 				title: "Player",
-				width: 340,
+				width: 800,
 				top: 160,
 				left: 90
 			},
@@ -117,6 +125,7 @@ define([
 		cylindersVisualMode: "empty",
 		modelsVisualMode: "medium",
 		shortWayVisualMode: "wide",
+		namesVisualMode: "auto",
 		shortWayWide: {
 			color: "#336699",
 			strokeOpacity: 0.5,
@@ -126,7 +135,8 @@ define([
 			color: "#336699",
 			strokeOpacity: 1,
 			strokeWeight: 2
-		}
+		},
+		namesVisualAutoMinZoom: 12
 	}
 
 
@@ -209,7 +219,8 @@ define([
 	}
 
 	Pilot.prototype.initialized = function() {
-		this._ufo.icon(this.icon).visible(true);
+		this._ufo.redraw();
+		this._ufo.visible(true);
 	}
  
 	Pilot.prototype.coordsUpdate = function(data,duration) {
@@ -237,9 +248,9 @@ define([
 
 		this.mapType = this.options.mapType;
 		if (this.mapType == "GoogleMap")
-			this.map = new GoogleMap();
+			this.map = new GoogleMap(this.options);
 		else if (this.mapType == "OwgMap")
-			this.map = new OwgMap();
+			this.map = new OwgMap(this.options);
 
 		this.ufosTable = new UfosTable(this.ufos);
 		this.ufosTableWindow = new Window(this.options.windows.ufosTable);
@@ -260,6 +271,7 @@ define([
 		this.cylindersVisualMode = ko.observable("");
 		this.modelsVisualMode = ko.observable("");
 		this.shortWayVisualMode = ko.observable("");
+		this.namesVisualMode = ko.observable("");
 		this.playerControl.on("setTracksVisualMode",function(v) {
 			self.tracksVisualMode(v);
 		});
@@ -271,6 +283,9 @@ define([
 		});
 		this.playerControl.on("setShortWayVisualMode",function(v) {
 			self.shortWayVisualMode(v);
+		});
+		this.playerControl.on("setNamesVisualMode",function(v) {
+			self.namesVisualMode(v);
 		});
 		this.tracksVisualMode.subscribe(function(v) {
 			self.playerControl.setTracksVisualMode(v);
@@ -288,10 +303,15 @@ define([
 			self.playerControl.setShortWayVisualMode(v);
 			self.map.setShortWayVisualMode(v);
 		});
+		this.namesVisualMode.subscribe(function(v) {
+			self.playerControl.setNamesVisualMode(v);
+			self.map.setNamesVisualMode(v);
+		});
 		this.tracksVisualMode(this.options.tracksVisualMode);
 		this.cylindersVisualMode(this.options.cylindersVisualMode);
 		this.modelsVisualMode(this.options.modelsVisualMode);
 		this.shortWayVisualMode(this.options.shortWayVisualMode);
+		this.namesVisualMode(this.options.namesVisualMode);
 
 		this.server = new TestServer();
 		this.server.generateData(this.options.testServerOptions);
@@ -304,6 +324,11 @@ define([
 	TrackerPageDebug.prototype.setTitles = function(data) {
 		if (this.mainMenu)
 			this.mainMenu.setTitles(data.titles);
+	}
+
+	TrackerPageDebug.prototype.setRaceStartKey = function(data) {
+		if (this.playerControl)
+			this.playerControl.setRaceStartKey(data.raceStartKey);
 	}
 
 	TrackerPageDebug.prototype.loadPilots = function(callback) {
@@ -486,8 +511,10 @@ define([
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {
+				console.log("dataSource race data:",data);
 				self.loadPilots(function() {
 					self.setTitles(data);
+					self.setRaceStartKey(data);
 					self.loadWaypoints(data);
 					self.loadShortWay(data);
 					self.playerInitNew(data);

@@ -8,6 +8,10 @@ define(["utils"],function(utils) {
 			this.events = [];
 			this.waypoints = [];
 			for (var i = 0; i < options.waypointsCnt; i++) {
+				var dtInt = Math.floor((options.endKey-options.startKey)/options.waypointsCnt);
+				var dtOpen = Math.floor((options.startKey + dtInt * i + Math.floor(Math.random()*dtInt/2))/1000)*1000;
+				var dtClose = dtOpen + Math.floor(Math.random()*dtInt/2/1000)*1000;
+				if (i == 0) this.options.raceStartKey = dtOpen;
 				this.waypoints.push({
 					id: i,
 					name: "Waypoint #" + i,
@@ -17,7 +21,9 @@ define(["utils"],function(utils) {
 					radius: options.waypoints.minRadius + Math.random()*(options.waypoints.maxRadius-options.waypoints.minRadius),
 					height: options.waypoints.height,
 					textSize: 1,
-					texture: "/art/redbull4.png"
+					texture: "/art/redbull4.png",
+					openTime: dtOpen,
+					closeTime: dtClose
 				});
 			}
 
@@ -40,7 +46,7 @@ define(["utils"],function(utils) {
 					trackColor: colors[i%colors.length],
 					trackWidth: 2,
 					color: toRGB(colors[i%colors.length]),
-					icon: {url: "/img/ufoFly.png", width: 32, height: 35, x: 15, y: 32},
+					icons: options.icons,
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
@@ -120,6 +126,7 @@ define(["utils"],function(utils) {
 				data = {
 					startKey: this.options.startKey,
 					endKey: this.options.endKey,
+					raceStartKey: this.options.raceStartKey,
 					center: this.options.coords.center,
 					waypoints: this.waypoints,
 					optWay: optWay,

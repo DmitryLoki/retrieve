@@ -1,4 +1,20 @@
 <div>
+	<div class="airvis-clearfix">
+		<div class="airvis-player-timeWindow" data-bind="css:raceTimeCss">
+			<div class="airvis-player-time" data-bind="text:raceTime"></div>
+		</div>
+		<div class="airvis-player-timeText" data-bind="css:raceTimeCss,text:raceTimeText"></div>
+		<div class="airvis-player-timeWindow airvis-local">
+			<div class="airvis-player-time" data-bind="text:localTime"></div>
+		</div>
+		<div class="airvis-player-timeText airvis-local">Local time</div>
+		<div class="airvis-player-selects">
+			<!-- ko widget: { data: cylindersVisualSelect, type: "Select"} --><!-- /ko -->
+			<!-- ko widget: { data: namesVisualSelect, type: "Select"} --><!-- /ko -->
+			<!-- ko widget: { data: trackVisualSelect, type: "Select"} --><!-- /ko -->
+			<!-- ko widget: { data: modelsVisualSelect, type: "Select"} --><!-- /ko -->
+		</div>
+	</div>
 	<div class="airvis-player-controls">
 		<button data-bind="enable: enabled, click: play, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }">PLAY</button>
 		<button data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }">PAUSE</button>
@@ -7,21 +23,4 @@
 		<button data-bind="enable: enabled, click: changeSpeed.bind($data,25), css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }">x25</button>
 	</div>
 	<div class="airvis-slider-container" data-bind="widget:{data:slider,type:'Slider'}"></div>
-	<div class="airvis-current-time">Race current time: <span data-bind="text: filters.formatTime(new Date(slider.val()))"></span></div>
-	<div class="airvis-row airvis-player-controls-titles airvis-clearfix">
-		<div class="airvis-span120"><strong>Tracks</strong></div>
-		<div class="airvis-span120"><strong>Cylinders</strong></div>
-		<div class="airvis-span120"><strong>Short way</strong></div>
-	</div>
-	<div class="airvis-row airvis-clearfix">
-		<div class="airvis-span120">
-			<!-- ko widget: { data: trackVisualRadioGroup, type: "RadioGroup"} --><!-- /ko -->
-		</div>
-		<div class="airvis-span120">
-			<!-- ko widget: { data: cylindersVisualRadioGroup, type: "RadioGroup"} --><!-- /ko -->
-		</div>
-		<div class="airvis-span120">
-			<!-- ko widget: { data: shortWayVisualRadioGroup, type: "RadioGroup"} --><!-- /ko -->
-		</div>
-	</div>
 </div>

@@ -256,16 +256,57 @@ document,body {
 	background-color: rgba(0,0,0,.4);
 }
 .airvis-player-controls-titles strong {
-	padding: 2px 5px;
 	color: #606060;
+	padding: 2px 5px;
+}
+.airvis-player-timeWindow {
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	float: left;
+	margin: 10px;
+}
+.airvis-player-timeWindow.airvis-active {
+	background-color: #ced828;
+}
+.airvis-player-timeWindow.airvis-inactive {
+	background-color: #fbd72c;
+}
+.airvis-player-timeWindow.airvis-local {
+	background-color: #b0d3d8;
+}
+.airvis-player-timeText {
+	float: left;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 20px;
+	margin: 10px;
+	margin-left: 0;
+	width: 70px;
+}
+.airvis-player-timeText.airvis-active {
+	color: #ced828;
+}
+.airvis-player-timeText.airvis-inactive {
+	color: #fbd72c;
+}
+.airvis-player-timeText.airvis-local {
+	color: #b0d3d8;
+}
+.airvis-player-time {
+	color: #ffffff;
+	font-size: 30px;
+	font-weight: bold;
+	line-height: 30px;
+	margin: 5px;
 }
 
 
 /* Radio */
 .airvis-radio-container {
+	cursor: pointer;
 	display: block;
 	padding: 2px 5px;
-	cursor: pointer;
 }
 .airvis-radio {
 	display: block;
@@ -290,6 +331,89 @@ document,body {
 	content: "";
 	background-color: #f0f0f0;
 }
+
+
+/* Select */
+.airvis-selectContainer {
+	float: left;
+	position: relative;
+	width: 150px;
+	margin: 5px;
+}
+.airvis-select {
+	text-decoration: none;
+}
+.airvis-value {
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	color: #002a3a;
+	display: block;
+	float: right;
+	font-size: 12px;
+	font-weight: bold;
+	background-color: #ced7d9;
+	padding: 1px 4px;
+	text-align: center;
+	width: 50px;
+	min-height: 20px;
+}
+.airvis-label {
+	color: #ced7d9;
+	float: right;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 22px;
+	margin-right: 5px;
+}
+.airvis-select:hover .airvis-value {
+	background-color: #ffffff;
+}
+.airvis-select:hover .airvis-label {
+	color: #ffffff;
+}
+.airvis-selectBox {
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	background-color: #ffffff;
+	padding: 1px 4px;
+	position: absolute;
+	width: 50px;
+	z-index: 1;
+}
+.airvis-selectBoxdown {
+	top: 0;
+	right: 0;
+}
+.airvis-selectBoxup {
+	bottom: 0;
+	right: 0;
+}
+.airvis-selectBox > a {
+	display: block;
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #002a3a;
+}
+.airvis-selectBox > a.active {
+	color: #00aeef;
+}
+.airvis-selectBox > a:hover {
+	color: #586971;
+}
+.airvis-selectBox > a.active:hover {
+	color: #6bc6f3;
+}
+.airvis-selectContainerFade .airvis-value {
+	background-color: #537585;
+}
+.airvis-selectContainerFade .airvis-label {
+	color: #6d878f;
+}
+
 
 /* sq animation border */
 .airvis-slideSq {
