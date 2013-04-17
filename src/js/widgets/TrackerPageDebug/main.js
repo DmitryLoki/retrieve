@@ -440,6 +440,11 @@ define([
 
 					// Теперь здесь сделаем запрос на получение инфы о треке
 					// потому что если делать отдельно, вначале при загрузке еще нет данных в кеше
+					if (self.tracksVisualMode() == "off") {
+						self.ufos().forEach(function(ufo) {
+							ufo.trackVisibleChecked(false);
+						});
+					}
 					if (self.tracksVisualMode() != "off") {
 						self.dataSource.get({
 							type: "tracks",
@@ -448,6 +453,7 @@ define([
 							restrict: self.tracksVisualMode() == "10min" ? 10 : null,
 							callback: function(data) {
 								self.ufos().forEach(function(ufo) {
+									ufo.trackVisibleChecked(true);
 									ufo.trackUpdate(data[ufo.id]);
 								});
 							}

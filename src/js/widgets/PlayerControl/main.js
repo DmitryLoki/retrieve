@@ -88,26 +88,26 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 	<div class="airvis-current-time">Race current time: <span data-bind="text: filters.formatTime(new Date(slider.val()))"></span></div>
 */
 
-		this.trackVisualSelect = new Select({data:this.tracksVisualMode,label:"Tracks",values:[{value:"10min",title:"10 min"},{value:"full",title:"Full"},{value:"off",title:"Off"}]});
+		this.tracksVisualSelect = new Select({data:this.tracksVisualMode,label:"Tracks",values:[{value:"10min",title:"10 min"},{value:"full",title:"Full"},{value:"off",title:"Off"}]});
 		this.cylindersVisualSelect = new Select({data:this.cylindersVisualMode,label:"Cylinders",values:[{value:"full",title:"Full"},{value:"empty",title:"Empty"},{value:"off",title:"Off"}]});
 		this.modelsVisualSelect = new Select({data:this.modelsVisualMode,label:"Models",values:[{value:"large",title:"Large"},{value:"medium",title:"Medium"},{value:"small",title:"Small"}]});
 		this.shortWayVisualSelect = new Select({data:this.shortWayVisualMode,label:"Shortest way",values:[{value:"wide",title:"Wide"},{value:"thin",title:"Thin"},{value:"off",title:"Off"}]});
 		this.namesVisualSelect = new Select({data:this.namesVisualMode,label:"Names",values:[{value:"on",title:"On"},{value:"auto",title:"Auto"},{value:"off",title:"Off"}]});
 		
 		var fadeSelects = function(v) {
-			var selects = ["trackVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
+			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
 			for (var i = 0; i < selects.length; i++)
 				if (self[selects[i]] != v)
 					self[selects[i]].fade();
 		}
 
 		var unfadeSelects = function() {
-			var selects = ["trackVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
+			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
 			for (var i = 0; i < selects.length; i++)
 				self[selects[i]].unfade();
 		}
 
-		this.trackVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
+		this.tracksVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.cylindersVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.modelsVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.shortWayVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);

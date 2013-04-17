@@ -209,7 +209,12 @@ define(function() {
 
 				// Количество секунд, прошедших с начала гонки
 				var dtOffset = Math.floor((query.dt - query.dtStart) / 1000);
+
+				// Милисекунды начала трека, если грузить только последние 10 мин
+				query.dtMin = query.restrict ? Math.max(query.dt - query.restrict*1000,0) : 0;
+
 				var dtMin = query.restrict ? Math.max(dtOffset - query.restrict,0) : 0;
+				var dtMin = 0;
 
 				var data = {};
 
@@ -238,7 +243,8 @@ define(function() {
 						var inOffset = Math.floor(dtOffset / inSize);
 						if (this.cache[inSize][inOffset] && this.cache[inSize][inOffset].status == "ready") {
 							// получаем в inOffset индекс первого интервала с загруженными данными
-							while(this.cache[inSize][inOffset-1] && this.cache[inSize][inOffset-1].status == "ready" && (dtMin <= (inOffset-1)*inSize))
+							// при этом не берем интервалы раньше чем dtMin (если нужен трек за последние 10 мин)
+							while(this.cache[inSize][inOffset-1] && this.cache[inSize][inOffset-1].status == "ready" && (dtMin==0 || dtMin <= (inOffset-1)*inSize))
 								inOffset--;
 							// грузим стартовые данные (из start) на из первого связного загруженного интервала
 							addStartData(this.cache[inSize][inOffset].data.start);
@@ -258,7 +264,7 @@ define(function() {
 						var keys = [];
 						for (var i in data[pilot_id])
 							if (data[pilot_id].hasOwnProperty(i))
-								if (i <= query.dt)
+								if (i <= query.dt && i >= query.dtMin)
 									keys.push(i);
 //						out[pilot_id] = {data:{},start:keys[0],end:keys[keys.length-1]};
 						out[pilot_id] = {data:{},start:keys[0],end:query.dt};
