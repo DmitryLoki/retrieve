@@ -14,6 +14,7 @@ define([
     'widget!MainMenu',
     'widget!TopBar',
     'TestServer',
+    'RealServer',
     'DataSource',
     'ShortWay'
 ], function(
@@ -32,6 +33,7 @@ define([
     MainMenu,
     TopBar,
     TestServer,
+    RealServer,
     DataSource,
     ShortWay
 ){
@@ -51,8 +53,8 @@ define([
 			placeTitle: "France, Saint Andre les Alpes",
 			pilotsCnt: 2,
 			waypointsCnt: 5,
-			startKey: (new Date).getTime() - 120000,
-			endKey: (new Date).getTime() - 60000,
+//			startKey: (new Date).getTime() - 120000,
+//			endKey: (new Date).getTime() - 60000,
 			dtStep: 1000,
 			// Данные для генератора координат
 			coords: {
@@ -327,7 +329,9 @@ define([
 		this.shortWayVisualMode(this.options.shortWayVisualMode);
 		this.namesVisualMode(this.options.namesVisualMode);
 
-		this.server = new TestServer();
+//		this.server = new TestServer();
+		this.server = new RealServer();
+		// это пока оставим, ничего не генерим но используем несколько настроек 
 		this.server.generateData(this.options.testServerOptions);
 		// Создаем dataSource, устанавливаем ему в качестве источника данных тестовый сервер
 		this.dataSource = new DataSource({
@@ -395,6 +399,8 @@ define([
 	// между окружающими ее целыми секундами.
 	TrackerPageDebug.prototype.playerInitNew = function(data) {
 		var self = this;
+
+		console.log("playerInitNew",data);
 
 		// Даннные в милисекундах, время начала и конца гонки. Текущее время плеера устанавливается на начало гонки
 		var playerStartKey = data.startKey;
@@ -482,6 +488,7 @@ define([
 		// При инициализации и когда вручную тащим бегунок слайдера, нужно уметь задавать положение на определенное время
 		// При этом ессно обновлять данные таблицы, а то вдруг у нас состояние pause, при котором данные не обновляются автоматически
 		var setSpecificFrame = function(time) {
+			console.log("setSpecificFrame",time);
 			playerCurrentKey = time;
 			renderFrame(function() {
 				renderTableData();
@@ -506,9 +513,6 @@ define([
 			});
 		}
 
-		// Нужно проставить маркеры, для этого нужно получить их начальное положение и после этого проставить данные в таблице
-		setSpecificFrame(playerStartKey);
-
 		self.playerControl
 		.on("play",function() {
 			timelineIntervalCycler();
@@ -528,11 +532,15 @@ define([
 		})
 		.initTimeInterval(playerStartKey,playerEndKey)
 		.pause();
+
+		// Нужно проставить маркеры, для этого нужно получить их начальное положение и после этого проставить данные в таблице
+		setSpecificFrame(playerStartKey);
 	}
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		var self = this;
 		// Все запросы к серверу считаются асинхронными с callback-ом
+		/*
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {
@@ -544,6 +552,20 @@ define([
 					self.playerInitNew(data);
 				});
 			}
+		});
+		*/
+		self.loadPilots(function() {
+			self.dataSource.get({
+				type: "race",
+				callback: function(data) {
+					console.log(data);
+					self.setTitles(data);
+					self.setRaceStartKey(data);
+					self.loadWaypoints(data);
+					self.loadShortWay(data);
+					self.playerInitNew(data);
+				}
+			});
 		});
 	}
 

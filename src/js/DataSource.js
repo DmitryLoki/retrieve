@@ -189,7 +189,7 @@ define(function() {
 							query.callback(getDataFromFrame(data,query.dt));
 						}
 					}
-					this.options.server.getWithDelay({
+					this.options.server.get({
 						type: "timeline",
 						first: first,
 						last: last,
