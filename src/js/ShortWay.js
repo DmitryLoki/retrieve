@@ -6,6 +6,7 @@ define(function() {
 	}
 
 	ShortWay.prototype.calculate = function(data) {
+		if (!data || data.length < 2) return []; 
 		for (var cycl = 0; cycl < this.APPROXIMATION_CYCLES; cycl++) {
 			for (var i = 1; i < data.length-1; i++) {
 				if (!data[i-1].aPoint) data[i-1].aPoint = {lat:data[i-1].lat,lng:data[i-1].lng};
