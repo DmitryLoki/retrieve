@@ -1,522 +1,132 @@
 
 /* overall container */
-document,body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.airvis-container {
-	min-height: 100%;
-	margin: 0;
-	padding: 0;
-}
+document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;}
+.airvis-container { min-height: 100%; margin: 0; padding: 0;}
 
 
 /* clearfix */
 .airvis-clearfix {
-    *zoom: 1;
-}
+    *zoom: 1;}
 .airvis-clearfix:before,
 .airvis-clearfix:after {
     content: "";
     display: table;
-    line-height: 0;
-}
+    line-height: 0;}
 .airvis-clearfix:after {
-    clear: both;
-}
+    clear: both;}
 
 /* columns */
-.airvis-row {
-	margin-left: -20px;
-}
-.airvis-span120 {
-	display: block;
-	float: left;
-	width: 100px;
-	margin-left: 20px;
-}
+.airvis-row { margin-left: -20px;}
+.airvis-span120 { display: block; float: left; width: 100px; margin-left: 20px;}
 
 /* setCapture does not work in some browsers, so instead of using it we overwrite cursor over the whole body while dragging an object */
-.airvis-document-overwrite-cursor-pointer {
-	cursor: pointer !important;
-}
-.airvis-document-overwrite-cursor-move {
-	cursor: move !important;
-}
-.airvis-document-overwrite-cursor-e-resize {
-	cursor: e-resize !important;
-}
-.airvis-document-overwrite-cursor-se-resize {
-	cursor: se-resize !important;
-}
-.airvis-document-overwrite-cursor-s-resize {
-	cursor: s-resize !important;
-}
+.airvis-document-overwrite-cursor-pointer { cursor: pointer !important;}
+.airvis-document-overwrite-cursor-move { cursor: move !important;}
+.airvis-document-overwrite-cursor-e-resize { cursor: e-resize !important;}
+.airvis-document-overwrite-cursor-se-resize { cursor: se-resize !important;}
+.airvis-document-overwrite-cursor-s-resize { cursor: s-resize !important;}
 
 /* common window widget styles */
-.airvis-window {
-	color: #333333;
-	display: block;
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size: 14px;
-	line-height: 20px;
-	position: absolute;
-}
-.airvis-window-header {
-	background-color: rgba(0,47,64,.93);
-	padding: 0 11px;
-	height: 40px;
-}
-.airvis-window-title {
-	color: #ffffff;
-	display: block;
-	float: left;
-	font-size: 18px;
-	font-weight: bold;
-	line-height: 40px;
-	padding: 0 11px;
-	text-rendering: optimizelegibility;
-}
-.airvis-window-close {
-	float: right;
-	outline: 0 none;
-	display: block;
-	width: 20px;
-	height: 20px;
-	background: url("icon-close.png") 0 0 no-repeat;
-	margin-top: 10px;
-}
-.airvis-window-close-absolute {
-	position: absolute;
-	outline: 0 none;
-	display: block;
-	top: 5px;
-	right: 5px;
-	width: 20px;
-	height: 20px;
-	background: url("icon-close.png") 0 0 no-repeat;
-}
-.airvis-window-close:hover {
-	background-color: #303030;
-	text-decoration: underline;
-}
-.airvis-window-content {
-	background-color: rgba(0,47,64,.75);
-	position: relative;
-	overflow: auto;
-}
-.airvis-window-content-absolute {
-	bottom: 0;
-	left: 0;
-	position: absolute;
-	right: 0;
-	top: 0px;
-}
-.airvis-transparent {
-	background-color: transparent;
-}
-.airvis-window-resize {
-	position: absolute;
-}
-.airvis-resize-right {
-	bottom: 0;
-	cursor: e-resize;
-	right: -8px;
-	top: 0;
-	width: 10px;
-}
-.airvis-resize-bottom {
-	bottom: -8px;
-	cursor: s-resize;
-	height: 10px;
-	left: 0;
-	right: 0;
-}
-.airvis-resize-bottom-right {
-	bottom: -8px;
-	cursor: se-resize;
-	height: 10px;
-	right: -8px;
-	width: 10px;
-}
+.airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
+.airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
+.airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0 11px; text-rendering: optimizelegibility;}
+.airvis-window-close { float: right; outline: 0 none; display: block; width: 20px; height: 20px; background: url("icon-close.png") 0 0 no-repeat; margin-top: 10px;}
+.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 5px; right: 5px; width: 20px; height: 20px; background: url("icon-close.png") 0 0 no-repeat;}
+.airvis-window-close:hover { background-color: #303030; text-decoration: underline;}
+.airvis-window-content { background-color: rgba(0,47,64,.75); position: relative; overflow: auto;}
+.airvis-window-content-absolute { bottom: 0; left: 0; position: absolute; right: 0; top: 0px;}
+.airvis-transparent { background-color: transparent;}
+.airvis-window-resize { position: absolute;}
+.airvis-resize-right { bottom: 0; cursor: e-resize; right: -8px; top: 0; width: 10px;}
+.airvis-resize-bottom { bottom: -8px; cursor: s-resize; height: 10px; left: 0; right: 0;}
+.airvis-resize-bottom-right { bottom: -8px; cursor: se-resize; height: 10px; right: -8px; width: 10px;}
 
 
 
 /* table with fixed header in ufosTable widget */
-.airvis-table-with-fixed-header {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	top: 42px;
-}
-.airvis-table-with-fixed-header-inner {
-	height: 100%;
-	overflow-x: hidden;
-	overflow-y: auto;
-}
-.airvis-table-with-fixed-header table {
-	margin: 0;
-	overflow: hidden;
-	position: static;
-	width: 100%;
-	font-size: 12px;
-	color: #ffffff;
-
+.airvis-table-with-fixed-header { position: absolute; bottom: 0; left: 0; right: 0; top: 42px;}
+.airvis-table-with-fixed-header-inner { height: 100%; overflow-x: hidden; overflow-y: auto;}
+.airvis-table-with-fixed-header table { margin: 0; overflow: hidden; position: static; width: 100%; font-size: 12px; color: #ffffff;
 }
 .arvis-table-head-surrogate { width: 100%; height: 42px; background-color: rgba(0,47,64,.50);}
-.airvis-table-with-fixed-header table th {
-	padding: 0;
-	border: 0;
-	font-size: 12px;
-	line-height: 15px;
-	text-align: left;
-	font-weight: normal;
-}
-.airvis-table-with-fixed-header th div.th_wrap {
-	position: absolute;
-	text-align: center;
-	top: -42px;
-	height: 42px;
-	
-	
-}
+.airvis-table-with-fixed-header table th { padding: 0; border: 0; font-size: 12px; line-height: 15px; text-align: left; font-weight: normal;}
+.airvis-table-with-fixed-header th div.th_wrap { position: absolute; text-align: center; top: -42px; height: 42px;  }
 .airvis-table-with-fixed-header th div.th_wrap div { position: absolute; bottom: 5px; left: 0; right: 0; padding: 0 10px;}
-.airvis-table-with-fixed-header tr.airvis-hidden-header th > div {
-	height: 0;
-	overflow-y: hidden;
-	position: static;
-	white-space: nowrap;
-}
+.airvis-table-with-fixed-header tr.airvis-hidden-header th > div { height: 0; overflow-y: hidden; position: static; white-space: nowrap;}
 
 
 /* redefine font sizes in airvis tables */
 .airvis-window table tbody tr:nth-child(2n+2) { background-color: rgba(0,47,64,.35);}
-.airvis-window table tbody td {
-	/*font-size: 10px;*/
-	line-height: 20px;
-	padding: 2px 10px;
-}
+.airvis-window table tbody td { /*font-size: 10px;*/ line-height: 20px; padding: 2px 10px;}
 .airvis-window table tbody td + td { border-left: 1px solid rgba(0,47,64,.15)}
 
-.airvis-window th.airvis-checkbox, .airvis-window td.airvis-checkbox {
-	padding: 0;
-	text-align: center;
-	width: 32px;
-}
-.airvis-window th.airvis-checkbox .checkbox, .airvis-window td.airvis-checkbox .checkbox {
-	/*margin-bottom: -5px;*/
-	margin-top: 5px;
-}
+.airvis-window th.airvis-checkbox, .airvis-window td.airvis-checkbox { padding: 0; text-align: center; width: 32px;}
+.airvis-window th.airvis-checkbox .checkbox, .airvis-window td.airvis-checkbox .checkbox { /*margin-bottom: -5px;*/ margin-top: 5px;}
 
 
 /* Livetracking controls */
-.airvis-player-controls {
-	padding: 5px;
-	padding-bottom: 0;
-}
-.airvis-player-controls button {
-	margin: 2px;
-}
-.airvis-current-time {
-	color: #00aeef;
-	font-size: 12.8px;
-	padding: 0 10px;
-	padding-bottom: 5px;
-}
-.airvis-slider {
-	background-color: #777777;
-	border: 1px solid #555555;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	height: 10px;
-	margin: 4px;
-	position: relative;
-}
-.airvis-slider-container {
-	padding: 5px;
-	padding-top: 0;
-	overflow: hidden;
-}
-.airvis-slider-handle {
-	background-color: #a4a4a4;
-	border: 1px solid #444444;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	display: block;
-	height: 15px;
-	margin-left: -4px;
-	margin-top: -4px;
-	width: 15px;
-	position: absolute;
-	overflow: hidden;
-}
-.airvis-slider-range {
-	background-color: #ececec;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	height: 10px;
-	left: 0;
-	position: absolute;
-}
-.airvis-player-controls-titles {
-	background-color: rgba(0,0,0,.4);
-}
-.airvis-player-controls-titles strong {
-	color: #606060;
-	padding: 2px 5px;
-}
-.airvis-player-timeWindow {
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	float: left;
-	margin: 10px;
-}
-.airvis-player-timeWindow.airvis-active {
-	background-color: #ced828;
-}
-.airvis-player-timeWindow.airvis-inactive {
-	background-color: #fbd72c;
-}
-.airvis-player-timeWindow.airvis-local {
-	background-color: #b0d3d8;
-}
-.airvis-player-timeText {
-	float: left;
-	font-size: 16px;
-	font-weight: bold;
-	line-height: 20px;
-	margin: 10px;
-	margin-left: 0;
-	width: 70px;
-}
-.airvis-player-timeText.airvis-active {
-	color: #ced828;
-}
-.airvis-player-timeText.airvis-inactive {
-	color: #fbd72c;
-}
-.airvis-player-timeText.airvis-local {
-	color: #b0d3d8;
-}
-.airvis-player-time {
-	color: #ffffff;
-	font-size: 30px;
-	font-weight: bold;
-	line-height: 30px;
-	margin: 5px;
-}
+.airvis-player-controls { padding: 5px; padding-bottom: 0;}
+.airvis-player-controls button { margin: 2px;}
+.airvis-current-time { color: #00aeef; font-size: 12.8px; padding: 0 10px; padding-bottom: 5px;}
+.airvis-slider { background-color: #777777; border: 1px solid #555555; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; height: 10px; margin: 4px; position: relative;}
+.airvis-slider-container { padding: 5px; padding-top: 0; overflow: hidden;}
+.airvis-slider-handle { background-color: #a4a4a4; border: 1px solid #444444; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; display: block; height: 15px; margin-left: -4px; margin-top: -4px; width: 15px; position: absolute; overflow: hidden;}
+.airvis-slider-range { background-color: #ececec; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; height: 10px; left: 0; position: absolute;}
+.airvis-player-controls-titles { background-color: rgba(0,0,0,.4);}
+.airvis-player-controls-titles strong { color: #606060; padding: 2px 5px;}
+.airvis-player-timeWindow { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; float: left; margin: 10px;}
+.airvis-player-timeWindow.airvis-active { background-color: #ced828;}
+.airvis-player-timeWindow.airvis-inactive { background-color: #fbd72c;}
+.airvis-player-timeWindow.airvis-local { background-color: #b0d3d8;}
+.airvis-player-timeText { float: left; font-size: 16px; font-weight: bold; line-height: 20px; margin: 10px; margin-left: 0; width: 70px;}
+.airvis-player-timeText.airvis-active { color: #ced828;}
+.airvis-player-timeText.airvis-inactive { color: #fbd72c;}
+.airvis-player-timeText.airvis-local { color: #b0d3d8;}
+.airvis-player-time { color: #ffffff; font-size: 30px; font-weight: bold; line-height: 30px; margin: 5px;}
 
 
 /* Radio */
-.airvis-radio-container {
-	cursor: pointer;
-	display: block;
-	padding: 2px 5px;
-}
-.airvis-radio {
-	display: block;
-	float: left;
-	margin: 3px;
-	width: 12px;
-	height: 12px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-	content: "";
-	background-color: #505050;
-}
-.airvis-radio-inner {
-	display: block;
-	margin: 3px;
-	width: 6px;
-	height: 6px;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	content: "";
-	background-color: #f0f0f0;
-}
+.airvis-radio-container { cursor: pointer; display: block; padding: 2px 5px;}
+.airvis-radio { display: block; float: left; margin: 3px; width: 12px; height: 12px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; content: ""; background-color: #505050;}
+.airvis-radio-inner { display: block; margin: 3px; width: 6px; height: 6px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; content: ""; background-color: #f0f0f0;}
 
 
 /* Select */
-.airvis-selectContainer {
-	float: left;
-	position: relative;
-	width: 150px;
-	margin: 5px;
-}
-.airvis-select {
-	text-decoration: none;
-}
-.airvis-value {
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	color: #002a3a;
-	display: block;
-	float: right;
-	font-size: 12px;
-	font-weight: bold;
-	background-color: #ced7d9;
-	padding: 1px 4px;
-	text-align: center;
-	width: 50px;
-	min-height: 20px;
-}
-.airvis-label {
-	color: #ced7d9;
-	float: right;
-	font-size: 14px;
-	font-weight: bold;
-	line-height: 22px;
-	margin-right: 5px;
-}
-.airvis-select:hover .airvis-value {
-	background-color: #ffffff;
-}
-.airvis-select:hover .airvis-label {
-	color: #ffffff;
-}
-.airvis-selectBox {
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-	background-color: #ffffff;
-	padding: 1px 4px;
-	position: absolute;
-	width: 50px;
-	z-index: 1;
-}
-.airvis-selectBoxdown {
-	top: 0;
-	right: 0;
-}
-.airvis-selectBoxup {
-	bottom: 0;
-	right: 0;
-}
-.airvis-selectBox > a {
-	display: block;
-	text-align: center;
-	font-size: 12px;
-	font-weight: bold;
-	text-decoration: none;
-	color: #002a3a;
-}
-.airvis-selectBox > a.active {
-	color: #00aeef;
-}
-.airvis-selectBox > a:hover {
-	color: #586971;
-}
-.airvis-selectBox > a.active:hover {
-	color: #6bc6f3;
-}
-.airvis-selectContainerFade .airvis-value {
-	background-color: #537585;
-}
-.airvis-selectContainerFade .airvis-label {
-	color: #6d878f;
-}
+.airvis-selectContainer { float: left; position: relative; width: 150px; margin: 5px;}
+.airvis-select { text-decoration: none;}
+.airvis-value { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: #ced7d9; padding: 1px 4px; text-align: center; width: 50px; min-height: 20px;}
+.airvis-label { color: #ced7d9; float: right; font-size: 14px; font-weight: bold; line-height: 22px; margin-right: 5px;}
+.airvis-select:hover .airvis-value { background-color: #ffffff;}
+.airvis-select:hover .airvis-label { color: #ffffff;}
+.airvis-selectBox { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; background-color: #ffffff; padding: 1px 4px; position: absolute; width: 50px; z-index: 1;}
+.airvis-selectBoxdown { top: 0; right: 0;}
+.airvis-selectBoxup { bottom: 0; right: 0;}
+.airvis-selectBox > a { display: block; text-align: center; font-size: 12px; font-weight: bold; text-decoration: none; color: #002a3a;}
+.airvis-selectBox > a.active { color: #00aeef;}
+.airvis-selectBox > a:hover { color: #586971;}
+.airvis-selectBox > a.active:hover { color: #6bc6f3;}
+.airvis-selectContainerFade .airvis-value { background-color: #537585;}
+.airvis-selectContainerFade .airvis-label { color: #6d878f;}
 
 
 /* sq animation border */
-.airvis-slideSq {
-	border: 1px solid #000000;
-	position: absolute;
-}
+.airvis-slideSq { border: 1px solid #000000; position: absolute;}
 
 /* TopBar */
-.airvis-topbar {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 40px;
-	background-color: rgba(0, 47, 64, 0.93);
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+.airvis-topbar { position: absolute; top: 0; left: 0; right: 0; height: 40px; background-color: rgba(0, 47, 64, 0.93); font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
+.airvis-topbar-container { margin: 0 auto; width: 800px;}
+.airvis-topbar-logo { background: transparent url("../img/logo.png") 0 0 no-repeat; display: block; float: left; height: 24px; margin: 8px 0 0 0; width: 216px;}
+.airvis-topbar-items { display: block; float: left; margin: 0; padding: 0; margin-left: 70px;}
+.airvis-topbar-items li { display: block; float: left; list-style: none outside none;}
+.airvis-topbar-items a { display: block; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px;
+ -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; color: #ffffff; background-color: transparent;
 }
-.airvis-topbar-container {
-	margin: 0 auto;
-	width: 800px;
-}
-.airvis-topbar-logo {
-	background: transparent url("../img/logo.png") 0 0 no-repeat;
-	display: block;
-	float: left;
-	height: 24px;
-	margin: 8px 0 0 0;
-	width: 216px;
-}
-.airvis-topbar-items {
-	display: block;
-	float: left;
-	margin: 0;
-	padding: 0;
-	margin-left: 70px;
-}
-.airvis-topbar-items li {
-	display: block;
-	float: left;
-	list-style: none outside none;
-}
-.airvis-topbar-items a {
-	display: block;
-	margin-top: 8px;
-	margin-left: 10px;
-	padding: 0 11px;
-	height: 24px;
-	background-color: #c3ced0;
-	color: #002a3a;
-	text-decoration: none;
-	font-size: 14px;
-	font-weight: bold;
-	line-height: 24px;
-
-	-webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
-
-}
-.airvis-topbar-items a.airvis-checked {
-	background-color: transparent;
-	color: #ffffff;
-}
-.airvis-topbar-items a:hover {
-	background-color: #ffffff;
-	color: #002a3a;	
-}
+.airvis-topbar-items a.airvis-checked { background-color: rgba(255,255,255, 0.75); color: #002a3a; }
+.airvis-topbar-items a:hover { background-color: #ffffff; color: #002a3a;	}
 
 /* Title */
-.airvis-title {
-	padding: 20px;
-	color: #ffffff;
-	font-size: 16px;
-	font-weight: bold;
-	position: relative;
-}
-.airvis-title h1 {
-	font-size: 28px;
-	line-height: 28px;
-	margin: 0;
-	padding: 0;
-}
-.airvis-title .airvis-title-place {
-	float: left;
-	margin: 10px 30px 0 0;
-}
-.airvis-title .airvis-title-date {
-	float: left;
-	margin: 10px 30px 0 0;
-}
-.airvis-title .airvis-title-task {
-	float: left;
-	margin: 10px 30px 0 0;
-}
+.airvis-title { padding: 20px; color: #ffffff; font-size: 16px; font-weight: bold; position: relative;}
+.airvis-title h1 { font-size: 28px; line-height: 28px; margin: 0; padding: 0;}
+.airvis-title .airvis-title-place { float: left; margin: 10px 30px 0 0;}
+.airvis-title .airvis-title-date { float: left; margin: 10px 30px 0 0;}
+.airvis-title .airvis-title-task { float: left; margin: 10px 30px 0 0;}
