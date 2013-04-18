@@ -53,8 +53,8 @@ define([
 			placeTitle: "France, Saint Andre les Alpes",
 			pilotsCnt: 20,
 			waypointsCnt: 5,
-//			startKey: (new Date).getTime() - 120000,
-//			endKey: (new Date).getTime() - 60000,
+			startKey: (new Date).getTime() - 120000,
+			endKey: (new Date).getTime() - 60000,
 			dtStep: 1000,
 			// Данные для генератора координат
 			coords: {
@@ -329,8 +329,8 @@ define([
 		this.shortWayVisualMode(this.options.shortWayVisualMode);
 		this.namesVisualMode(this.options.namesVisualMode);
 
-//		this.server = new TestServer();
-		this.server = new RealServer();
+		this.server = new TestServer();
+//		this.server = new RealServer();
 		// это пока оставим, ничего не генерим но используем несколько настроек 
 		this.server.generateData(this.options.testServerOptions);
 		// Создаем dataSource, устанавливаем ему в качестве источника данных тестовый сервер

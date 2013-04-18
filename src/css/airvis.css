@@ -411,12 +411,14 @@ document,body {
 .airvis-selectBox > a.active {
 	color: #00aeef;
 }
+/*
 .airvis-selectBox > a:hover {
 	color: #586971;
 }
 .airvis-selectBox > a.active:hover {
 	color: #6bc6f3;
 }
+*/
 .airvis-selectContainerFade .airvis-value {
 	background-color: #537585;
 }

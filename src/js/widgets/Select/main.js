@@ -8,6 +8,22 @@ define(["jquery","knockout","utils"],function($,ko,utils) {
         this.faded = ko.observable(false);
         this.values = ko.observableArray(params.values || []);
 
+        this.displayValues = ko.computed(function() {
+            var out = [];
+            if (!self.values || self.values().length == 0) return [];
+            self.values().forEach(function(rw) {
+                if (self.expandDirection() == "down") {
+                    if (self.data() == rw.value) out.unshift(rw);
+                    else out.push(rw);
+                }
+                else {
+                    if (self.data() == rw.value) out.push(rw);
+                    else out.unshift(rw);
+                }
+            });
+            return out;
+        })
+
         this.selectBoxPosition = ko.computed(function() {
             return "airvis-selectBox" + self.expandDirection();
         });

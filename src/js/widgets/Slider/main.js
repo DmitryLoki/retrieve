@@ -3,6 +3,12 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 	var Slider = function(options) {
 		var self = this;
 
+		var defaults = {
+			min: 0,
+			max: 0,
+			val: 0
+		}
+
 		self._dragging = false;
 		self._val = ko.observable(options.val || 0);
 		self._min = ko.observable(options.min || 0);

@@ -5,7 +5,7 @@
 			<div class="airvis-label" data-bind="text:label"></div>
 		<!-- /ko -->
 	</a>
-	<div class="airvis-selectBox" data-bind="visible:expanded,foreach:values,css:selectBoxPosition">
+	<div class="airvis-selectBox" data-bind="visible:expanded,foreach:displayValues,css:selectBoxPosition">
 		<a href="#" data-bind="text:title,click:$parent.setValue.bind($parent,$data),css:{active:$parent.data()==value}"></a>
 	</div>
 </div>
