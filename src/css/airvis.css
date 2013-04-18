@@ -102,11 +102,11 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-selectBoxdown { top: 0; right: 0;}
 .airvis-selectBoxup { bottom: 0; right: 0;}
 .airvis-selectBox > a { display: block; text-align: center; font-size: 12px; font-weight: bold; text-decoration: none; color: #002a3a;}
-/*
 .airvis-selectBox > a.active { color: #00aeef;}
+/*
 .airvis-selectBox > a:hover { color: #586971;}
-*/
 .airvis-selectBox > a.active:hover { color: #6bc6f3;}
+*/
 .airvis-selectContainerFade .airvis-value { background-color: #537585;}
 .airvis-selectContainerFade .airvis-label { color: #6d878f;}
 
