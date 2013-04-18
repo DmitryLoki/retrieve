@@ -49,7 +49,7 @@ define([
 			taskTitle: "Task1 - 130km",
 			dateTitle: "22 Sep, 2012",
 			placeTitle: "France, Saint Andre les Alpes",
-			pilotsCnt: 2,
+			pilotsCnt: 20,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 120000,
 			endKey: (new Date).getTime() - 60000,

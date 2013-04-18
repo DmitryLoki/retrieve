@@ -2,7 +2,7 @@ span.checkbox {
     display: inline-block;
     width: 14px;
     height: 14px;
-    background: url("/img/checkbox.png") 0 14px;
+    background: url("../img/checkbox.png") 0 14px;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
