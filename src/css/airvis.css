@@ -41,6 +41,9 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-resize-bottom { bottom: -8px; cursor: s-resize; height: 10px; left: 0; right: 0;}
 .airvis-resize-bottom-right { bottom: -8px; cursor: se-resize; height: 10px; right: -8px; width: 10px;}
 
+.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: 5px; right: 10px; width: 20px; height: 20px; }
+.airvis-expand { background-color: #ff0000; }
+.airvis-collapse { background-color: #00ff00; }
 
 
 /* table with fixed header in ufosTable widget */
@@ -154,8 +157,10 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-selectBoxup { bottom: 0; right: 0;}
 .airvis-selectBox > a { display: block; text-align: center; font-size: 12px; font-weight: bold; text-decoration: none; color: #002a3a;}
 .airvis-selectBox > a.active { color: #00aeef;}
+/*
 .airvis-selectBox > a:hover { color: #586971;}
 .airvis-selectBox > a.active:hover { color: #6bc6f3;}
+*/
 .airvis-selectContainerFade .airvis-value { background-color: #537585;}
 .airvis-selectContainerFade .airvis-label { color: #6d878f;}
 
@@ -185,3 +190,13 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-title .airvis-title-place { float: left; margin: 10px 30px 0 0;}
 .airvis-title .airvis-title-date { float: left; margin: 10px 30px 0 0;}
 .airvis-title .airvis-title-task { float: left; margin: 10px 30px 0 0;}
+
+/* Ufos on the map */
+.airvis-ufo {
+	padding-top: 32px;
+	padding-left: 16px;
+	background: transparent url("/img/ufoFlyMedium.png") 0 0 no-repeat;
+	white-space: nowrap;
+}
+
+

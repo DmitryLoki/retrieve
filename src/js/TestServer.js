@@ -31,6 +31,7 @@ define(["utils"],function(utils) {
 
 			// Цвета в формате [r,g,b,alpha] для owg. alpha пока не работает, должна быть = 1, но если owg пофиксят, будет поддерживаться
 			var colors = [[0,0,0,1],[1,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1],[1,0,1,1],[0,1,1,1],[1,1,1,1]];
+			var countries = "RU HU CZ NO".split(/ /);
 
 			var toRGB = function(ar) {
 				var decColor = 0x1000000 + Math.floor(255*ar[2]) + 0x100 * Math.floor(ar[1]*255) + 0x10000 * Math.floor(ar[0]*255);
@@ -42,6 +43,7 @@ define(["utils"],function(utils) {
 					id: i,
 					name: "Pilot #" + i,
 					owgModelUrl: "/art/models/paraplan5.json.amd",
+					country: countries[i%countries.length],
 					textSize: 0.5,
 					trackColor: colors[i%colors.length],
 					trackWidth: 2,

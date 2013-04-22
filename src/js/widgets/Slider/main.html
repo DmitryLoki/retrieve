@@ -1,6 +1,6 @@
 <div>
-	<div class="slider airvis-slider" data-bind="click:clickSlider">
+	<div class="slider airvis-slider" data-bind="event:{mousedown:dragStart}">
 		<div class="airvis-slider-range" data-bind="style:{width:valPercent()+'%'}"></div>
-		<a class="airvis-slider-handle" href="#" data-bind="event:{mousedown:dragStart},style:{left:sliderPercent()+'%'}"></a>
+		<a class="airvis-slider-handle" href="#" data-bind="style:{left:sliderPercent()+'%'}"></a>
 	</div>
 </div>

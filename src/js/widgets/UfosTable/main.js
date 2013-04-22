@@ -1,7 +1,10 @@
-define(['knockout','widget!Checkbox'], function(ko, Checkbox){
-	var UfosTable = function(ufos){
+define(["jquery","knockout","widget!Checkbox"],function($,ko,Checkbox){
+	var UfosTable = function(ufos) {
 		this.ufos = ufos;
 		var self = this;
+
+		this.inModalWindow = ko.observable(false);
+		this.mode = ko.observable("short");
 
 	    this.allVisibleChecked = ko.computed({
 	        read: function(){
@@ -46,10 +49,20 @@ define(['knockout','widget!Checkbox'], function(ko, Checkbox){
         this.allTrackVisibleCheckbox = new Checkbox({checked: this.allTrackVisibleChecked, color: 'blue'});
 	};
 
-	UfosTable.prototype.domInit = function(elem, params){
+	UfosTable.prototype.domInit = function(elem, params) {
+		var self = this;
+		this.modalWindow = params.modalWindow;
+		if (this.modalWindow) {
+			console.log("a");
+			this.switchMode = function() {
+				self.mode(self.mode()=="short"?"full":"short");
+				self.modalWindow.width(self.mode()=="short"?500:700);
+			}
+			this.inModalWindow(true);
+		}
 	};
 
-	UfosTable.prototype.domDestroy = function(elem, params){
+	UfosTable.prototype.domDestroy = function(elem, params) {
 	};
 	
 	UfosTable.prototype.templates = ['main'];

@@ -14,31 +14,35 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 		});
 
 		this._timeKey = ko.observable(0);
+		this._dragKey = ko.observable(0);
+		this._dragging = ko.observable(false);
 		this._raceStartKey = 0;
 
-		this.localTime = ko.computed(function() {
-			var d = new Date(self._timeKey());
-			var h = d.getHours();
-			var m = d.getMinutes();
-			var s = d.getSeconds();
+		var getTimeStr = function(h,m,s) {
 			return (h<10?"0":"") + h + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
+		}
+
+		this.localTime = ko.computed(function() {
+			var key = self._dragging() ? self._dragKey() : self._timeKey();
+			var d = new Date(key);
+			return getTimeStr(d.getHours(),d.getMinutes(),d.getSeconds());
 		});
 
 		this.raceTime = ko.computed(function() {
-			var d = Math.floor(Math.abs(self._timeKey()-self._raceStartKey)/1000);
-			var h = Math.floor(d/3600);
-			var m = Math.floor(d%3600/60);
-			var s = d%60;
-			return (self._timeKey()<self._raceStartKey?"-":" ") + (h<10?"0":"") + h + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
+			var key = self._dragging() ? self._dragKey() : self._timeKey();
+			var d = Math.abs(Math.floor((key-self._raceStartKey)/1000));
+			return (key<self._raceStartKey?"-":" ") + getTimeStr(Math.floor(d/3600),Math.floor(d%3600/60),d%60);
 		});
 
 		this.raceTimeText = ko.computed(function() {
 			return "Race to goal time";
-			return self.timeKey() < self._raceStartKey ? "Race to goals starts in" : "Race to goal is on";
+			var key = self._dragging() ? self._dragKey() : self._timeKey();
+			return key < self._raceStartKey ? "Race to goals starts in" : "Race to goal is on";
 		});
 
 		this.raceTimeCss = ko.computed(function() {
-			return self._timeKey() >= self._raceStartKey ? "airvis-active" : "airvis-inactive";
+			var key = self._dragging() ? self._dragKey() : self._timeKey();
+			return key < self._raceStartKey ? "airvis-inactive" : "airvis-active";
 		});
 
 		// Событие change вызывается когда делается дроп слайдера, т.е. когда val слайдера меняется изнутри
@@ -46,11 +50,23 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 		// Когда val слайдер проставляется сверху из трекер пейджа, по идее слайдер не должен вызывать change.
 		// Но мы вставим дополнительную проверку, чтобы код точно не зациклился.
 		this._silence = false;
-
 		this.slider = new Slider({enabled:false});
 		this.slider.on("change",function(val) {
 			if (!self._silence)
 				self.emit("change",val);
+		});
+
+		this.slider.on("dragStart",function() {
+			self._dragging(true);
+			self._dragKey(self._timeKey());
+		});
+
+		this.slider.on("dragEnd",function() {
+			self._dragging(false);
+		});
+
+		this.slider.on("dragChange",function(val) {
+			self._dragKey(val);
 		});
 
 		this.enabled = ko.observable(false);
@@ -64,33 +80,9 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 		this.shortWayVisualMode = ko.observable();
 		this.namesVisualMode = ko.observable();
 
-//		this.trackVisualRadioGroup = new RadioGroup({data:this.tracksVisualMode,values:[{value:"10min",title:"10 min"},{value:"full",title:"Full"}]});
-//		this.cylindersVisualRadioGroup = new RadioGroup({data:this.cylindersVisualMode,values:[{value:"full",title:"Full"},{value:"empty",title:"Empty"},{value:"off",title:"Off"}]});
-//		this.modelsVisualRadioGroup = new RadioGroup({data:this.modelsVisualMode,values:[{value:"large",title:"Large"},{value:"medium",title:"Medium"},{value:"small",title:"Small"}]});
-//		this.shortWayVisualRadioGroup = new RadioGroup({data:this.shortWayVisualMode,values:[{value:"wide",title:"Wide"},{value:"thin",title:"Thin"},{value:"off",title:"Off"}]});
-/*
-	<div class="airvis-row airvis-player-controls-titles airvis-clearfix">
-		<div class="airvis-span120"><strong>Tracks</strong></div>
-		<div class="airvis-span120"><strong>Cylinders</strong></div>
-		<div class="airvis-span120"><strong>Short way</strong></div>
-	</div>
-	<div class="airvis-row airvis-clearfix">
-		<div class="airvis-span120">
-			<!-- ko widget: { data: trackVisualRadioGroup, type: "RadioGroup"} --><!-- /ko -->
-		</div>
-		<div class="airvis-span120">
-			<!-- ko widget: { data: cylindersVisualRadioGroup, type: "RadioGroup"} --><!-- /ko -->
-		</div>
-		<div class="airvis-span120">
-			<!-- ko widget: { data: shortWayVisualRadioGroup, type: "RadioGroup"} --><!-- /ko -->
-		</div>
-	</div>
-	<div class="airvis-current-time">Race current time: <span data-bind="text: filters.formatTime(new Date(slider.val()))"></span></div>
-*/
-
-		this.tracksVisualSelect = new Select({data:this.tracksVisualMode,label:"Tracks",values:[{value:"10min",title:"10 min"},{value:"full",title:"Full"},{value:"off",title:"Off"}]});
+		this.tracksVisualSelect = new Select({data:this.tracksVisualMode,label:"Tracks",values:[{value:"10min",title:"10 min"},{value:"full",title:"Full"},{value:"off",title:"Off"}],expandDirection:"up"});
 		this.cylindersVisualSelect = new Select({data:this.cylindersVisualMode,label:"Cylinders",values:[{value:"full",title:"Full"},{value:"empty",title:"Empty"},{value:"off",title:"Off"}]});
-		this.modelsVisualSelect = new Select({data:this.modelsVisualMode,label:"Models",values:[{value:"large",title:"Large"},{value:"medium",title:"Medium"},{value:"small",title:"Small"}]});
+		this.modelsVisualSelect = new Select({data:this.modelsVisualMode,label:"Models",values:[{value:"large",title:"Large"},{value:"medium",title:"Medium"},{value:"small",title:"Small"}],expandDirection:"up"});
 		this.shortWayVisualSelect = new Select({data:this.shortWayVisualMode,label:"Shortest way",values:[{value:"wide",title:"Wide"},{value:"thin",title:"Thin"},{value:"off",title:"Off"}]});
 		this.namesVisualSelect = new Select({data:this.namesVisualMode,label:"Names",values:[{value:"on",title:"On"},{value:"auto",title:"Auto"},{value:"off",title:"Off"}]});
 		

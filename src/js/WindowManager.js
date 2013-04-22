@@ -3,7 +3,7 @@ define(["jquery","knockout"],function($,ko) {
 		var self = this;
 
 		this.items = ko.observableArray();
-		this.precision = ko.observable(1000);
+		this.precision = ko.observable(500);
 
 		var getSegments = function(w) {
 			var out = [];
