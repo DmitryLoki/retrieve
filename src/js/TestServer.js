@@ -42,6 +42,7 @@ define(["utils"],function(utils) {
 					id: i,
 					name: "Pilot #" + i,
 					owgModelUrl: "/art/models/paraplan5.json.amd",
+					country: "RU",
 					textSize: 0.5,
 					trackColor: colors[i%colors.length],
 					trackWidth: 2,

@@ -16,6 +16,8 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		self.enabled = ko.observable(options.hasOwnProperty("enabled") ? options.enabled : true);
 		self.containerWidth = 0;
 
+		self.sliderPercent = ko.observable();
+
 		self.val = ko.computed({
 			read: function() {
 				return self._val();
@@ -30,15 +32,6 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 				self._val(val);
 			}
 		});
-
-		// если val менялось снаружи через set-метод, событие change не эмитится
-		// если val поменялось в результате дропа сладера при перетаскивании, происходит эмит
-		self._silence = false;
-
-		self.val.subscribe(function(val) {
-			if (!self._silence)
-				self.emit("change",val);
-		})
 
 		self.min = ko.computed({
 			read: function() {
@@ -77,75 +70,27 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 			return Math.round((self.val()-self.min())/(self.max()-self.min())*totalWidth*100)/100;
 		});
 
-		self.sliderPercent = ko.observable();
-
 		self.valPercent.subscribe(function(val) {
 			if (!self._dragging)
 				self.sliderPercent(val);
 		});
 
-/*
-		var documentMouseMove = function(e) {
+		// если val менялось снаружи через set-метод, событие change не эмитится
+		// если val поменялось в результате дропа сладера при перетаскивании, происходит эмит
+		self._silence = false;
+
+		self.val.subscribe(function(val) {
+			if (!self._silence)
+				self.emit("change",val);
+		});
+
+		// Теперь при драге должны эмититься события о текущем положении слайдера
+		self.sliderPercent.subscribe(function(p) {
 			if (self._dragging) {
-				// смещение в пикселях x-положения мыши от того места, где был mousedown
-				var pxMouseOffset = e.pageX - self._dragStartEvent.pageX;
-				// стартовое смещение бегунка в пикселях
-				var pxStartOffset = self._dragStartPercent*self.containerWidth/100;
-				// смещение бегунка, какое оно теперь должно быть, но в пикселях
-				var pxOffset = pxStartOffset + pxMouseOffset;
-				// смещение бегунка в %-х относительно общей ширины контейнера
-				var percentOffset = self.containerWidth ? pxOffset / self.containerWidth * 100 : 0;
-				if (percentOffset > 100) percentOffset = 100;
-				if (percentOffset < 0) percentOffset = 0;
-				// простановка значения относительно max-min
-				self.sliderPercent(percentOffset);
+				var val = self.min()+p/100*(self.max()-self.min());
+				self.emit("dragChange",val);
 			}
-		}
-
-		var documentMouseUp = function(e) {
-			if (self._dragging) {
-				self.dragEnd();
-			}
-		}
-
-		self.domInit = function(elem, params, parentElement) {
-			// Мы никак не можем обойтись без контейнера, нам нужна его ширина
-			// Причина в том, что даже если оффсет бегунка задан в %-х, событие mousemove работает в пикселях, 
-			// и приходится пересчитывать px-смещение мыши в %-е смещение бегунка
-			// Более того, мы не можем один раз и навсегда в domInit запомнить ширину контейнера, потому что 
-			// она может меняться, например, при ресайзе окна.
-			// Но заново высчитывать container.width() при каждом mousemove слишком накладно. 
-			// Будем считать, что пока кнопка мыши зажата, размеры контейнера постоянны, 
-			// т.е. будем пересчитывать width один раз на каждый mousedown.
-			// а теперь упростим еще, считаем, что ширина вообще не меняется, и считаем ее один раз при инициализации
-			var div = ko.virtualElements.firstChild(elem);
-			while (div && div.nodeType != 1)
-				div = ko.virtualElements.nextSibling(div);
-			self.containerWidth = $(div).find(".slider").width();
-			$(document).on("mousemove",documentMouseMove).on("mouseup",documentMouseUp);
-		}
-
-		self.domDestroy = function(elem,val) {
-			$(document).off("mousemove",documentMouseMove).off("mouseup",documentMouseUp);
-		}
-
-	}
-
-	Slider.prototype.dragStart = function(m,e) {
-		if (!this.enabled()) return false;
-		this.emit("drag",this.val());
-		this._dragging = true;
-		this._dragStartPercent = this.sliderPercent();
-		this._dragStartEvent = e;
-	}
-
-	Slider.prototype.dragEnd = function() {
-		if (!this._dragging) return false;
-		this.val(Math.round(this.min() + this.sliderPercent() / 100 * (this.max() - this.min())));
-		this.emit("drop",this.val());
-		this._dragging = false;
-	}
-*/
+		});
 	}
 
 	Slider.prototype.domInit = function(element, params, parentElement) {
@@ -159,41 +104,31 @@ define(["jquery","knockout","knockout.mapping"], function($,ko,komap) {
 		e.stopPropagation();
 		e.preventDefault();
 		this._dragging = true;
-		var containerWidth = this.container.width();
-		var startE = e;
-		var startPercent = this.sliderPercent();
+		this.emit("dragStart");
 
-//		e.target.setCapture();
+		var w = this.container.width();
+		if (!w || !(w>0)) return;
+		var l = this.container.offset().left;
+		if (!l || !(l>=0)) return;
+
 		var mouseMove = function(e) {
-			// смещение в пикселях x-положения мыши от того места, где был mousedown
-			var pxMouseOffset = e.pageX - startE.pageX;
-			// стартовое смещение бегунка в пикселях
-			var pxStartOffset = startPercent*containerWidth/100;
-			// смещение бегунка, какое оно теперь должно быть, но в пикселях
-			var pxOffset = pxStartOffset + pxMouseOffset;
-			// смещение бегунка в %-х относительно общей ширины контейнера
-			var percentOffset = containerWidth ? pxOffset / containerWidth * 100 : 0;
-			if (percentOffset > 100) percentOffset = 100;
-			if (percentOffset < 0) percentOffset = 0;
-			// простановка значения относительно max-min
-			self.sliderPercent(percentOffset);
+			var p = (e.pageX-l)/w;
+			if (p > 1) p = 1;
+			if (p < 0) p = 0;
+			self.sliderPercent(p*100);
 		}
+
 		$("body").addClass("airvis-document-overwrite-cursor-pointer");
 		$(document).on("mousemove",mouseMove).one("mouseup mouseleave",function(e) {
 			$("body").removeClass("airvis-document-overwrite-cursor-pointer");
 			$(document).off("mousemove",mouseMove);
 			self.val(Math.round(self.min() + self.sliderPercent() / 100 * (self.max() - self.min())));
 			self._dragging = false;
+			self.emit("dragEnd");
 		});
-	}
 
-	Slider.prototype.clickSlider = function(self,e) {
-		var w = this.container.width();
-		if (!w || !(w>0)) return;
-		var p = (e.pageX - this.container.offset().left) / w;
-		if (p > 1) p = 1;
-		if (p < 0) p = 0;
-		self.val(self.min() + (self.max()-self.min()) * p);
+		mouseMove(e);
+		this.sliderPercent.valueHasMutated();
 	}
 
 	Slider.prototype.forward = function() {

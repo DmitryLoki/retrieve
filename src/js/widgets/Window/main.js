@@ -7,7 +7,9 @@ define(["jquery","knockout"],function($,ko) {
 			showHeader: true,
 			absoluteCloseIcon: false,
 			visible: true,
-			resizable: true, 
+			resizable: true,
+			resizableY: false,
+			resizableX: false,
 			contentCss: "",
 			title: "",
 			nodes: [],
@@ -25,6 +27,8 @@ define(["jquery","knockout"],function($,ko) {
 		self.absoluteCloseIcon = this.asObservable(options.absoluteCloseIcon,defaults.absoluteCloseIcon);
 		self.visible = this.asObservable(options.visible,defaults.visible);
 		self.resizable = this.asObservable(options.resizable,defaults.resizable);
+		self.resizableY = this.asObservable(options.resizableY,defaults.resizableY);
+		self.resizableX = this.asObservable(options.resizableX,defaults.resizableX);
 		self.contentCss = this.asObservable(options.contentCss,defaults.contentCss);
 		self.title = this.asObservable(options.title,defaults.title);
 		self.width = this.asObservable(options.width,defaults.width);

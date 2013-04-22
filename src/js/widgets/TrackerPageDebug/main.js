@@ -51,7 +51,7 @@ define([
 			taskTitle: "Task1 - 130km",
 			dateTitle: "22 Sep, 2012",
 			placeTitle: "France, Saint Andre les Alpes",
-			pilotsCnt: 20,
+			pilotsCnt: 15,
 			waypointsCnt: 5,
 			startKey: (new Date).getTime() - 120000,
 			endKey: (new Date).getTime() - 60000,
@@ -99,15 +99,20 @@ define([
 			ufosTable: {
 				visible: true,
 				title: "Leaderboard",
+				resizable: false,
+				resizableY: true,
 				height: 300,
-				width: 700,
+				width: 500,
 				top: 380,
-				left: 90 
+				left: 90
 			},
 			playerControl: {
 				visible: true,
+				showHeader: false,
+				resizable: false,
+				absoluteCloseIcon: true,
 				title: "Player",
-				width: 800,
+				width: 830,
 				top: 160,
 				left: 90
 			},
@@ -117,7 +122,7 @@ define([
 				showHeader: false,
 				resizable: false,
 				absoluteCloseIcon: true,
-				width: 800,
+				width: 830,
 				top: 50,
 				left: 90,
 				height: 100
@@ -176,6 +181,7 @@ define([
 	var Pilot = function(options) {
 		this.id = options.id;
 		this.name = options.name;
+		this.country = options.country;
 		this.map = options.map;
 		this.icon = options.icon;
 		this.trackColor = options.trackColor;
@@ -289,6 +295,7 @@ define([
 		this.shortWayVisualMode = ko.observable("");
 		this.namesVisualMode = ko.observable("");
 		this.playerControl.on("setTracksVisualMode",function(v) {
+			console.log("update setTracksVisualMode",v);
 			self.tracksVisualMode(v);
 		});
 		this.playerControl.on("setCylindersVisualMode",function(v) {
@@ -306,6 +313,10 @@ define([
 		this.tracksVisualMode.subscribe(function(v) {
 			self.playerControl.setTracksVisualMode(v);
 			self.map.setTracksVisualMode(v);
+			if (self.ufos)
+				self.ufos().forEach(function(ufo) {
+					ufo.trackVisibleChecked(v != "off");
+				});
 		});
 		this.cylindersVisualMode.subscribe(function(v) {
 			self.playerControl.setCylindersVisualMode(v);
@@ -446,11 +457,6 @@ define([
 
 					// Теперь здесь сделаем запрос на получение инфы о треке
 					// потому что если делать отдельно, вначале при загрузке еще нет данных в кеше
-					if (self.tracksVisualMode() == "off") {
-						self.ufos().forEach(function(ufo) {
-							ufo.trackVisibleChecked(false);
-						});
-					}
 					if (self.tracksVisualMode() != "off") {
 						self.dataSource.get({
 							type: "tracks",
@@ -459,7 +465,6 @@ define([
 							restrict: self.tracksVisualMode() == "10min" ? 10 : null,
 							callback: function(data) {
 								self.ufos().forEach(function(ufo) {
-									ufo.trackVisibleChecked(true);
 									ufo.trackUpdate(data[ufo.id]);
 								});
 							}

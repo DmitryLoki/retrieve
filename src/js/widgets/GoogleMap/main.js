@@ -12,11 +12,13 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
               };
     })();
 
+
+
 	var MapFloatElem = function(params){
 		this._params = params;
 	};
 	MapFloatElem.prototype = new gmaps.OverlayView;
-	MapFloatElem.prototype.onRemove = function(){
+	MapFloatElem.prototype.onRemove = function() {
 		ko.cleanNode(this._div);
 		this._div.parentNode.removeChild(this._div);
 	};
@@ -48,6 +50,43 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 	MapFloatElem.prototype.setPosition = function(coords) {
 		return this.move(coords);
 	}
+
+/*
+	var MapFloatElem = function(params) {
+		this._params = params;
+	}
+	MapFloatElem.prototype = new gmaps.OverlayView;
+	MapFloatElem.prototype.onRemove = function() {
+		ko.cleanNode(this._div);
+		this._div.parentNode.removeChild(this._div);
+	};
+	MapFloatElem.prototype.draw = function(){
+		if(!this._coords) return;
+		var proj = this.getProjection();
+		if(!proj) return;
+		var coords = proj.fromLatLngToDivPixel(this._coords);
+		this._div.style.left = coords.x + 'px';
+		this._div.style.top = coords.y + 'px';
+	};
+	MapFloatElem.prototype.onAdd = function(){
+		var div = document.createElement('div');
+		div.style.position = 'absolute';
+		div.style.left = '99999px';
+		div.style.top = '99999px';
+		div.innerHTML = "<div class='airvis-ufo' style='color:" + this._params.data.color + "'>" + this._params.data.title + "</div>";
+		var panes = this.getPanes();
+		panes.floatPane.appendChild(div);
+		this._div = div;
+	};
+	MapFloatElem.prototype.move = function(coords){
+		this._coords = coords;
+		this.draw();
+	};
+	MapFloatElem.prototype.setPosition = function(coords) {
+		return this.move(coords);
+	}
+*/
+
 
 
 	var Ufo = function(params) {
@@ -117,6 +156,21 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 			this._trackModel.setMap(this._visible && this._trackVisible ? this._map._map : null);
 	}
 
+
+	Ufo.prototype.move = function(coords) {
+		this._params.lat = coords.lat;
+		this._params.lng = coords.lng;
+		this._params.elevation = coords.elevation;
+		this._params.yaw = coords.yaw;
+		var latLng = new gmaps.LatLng(this._params.lat,this._params.lng);
+		if (this._model)
+			this._model.setPosition(latLng);
+		if (this._titleModel)
+			this._titleModel.setPosition(latLng);
+		return this;
+	}
+
+/*
 	Ufo.prototype.move = function(coords,duration) {
 		var self = this;
 
@@ -198,6 +252,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 
 		return this;
 	}
+*/
+
 
 	Ufo.prototype.visible = function(flag) {
 		if (this._visible != flag) {
