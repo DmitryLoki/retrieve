@@ -53,11 +53,11 @@
 					<!-- /ko -->
 					<td class="pilot-number" data-bind="text: $index() + 1"></td>
 					<!-- ko if: $parent.mode() == "short" -->
-						<td class="pilot-name"><span data-bind="text:name"></span><img data-bind="attr:{src:country}"></td>
+						<td class="pilot-name"><span data-bind="text:name"></span><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span>
 					<!-- /ko -->
 					<!-- ko if: $parent.mode() == "full" -->
 						<td class="pilot-name" data-bind="text: name"></td>
-						<td class="pilot-nation"><img data-bind="attr:{src:country}"></td>
+						<td class="pilot-nation"><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span></td>
 					<!-- /ko -->
 					<td class="dist-to-goal" data-bind="text: statusOrDist" data-bind="text: statusText ? statusText : leftDist() < 4294967295 ? (leftDist()/1000).toFixed(1) : '' "></td>
 					<td class="alt" data-bind="text: alt"></td>
