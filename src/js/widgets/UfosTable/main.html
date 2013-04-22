@@ -31,7 +31,7 @@
 					<th class="pilot-number"><div class="th_wrap"><div>#</div></div></th>
 					<th class="pilot-name"><div class="th_wrap"><div>Pilot</div></div></th>
 					<!-- ko if: mode() == "full" -->
-						<th class="pilot-number"><div class="th_wrap"><div>Nation</div></div></th>
+						<th class="pilot-nation"><div class="th_wrap"><div>Nation</div></div></th>
 					<!-- /ko -->
 					<th class="dist-to-goal"><div class="th_wrap"><div>Dist to<br>goal, km</div></div></th>
 					<th class="alt"><div class="th_wrap"><div>Alt,<br>m</div></div></th>
@@ -53,7 +53,7 @@
 					<!-- /ko -->
 					<td class="pilot-number" data-bind="text: $index() + 1"></td>
 					<!-- ko if: $parent.mode() == "short" -->
-						<td class="pilot-name"><span data-bind="text:name"></span><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span>
+						<td class="pilot-name"><span data-bind="text:name"></span><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span></td>
 					<!-- /ko -->
 					<!-- ko if: $parent.mode() == "full" -->
 						<td class="pilot-name" data-bind="text: name"></td>
