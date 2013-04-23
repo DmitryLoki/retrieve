@@ -15,7 +15,7 @@ define(["utils"],function(utils) {
 				this.waypoints.push({
 					id: i,
 					name: "Waypoint #" + i,
-					type: (i==0?"start":(i==options.waypointsCnt-1?"finish":"waypoint")),
+					type: (i==0?"to":(i==options.waypointsCnt-1?"goal":"waypoint")),
 					lat: options.coords.center.lat + (Math.random()-0.5)*options.waypoints.dispersion,
 					lng: options.coords.center.lng + (Math.random()-0.5)*options.waypoints.dispersion,
 					radius: options.waypoints.minRadius + Math.random()*(options.waypoints.maxRadius-options.waypoints.minRadius),
