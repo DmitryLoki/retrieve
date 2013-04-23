@@ -1,7 +1,9 @@
-define(["jquery","knockout","widget!Checkbox"],function($,ko,Checkbox){
+define(["jquery","knockout","widget!Checkbox","jquery.jscrollpane","jquery.mousewheel"],function($,ko,Checkbox){
 	var UfosTable = function(ufos) {
 		this.ufos = ufos;
 		var self = this;
+
+		console.log("scrollpane",$.fn.jScrollPane,$.fn.mousewheel,$.fn.unmousewheel);
 
 		this.inModalWindow = ko.observable(false);
 		this.mode = ko.observable("short");
@@ -49,17 +51,23 @@ define(["jquery","knockout","widget!Checkbox"],function($,ko,Checkbox){
         this.allTrackVisibleCheckbox = new Checkbox({checked: this.allTrackVisibleChecked, color: 'blue'});
 	};
 
-	UfosTable.prototype.domInit = function(elem, params) {
+	UfosTable.prototype.domInit = function(element, params) {
 		var self = this;
+
 		this.modalWindow = params.modalWindow;
 		if (this.modalWindow) {
-			console.log("a");
 			this.switchMode = function() {
 				self.mode(self.mode()=="short"?"full":"short");
 				self.modalWindow.width(self.mode()=="short"?370:490);
 			}
 			this.inModalWindow(true);
 		}
+
+		var div = ko.virtualElements.firstChild(element);
+		while (div && div.nodeType != 1)
+			div = ko.virtualElements.nextSibling(div);
+		this.container = $(div);
+		this.container.find("div.airvis-table-with-fixed-header-inner").jScrollPane();
 	};
 
 	UfosTable.prototype.domDestroy = function(elem, params) {

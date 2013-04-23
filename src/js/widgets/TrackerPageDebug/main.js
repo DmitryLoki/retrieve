@@ -337,10 +337,10 @@ define([
 		this.shortWayVisualMode(this.options.shortWayVisualMode);
 		this.namesVisualMode(this.options.namesVisualMode);
 
-//		this.server = new TestServer();
-//		this.server.generateData(this.options.testServerOptions);
+		this.server = new TestServer();
+		this.server.generateData(this.options.testServerOptions);
 
-		this.server = new RealServer(this.options);
+//		this.server = new RealServer(this.options);
 
 		// Создаем dataSource, устанавливаем ему в качестве источника данных тестовый сервер
 		this.dataSource = new DataSource({
@@ -356,28 +356,6 @@ define([
 	TrackerPageDebug.prototype.setRaceStartKey = function(data) {
 		if (this.playerControl)
 			this.playerControl.setRaceStartKey(data.raceStartKey);
-	}
-
-	TrackerPageDebug.prototype.loadPilots = function(callback) {
-		var self = this, loadedPilots = 0;
-		this.ufos([]);
-		this.dataSource.get({
-			type: "pilots",
-			callback: function(data) {
-				for (var i = 0; i < data.length; i++) {
-					var pilot = new Pilot(utils.extend(data[i],{
-						map: self.map
-					}));
-					pilot.on("loaded",function(p) {
-						self.ufos.push(p);
-						loadedPilots++;
-						if (loadedPilots == data.length && callback)
-							callback();
-					});
-					pilot.initialize();
-				}
-			}
-		});
 	}
 
 	TrackerPageDebug.prototype.loadWaypoints = function(data,callback) {
@@ -561,6 +539,29 @@ define([
 				});
 			}
 		});
+
+	TrackerPageDebug.prototype.loadPilots = function(callback) {
+		var self = this, loadedPilots = 0;
+		this.ufos([]);
+		this.dataSource.get({
+			type: "pilots",
+			callback: function(data) {
+				for (var i = 0; i < data.length; i++) {
+					var pilot = new Pilot(utils.extend(data[i],{
+						map: self.map
+					}));
+					pilot.on("loaded",function(p) {
+						self.ufos.push(p);
+						loadedPilots++;
+						if (loadedPilots == data.length && callback)
+							callback();
+					});
+					pilot.initialize();
+				}
+			}
+		});
+	}
+
 		*/
 
 		this.dataSource.get({
@@ -571,9 +572,29 @@ define([
 				self.setRaceStartKey(data);
 				self.loadWaypoints(data);
 				self.loadShortWay(data);
-				self.playerInitNew(data);
+
+				var loadedPilots = 0;
+				self.ufos([]);
+				self.dataSource.get({
+					type: "pilots",
+					callback: function(pilots) {
+						for (var i = 0; i < pilots.length; i++) {
+							var pilot = new Pilot(utils.extend(pilots[i],{
+								map: self.map
+							}));
+							pilot.on("loaded",function(p) {
+								self.ufos.push(p);
+								loadedPilots++;
+								if (loadedPilots == pilots.length) {
+									self.playerInitNew(data);
+								}
+							});
+							pilot.initialize();
+						}
+					}
+				});
 			}
-		})
+		});
 
 /*
 		self.loadPilots(function() {

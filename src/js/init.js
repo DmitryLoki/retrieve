@@ -4,7 +4,9 @@ require.config({
 		'jquery': 'wild-libs/jquery',
 		'jquery-ui': 'wild-libs/jquery-ui',
 		'setImmediate': 'wild-libs/setImmediate',
-		'owg': 'wild-libs/owg-optimized'
+		'owg': 'wild-libs/owg-optimized',
+		'jquery.jscrollpane': 'wild-libs/jquery.jscrollpane.min',
+		'jquery.mousewheel': 'wild-libs/jquery.mousewheel.min'
 	},
 	shim: {
     	'jquery': { exports: function(){ return jQuery.noConflict(true); } },
@@ -12,7 +14,15 @@ require.config({
     		deps: [ 'jquery' ],
     		exports: function($){ return $; }
     	},
-    	'setImmediate': { exports: 'window.setImmediate' }
+    	'setImmediate': { exports: 'window.setImmediate' },
+    	'jquery.jscrollpane': {
+    		deps: ['jquery'],
+    		exports: 'jQuery.fn.jScrollPane'
+    	},
+    	'jquery.mousewheel': {
+    		deps: ['jquery'],
+    		exports: 'jQuery.mousewheel'
+    	}
 	}
 });
 
