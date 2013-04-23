@@ -30,81 +30,167 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
 .airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
 .airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0 11px; text-rendering: optimizelegibility;}
-.airvis-window-close { float: right; outline: 0 none; display: block; width: 20px; height: 20px; background: url("icon-close.png") 0 0 no-repeat; margin-top: 10px;}
-.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 5px; right: 5px; width: 20px; height: 20px; background: url("icon-close.png") 0 0 no-repeat;}
-.airvis-window-close:hover { background-color: #303030; text-decoration: underline;}
+.airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat; margin-top: 8px; margin-right: -2px;}
+.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat;}
+.airvis-window-close:hover,
+.airvis-window-close-absolute:hover { background-position: -48px 0}
 .airvis-window-content { background-color: rgba(0,47,64,.75); position: relative; overflow: auto;}
-.airvis-window-content-absolute { bottom: 0; left: 0; position: absolute; right: 0; top: 0px;}
+.airvis-window-content-absolute { bottom: 0; left: 0; position: absolute; right: 0; top: 0px; overflow: visible;}
 .airvis-transparent { background-color: transparent;}
 .airvis-window-resize { position: absolute;}
 .airvis-resize-right { bottom: 0; cursor: e-resize; right: -8px; top: 0; width: 10px;}
 .airvis-resize-bottom { bottom: -8px; cursor: s-resize; height: 10px; left: 0; right: 0;}
 .airvis-resize-bottom-right { bottom: -8px; cursor: se-resize; height: 10px; right: -8px; width: 10px;}
 
-.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: 5px; right: 10px; width: 20px; height: 20px; }
-.airvis-expand { background-color: #ff0000; }
-.airvis-collapse { background-color: #00ff00; }
+.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) no-repeat;}
+.airvis-collapse { background-position: -24px -24px}
+.airvis-collapse:hover { background-position: -24px 0}
+.airvis-expand { background-position: 0 -24px}
+.airvis-expand:hover { background-position: 0 0}
 
 
 /* table with fixed header in ufosTable widget */
 .airvis-table-with-fixed-header { position: absolute; bottom: 0; left: 0; right: 0; top: 42px;}
 .airvis-table-with-fixed-header-inner { height: 100%; overflow-x: hidden; overflow-y: auto;}
-.airvis-table-with-fixed-header table { margin: 0; overflow: hidden; position: static; width: 100%; font-size: 12px; color: #ffffff;
-}
+.airvis-table-with-fixed-header table { margin: 0; overflow: hidden; position: static; width: 100%; font-size: 12px; color: #ffffff;}
 .arvis-table-head-surrogate { width: 100%; height: 42px; background-color: rgba(0,47,64,.50);}
 .airvis-table-with-fixed-header table th { padding: 0; border: 0; font-size: 12px; line-height: 15px; text-align: left; font-weight: normal;}
 .airvis-table-with-fixed-header th div.th_wrap { position: absolute; text-align: center; top: -42px; height: 42px;  }
-.airvis-table-with-fixed-header th div.th_wrap div { position: absolute; bottom: 5px; left: 0; right: 0; padding: 0 10px;}
+.airvis-table-with-fixed-header th + th div.th_wrap { border-left: 1px solid rgba(0,47,64,.15)}
+.airvis-table-with-fixed-header th div.th_wrap div { position: absolute; bottom: 5px; left: 0; right: 0; padding: 0}
 .airvis-table-with-fixed-header tr.airvis-hidden-header th > div { height: 0; overflow-y: hidden; position: static; white-space: nowrap;}
 
 
 /* redefine font sizes in airvis tables */
 .airvis-window table tbody tr:nth-child(2n+2) { background-color: rgba(0,47,64,.35);}
-.airvis-window table tbody td { /*font-size: 10px;*/ line-height: 20px; padding: 2px 10px;}
+.airvis-window table tbody td { /*font-size: 10px;*/ line-height: 20px; padding: 0 10px; text-align: center; vertical-align: top;}
+.airvis-window table tbody tr:first-child td { padding-top: 8px;}
 .airvis-window table tbody td + td { border-left: 1px solid rgba(0,47,64,.15)}
 
-.airvis-window th.airvis-checkbox, .airvis-window td.airvis-checkbox { padding: 0; text-align: center; width: 32px;}
-.airvis-window th.airvis-checkbox .checkbox, .airvis-window td.airvis-checkbox .checkbox { /*margin-bottom: -5px;*/ margin-top: 5px;}
+.airvis-window th.airvis-checkbox, 
+.airvis-window td.airvis-checkbox { padding: 0; text-align: center; width: 30px;}
+.airvis-window th.airvis-checkbox > div, 
+.airvis-window td.airvis-checkbox > div { width: 30px;}
+.airvis-window th.airvis-checkbox > div div { padding: 0;}
+.airvis-window th.airvis-checkbox .checkbox, 
+.airvis-window td.airvis-checkbox .checkbox { /*margin-bottom: -5px;*/ top: 1px; position: relative;}
+
+.airvis-window table .pilot-number,
+.airvis-window table .pilot-number div.th_wrap { width: 29px; padding: 0;}
+.airvis-window table th.pilot-name,
+.airvis-window table .pilot-name div.th_wrap { width: 159px; text-align: center;}
+.airvis-window table .pilot-name { text-align: left;}
+.airvis-window table th.dist-to-goal,
+.airvis-window table .dist-to-goal div.th_wrap { width: 59px;}
+.airvis-window table th.alt,
+.airvis-window table .alt div.th_wrap { width: 39px;}
+.airvis-window table th.gspd,
+.airvis-window table .gspd div.th_wrap,
+.airvis-window table th.vspd,
+.airvis-window table .vspd div.th_wrap { width: 49px;}
+.airvis-window table th.pilot-nation,
+.airvis-window table .pilot-nation div.th_wrap { width: 69px;}
+
+.airvis-window table .pilot-name { vertical-align: top;}
+.airvis-window table .pilot-name .countryicon-sprite { margin-left: 10px;}
 
 
 /* Livetracking controls */
-.airvis-player-controls { padding: 5px; padding-bottom: 0;}
+.airvis-player-controls { padding: 8px 0 0 10px;}
 .airvis-player-controls button { margin: 2px;}
 .airvis-current-time { color: #00aeef; font-size: 12.8px; padding: 0 10px; padding-bottom: 5px;}
-.airvis-slider { background-color: #777777; border: 1px solid #555555; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; height: 10px; margin: 4px; position: relative;}
-.airvis-slider-container { padding: 5px; padding-top: 0; overflow: hidden;}
-.airvis-slider-handle { background-color: #a4a4a4; border: 1px solid #444444; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; display: block; height: 15px; margin-left: -4px; margin-top: -4px; width: 15px; position: absolute; overflow: hidden;}
-.airvis-slider-range { background-color: #ececec; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; height: 10px; left: 0; position: absolute;}
+.airvis-slider { background-color: rgba(0, 47, 64, 0.75);; border: 1px solid rgba(0, 35, 48, 0.53); height: 8px; margin: 4px; position: relative;
+
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px;
+
+}
+.airvis-slider-container { padding: 5px; padding-top: 11px; overflow: hidden;}
+.airvis-slider-handle { display: none;}
+.airvis-slider-range { background-color: #ececec; height: 8px; left: 0; position: absolute;
+
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px;
+
+}
 .airvis-player-controls-titles { background-color: rgba(0,0,0,.4);}
 .airvis-player-controls-titles strong { color: #606060; padding: 2px 5px;}
-.airvis-player-timeWindow { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; float: left; margin: 10px;}
+.airvis-player-timeWindow { float: left; margin: 10px; width: 150px; text-align: center;
+
+  -webkit-border-radius: 2px; 
+  -moz-border-radius: 2px; 
+  border-radius: 2px;
+
+}
 .airvis-player-timeWindow.airvis-active { background-color: #ced828;}
 .airvis-player-timeWindow.airvis-inactive { background-color: #fbd72c;}
-.airvis-player-timeWindow.airvis-local { background-color: #b0d3d8;}
-.airvis-player-timeText { float: left; font-size: 16px; font-weight: bold; line-height: 20px; margin: 10px; margin-left: 0; width: 70px;}
+.airvis-player-timeWindow.airvis-local { background-color: #b0d3d8; padding-top: 15px;}
+.airvis-player-timeText { float: left; font-size: 14px; font-weight: bold; line-height: 20px; margin: 19px 40px 10px 10px; margin-left: 0; width: 70px;}
 .airvis-player-timeText.airvis-active { color: #ced828;}
 .airvis-player-timeText.airvis-inactive { color: #fbd72c;}
 .airvis-player-timeText.airvis-local { color: #b0d3d8;}
-.airvis-player-time { color: #ffffff; font-size: 30px; font-weight: bold; line-height: 30px; margin: 5px;}
+.airvis-player-time { color: #ffffff; font-size: 30px; font-weight: bold; line-height: 30px; margin: 1px 0 4px;}
 
+
+.airvis-player-timeWindow .airvis-player-time-status { font-size: 12px; line-height: 12px; text-align: right; text-transform: uppercase; color: #bca121; margin: 3px 4px 0;}
+.airvis-active  .airvis-player-time-status { color: #9da51f}
+
+.airvis-player-controls-wrapper { background: rgba(0, 47, 64, 0.5); height: 40px; position: relative;}
+.airvis-player-controls-wrapper .airvis-player-controls { float: left;}
+.airvis-player-controls a { display: inline-block; min-width: 20px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.75); text-align: center; color: #002a3a; cursor: pointer;
+
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px;
+
+}
+.airvis-player-controls a:hover,
+.airvis-player-controls a.player-button-on { background: #ffffff;}
 
 /* Radio */
 .airvis-radio-container { cursor: pointer; display: block; padding: 2px 5px;}
-.airvis-radio { display: block; float: left; margin: 3px; width: 12px; height: 12px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; content: ""; background-color: #505050;}
-.airvis-radio-inner { display: block; margin: 3px; width: 6px; height: 6px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; content: ""; background-color: #f0f0f0;}
+.airvis-radio { display: block; float: left; margin: 3px; width: 12px; height: 12px; content: ""; background-color: #505050;
+
+  -webkit-border-radius: 6px; 
+  -moz-border-radius: 6px; 
+  border-radius: 6px;
+
+}
+.airvis-radio-inner { display: block; margin: 3px; width: 6px; height: 6px; content: ""; background-color: #f0f0f0;
+
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px;
+
+}
 
 
 /* Select */
-.airvis-selectContainer { float: left; position: relative; width: 150px; margin: 5px;}
+.airvis-player-selects  { float: left; margin-left: 25px; width: 305px; padding-top: 5px;}
+.airvis-selectContainer { float: left; position: relative; width: 140px; margin: 5px;}
 .airvis-select { text-decoration: none;}
-.airvis-value { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: #ced7d9; padding: 1px 4px; text-align: center; width: 50px; min-height: 20px;}
-.airvis-label { color: #ced7d9; float: right; font-size: 14px; font-weight: bold; line-height: 22px; margin-right: 5px;}
+.airvis-value { color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: rgba(255,255,255, 0.75); padding: 0; text-align: center; width: 50px; min-height: 20px;
+
+  -webkit-border-radius: 2px; 
+  -moz-border-radius: 2px; 
+  border-radius: 2px;
+
+}
+.airvis-label { /*color: #ced7d9;*/ color: #ffffff; float: right; font-size: 14px; font-weight: bold; line-height: 18px; margin-right: 5px; padding-bottom: 2px;}
 .airvis-select:hover .airvis-value { background-color: #ffffff;}
 .airvis-select:hover .airvis-label { color: #ffffff;}
-.airvis-selectBox { -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; background-color: #ffffff; padding: 1px 4px; position: absolute; width: 50px; z-index: 1;}
+.airvis-selectBox { background-color: #ffffff; padding: 2px 0 3px; position: absolute; width: 50px; z-index: 1;
+
+  -webkit-border-radius: 2px; 
+  -moz-border-radius: 2px; 
+  border-radius: 2px;
+
+}
 .airvis-selectBoxdown { top: 0; right: 0;}
 .airvis-selectBoxup { bottom: 0; right: 0;}
-.airvis-selectBox > a { display: block; text-align: center; font-size: 12px; font-weight: bold; text-decoration: none; color: #002a3a;}
+.airvis-selectBox > a { display: block; text-align: center; font-size: 12px; font-weight: bold; text-decoration: none; color: #002a3a; line-height: 15px;}
 .airvis-selectBox > a.active { color: #00aeef;}
 /*
 .airvis-selectBox > a:hover { color: #586971;}
@@ -123,8 +209,12 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-topbar-logo { background: transparent url("../img/logo.png") 0 0 no-repeat; display: block; float: left; height: 24px; margin: 8px 0 0 0; width: 216px;}
 .airvis-topbar-items { display: block; float: left; margin: 0; padding: 0; margin-left: 70px;}
 .airvis-topbar-items li { display: block; float: left; list-style: none outside none;}
-.airvis-topbar-items a { display: block; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px;
- -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; color: #ffffff; background-color: transparent;
+.airvis-topbar-items a { display: block; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px; color: #ffffff; background-color: transparent;
+
+  -webkit-border-radius: 2px; 
+  -moz-border-radius: 2px; 
+  border-radius: 2px;
+
 }
 .airvis-topbar-items a.airvis-checked { background-color: rgba(255,255,255, 0.75); color: #002a3a; }
 .airvis-topbar-items a:hover { background-color: #ffffff; color: #002a3a;	}
@@ -144,4 +234,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 	white-space: nowrap;
 }
 
+.gmap {}
+.gmap > div > .gmnoprint:nth-child(3n+1),
+.gmap > div > .gmnoprint:last-child { top: 40px !important;}
 

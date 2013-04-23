@@ -1,6 +1,7 @@
 <div>
 	<div class="airvis-clearfix">
 		<div class="airvis-player-timeWindow" data-bind="css:raceTimeCss">
+			<div class="airvis-player-time-status">Live</div>
 			<div class="airvis-player-time" data-bind="text:raceTime"></div>
 		</div>
 		<div class="airvis-player-timeText" data-bind="css:raceTimeCss,text:raceTimeText"></div>
@@ -15,12 +16,14 @@
 			<!-- ko widget: { data: modelsVisualSelect, type: "Select"} --><!-- /ko -->
 		</div>
 	</div>
-	<div class="airvis-player-controls">
-		<button data-bind="enable: enabled, click: play, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }">PLAY</button>
-		<button data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }">PAUSE</button>
-		<button data-bind="enable: enabled, click: changeSpeed.bind($data,1), css: { 'player-button-on': _speed() == 1, 'player-button-off': _speed() != 1 }">x1</button>
-		<button data-bind="enable: enabled, click: changeSpeed.bind($data,10), css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }">x10</button>
-		<button data-bind="enable: enabled, click: changeSpeed.bind($data,25), css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }">x25</button>
+	<div class="airvis-player-controls-wrapper">
+		<div class="airvis-player-controls">
+			<a data-bind="enable: enabled, click: play, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }"><span>PLAY</span></a>
+			<a data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }"><span>PAUSE</span></a>
+			<a data-bind="enable: enabled, click: changeSpeed.bind($data,1), css: { 'player-button-on': _speed() == 1, 'player-button-off': _speed() != 1 }"><span>x1</span></a>
+			<a data-bind="enable: enabled, click: changeSpeed.bind($data,10), css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }"><span>x10</span></a>
+			<a data-bind="enable: enabled, click: changeSpeed.bind($data,25), css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }"><span>x25</span></a>
+		</div>
+		<div class="airvis-slider-container" data-bind="widget:{data:slider,type:'Slider'}"></div>
 	</div>
-	<div class="airvis-slider-container" data-bind="widget:{data:slider,type:'Slider'}"></div>
 </div>

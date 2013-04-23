@@ -100,7 +100,7 @@ define([
 				resizable: false,
 				resizableY: true,
 				height: 300,
-				width: 500,
+				width: 370,
 				top: 380,
 				left: 90
 			},
@@ -110,7 +110,7 @@ define([
 				resizable: false,
 				absoluteCloseIcon: true,
 				title: "Player",
-				width: 830,
+				width: 940,
 				top: 160,
 				left: 90
 			},
