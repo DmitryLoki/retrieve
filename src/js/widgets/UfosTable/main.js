@@ -56,7 +56,7 @@ define(["jquery","knockout","widget!Checkbox"],function($,ko,Checkbox){
 			console.log("a");
 			this.switchMode = function() {
 				self.mode(self.mode()=="short"?"full":"short");
-				self.modalWindow.width(self.mode()=="short"?500:700);
+				self.modalWindow.width(self.mode()=="short"?370:490);
 			}
 			this.inModalWindow(true);
 		}
