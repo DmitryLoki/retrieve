@@ -168,13 +168,15 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 	
 	PlayerControl.prototype.setTimePos = function(time) { //TODO: сделать через time()
 		this._silence = true;
-		this.slider.set("val",ko.utils.unwrapObservable(time));
+		time = ko.utils.unwrapObservable(time);
+		this.slider.set("val",time);
 		this._timeKey(time);
 		this._silence = false;
 		return this;
 	}
 
 	PlayerControl.prototype.initTimeInterval = function(timeStart, timeFinish) {
+		this._silence = true;
 		timeStart = ko.utils.unwrapObservable(timeStart);
 		timeFinish = ko.utils.unwrapObservable(timeFinish);
 		this.slider.set({
@@ -182,7 +184,9 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 			max: timeFinish,
 			val: timeStart
 		});
+		this._timeKey(timeStart);
 		this.enabled(true);
+		this._silence = false;
 		return this;
 	}
 

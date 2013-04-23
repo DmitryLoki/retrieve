@@ -1,10 +1,7 @@
 define(["utils"],function(utils) {
 
-	var RealServer = function() {
-
-		this.generateData = function(options) {
-			this.options = options;
-		}
+	var RealServer = function(options) {
+		this.options = options;
 
 /*
 		this.generateData = function(options) {
@@ -166,28 +163,60 @@ define(["utils"],function(utils) {
 				});
 			}
 			else if (query.type == "race") {
-				var data = {
-					startKey: this.options.startKey,
-					endKey: this.options.endKey,
-					raceStartKey: this.options.startKey + 10000,
-					center: this.options.coords.center,
-					waypoints: [],
-					titles: {
-						mainTitle: this.options.mainTitle,
-						taskTitle: this.options.taskTitle,
-						dateTitle: this.options.dateTitle,
-						placeTitle: this.options.placeTitle
+				$.ajax({
+					url: "http://api.airtribune.com/v0.1/contest/" + this.options.contestId + "/race/" + this.options.raceId,
+					dataType: "json",
+					success: function(result) {
+						var waypoints = [], center = {lat:0,lng:0};
+						var mult = 1000*86400;
+						if (result.checkpoints && result.checkpoints.features)
+							for (var i = 0; i < result.checkpoints.features.length; i++) {
+								rw = result.checkpoints.features[i];
+								waypoints.push({
+									id: i,
+									name: rw.properties.name,
+									type: rw.properties.checkpoint_type,
+									lat: rw.geometry.coordinates[0],
+									lng: rw.geometry.coordinates[1],
+									radius: rw.properties.radius,
+									textSize: 1,
+									openTime: rw.properties.open_time*mult,
+									closeTime: rw.properties.close_time*mult
+								});
+								if (rw.properties && rw.properties.checkpoint_type == "to")
+									self.options.raceStartKey = rw.properties.open_time*mult;
+								center.lat += rw.geometry.coordinates[0];
+								center.lng += rw.geometry.coordinates[1];
+							}
+						if (waypoints.length > 0) {
+							center.lat /= waypoints.length;
+							center.lng /= waypoints.length;
+						}
+						var data = {
+							startKey: result.start_time*mult,
+							endKey: result.end_time*mult,
+							raceStartKey: self.options.raceStartKey,
+							waypoints: waypoints,
+							center: center,
+							titles: {
+								mainTitle: result.contest_title,
+								taskTitle: result.race_title,
+								dateTitle: "",
+								placeTitle: result.place
+							}
+						}
+						if (query.callback)
+							query.callback(data);
 					}
-				}
+				});
+			}
+			else if (query.type == "timeline" && query.first && query.last) {
+				data = {start:{},timeline:{}};
 				if (query.callback)
 					query.callback(data);
 			}
-			else if (query.type == "timeline" && query.first && query.last) {
-				
-			}
 		}
-
-/*
+ /*
 		this.get = function(query) {
 			var data = {};
 			// TODO: пока не разобрался, какие данные должны приходит при инициализации гонки

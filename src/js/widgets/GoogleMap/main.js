@@ -531,7 +531,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		ko.virtualElements.prepend(elem,div);
 		
 		this._map = new gmaps.Map(div,{
-			zoom: 13,
+			zoom: 9,
 			center: new gmaps.LatLng(55.748758, 37.6174),
 			mapTypeId: gmaps.MapTypeId.TERRAIN
 		});

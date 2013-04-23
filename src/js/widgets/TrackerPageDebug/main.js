@@ -38,13 +38,11 @@ define([
     ShortWay
 ){
 
-	var TrackerPageDebug = function() {
+	var TrackerPageDebug = function() { 
 		this.initialize();
 	}
 
 	TrackerPageDebug.prototype.options = {
-		// Виджет карты - GoogleMap или OWG
-		mapType: "GoogleMap",
 		// Настройки тестового сервера
 		testServerOptions: {
 			mainTitle: "52th FAI european paragliding championship",
@@ -145,7 +143,7 @@ define([
 		},
 		namesVisualAutoMinZoom: 12,
 		waypointsColors: {
-			start: {
+			to: {
 				closed: "#ff0000",
 				opened: "#00ff00"
 			},
@@ -153,7 +151,7 @@ define([
 				closed: "#909090",
 				opened: "#909090"
 			},
-			finish: {
+			goal: {
 				closed: "#0000ff",
 				opened: "#0000ff"
 			}
@@ -268,11 +266,11 @@ define([
 		this.ufos = ko.observableArray();
 		this.waypoints = ko.observableArray();
 
-		this.mapType = this.options.mapType;
-		if (this.mapType == "GoogleMap")
-			this.map = new GoogleMap(this.options);
-		else if (this.mapType == "OwgMap")
-			this.map = new OwgMap(this.options);
+//		if (this.options.mapWidget == "3d")
+//			this.map = new OwgMap(this.options);
+//		else
+		this.map = new GoogleMap(this.options);
+		this.mapType = "GoogleMap";
 
 		this.ufosTable = new UfosTable(this.ufos);
 		this.ufosTableWindow = new Window(this.options.windows.ufosTable);
@@ -295,7 +293,6 @@ define([
 		this.shortWayVisualMode = ko.observable("");
 		this.namesVisualMode = ko.observable("");
 		this.playerControl.on("setTracksVisualMode",function(v) {
-			console.log("update setTracksVisualMode",v);
 			self.tracksVisualMode(v);
 		});
 		this.playerControl.on("setCylindersVisualMode",function(v) {
@@ -340,10 +337,11 @@ define([
 		this.shortWayVisualMode(this.options.shortWayVisualMode);
 		this.namesVisualMode(this.options.namesVisualMode);
 
-		this.server = new TestServer();
-//		this.server = new RealServer();
-		// это пока оставим, ничего не генерим но используем несколько настроек 
-		this.server.generateData(this.options.testServerOptions);
+//		this.server = new TestServer();
+//		this.server.generateData(this.options.testServerOptions);
+
+		this.server = new RealServer(this.options);
+
 		// Создаем dataSource, устанавливаем ему в качестве источника данных тестовый сервер
 		this.dataSource = new DataSource({
 			server: this.server
@@ -402,6 +400,16 @@ define([
 			callback();
 	}
 
+	TrackerPageDebug.prototype.setMapPosition = function(data) {
+		if (this.map && data.center) {
+			console.log("setMapPosition",data.center);
+			this.map.setCameraLookAtPosition({
+				latitude: data.center.lat,
+				longitude: data.center.lng
+			});
+		}
+	}
+
 	// Новая версия playerInit отличается другим подходам к таймаутам.
 	// Раньше тик зависел от скорости, на speed=1 тикал раз в секунду, запрашивал через dataSource данные, двигал маркеры
 	// Теперь попробуем тикать независимо от скорости с тиком, подходящим для анимации.
@@ -411,7 +419,6 @@ define([
 	TrackerPageDebug.prototype.playerInitNew = function(data) {
 		var self = this;
 
-		console.log("playerInitNew",data);
 
 		// Даннные в милисекундах, время начала и конца гонки. Текущее время плеера устанавливается на начало гонки
 		var playerStartKey = data.startKey;
@@ -421,14 +428,6 @@ define([
 
 		// Текущее актуальное время
 		var playerCurrentTime = (new Date).getTime();
-
-		// Центрируем карту, с сервера должны прийти дефолтные координаты камеры
-		if (this.map && data.center) {
-			this.map.setCameraLookAtPosition({
-				latitude: data.center.lat,
-				longitude: data.center.lng
-			});
-		}
 
 		var timerHandle = null;
 		var tableTimerHandle = null;
@@ -493,7 +492,6 @@ define([
 		// При инициализации и когда вручную тащим бегунок слайдера, нужно уметь задавать положение на определенное время
 		// При этом ессно обновлять данные таблицы, а то вдруг у нас состояние pause, при котором данные не обновляются автоматически
 		var setSpecificFrame = function(time) {
-			console.log("setSpecificFrame",time);
 			playerCurrentKey = time;
 			renderFrame(function() {
 				renderTableData();
@@ -544,6 +542,11 @@ define([
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		var self = this;
+
+		this.options.contestId = params.contestId;
+		this.options.raceId = params.raceId;
+		this.options.isOnline = params.isOnline;
+
 		// Все запросы к серверу считаются асинхронными с callback-ом
 		/*
 		this.dataSource.get({
@@ -559,11 +562,24 @@ define([
 			}
 		});
 		*/
+
+		this.dataSource.get({
+			type: "race",
+			callback: function(data) {
+				self.setTitles(data);
+				self.setMapPosition(data);
+				self.setRaceStartKey(data);
+				self.loadWaypoints(data);
+				self.loadShortWay(data);
+				self.playerInitNew(data);
+			}
+		})
+
+/*
 		self.loadPilots(function() {
 			self.dataSource.get({
 				type: "race",
 				callback: function(data) {
-					console.log(data);
 					self.setTitles(data);
 					self.setRaceStartKey(data);
 					self.loadWaypoints(data);
@@ -572,6 +588,8 @@ define([
 				}
 			});
 		});
+*/
+
 	}
 
 	TrackerPageDebug.prototype.templates = ["main"];
