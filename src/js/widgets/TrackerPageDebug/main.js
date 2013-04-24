@@ -120,7 +120,7 @@ define([
 				showHeader: false,
 				resizable: false,
 				absoluteCloseIcon: true,
-				width: 830,
+				width: 940,
 				top: 50,
 				left: 90,
 				height: 100

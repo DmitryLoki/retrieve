@@ -67,7 +67,11 @@ define(["jquery","knockout","widget!Checkbox","jquery.jscrollpane","jquery.mouse
 		while (div && div.nodeType != 1)
 			div = ko.virtualElements.nextSibling(div);
 		this.container = $(div);
-		this.container.find("div.airvis-table-with-fixed-header-inner").jScrollPane({scrollbarWidth:4, showArrows:false});
+		this.container.find("div.airvis-table-with-fixed-header-inner").jScrollPane({
+			'scrollbarWidth':0, 
+			'showArrows':false,
+			'contentWidth': '0px'
+		});
 	};
 
 	UfosTable.prototype.domDestroy = function(elem, params) {
