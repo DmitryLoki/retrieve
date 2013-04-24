@@ -470,6 +470,16 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		}
 	}
 
+	GoogleMap.prototype.calculateAndSetDefaultPosition = function() {
+		if (!this._map || !this._waypoints) return;
+		var bounds = new gmaps.LatLngBounds();
+		for (var i = 0; i < this._waypoints.length; i++) {
+			w = this._waypoints[i];
+			bounds.extend(new gmaps.LatLng(w._params.lat,w._params.lng));
+		}
+		this._map.fitBounds(bounds);
+	}
+
 	GoogleMap.prototype.ufo = function(params) {
 		var self = this;
 		params.map = self;

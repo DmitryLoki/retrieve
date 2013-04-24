@@ -1,4 +1,4 @@
-define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery', 'jquery-ui'], function(utils, filters, ko, komap, $){
+define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(utils, filters, ko, komap, $){
 	function koWidgetBindingInit(){ // <!-- ko widget: { data: btn1, type: "Button", title: "button #1" } --><!-- /ko -->
 		function init(elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
 	    	var val = valueAccessor();

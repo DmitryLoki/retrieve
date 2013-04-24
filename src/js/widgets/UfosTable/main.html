@@ -15,7 +15,7 @@
 						<th class="pilot-number"><div class="th_wrap"><div>#</div></div></th>
 						<th class="pilot-name"><div class="th_wrap"><div>Pilot</div></div></th>
 						<!-- ko if: mode() == "full" -->
-							<th class="pilot-nation"><div class="th_wrap"><div>Nation</div></div></th>
+							<th class="pilot-nation"><div class="th_wrap"><div>Country</div></div></th>
 						<!-- /ko -->
 						<th class="dist-to-goal"><div class="th_wrap"><div>Dist to<br>goal, km</div></div></th>
 						<th class="alt"><div class="th_wrap"><div>Alt,<br>m</div></div></th>
@@ -32,7 +32,7 @@
 						<th class="pilot-number"><div class="th_wrap"><div>#</div></div></th>
 						<th class="pilot-name"><div class="th_wrap"><div>Pilot</div></div></th>
 						<!-- ko if: mode() == "full" -->
-							<th class="pilot-nation"><div class="th_wrap"><div>Nation</div></div></th>
+							<th class="pilot-nation"><div class="th_wrap"><div>Country</div></div></th>
 						<!-- /ko -->
 						<th class="dist-to-goal"><div class="th_wrap"><div>Dist to<br>goal, km</div></div></th>
 						<th class="alt"><div class="th_wrap"><div>Alt,<br>m</div></div></th>
@@ -58,7 +58,7 @@
 						<!-- /ko -->
 						<!-- ko if: $parent.mode() == "full" -->
 							<td class="pilot-name" data-bind="text: name"></td>
-							<td class="pilot-nation"><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span></td>
+							<td class="pilot-nation"><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span><span data-bind="text:country"></span></td>
 						<!-- /ko -->
 						<td class="dist-to-goal" data-bind="text: statusOrDist" data-bind="text: statusText ? statusText : leftDist() < 4294967295 ? (leftDist()/1000).toFixed(1) : '' "></td>
 						<td class="alt" data-bind="text: alt"></td>
