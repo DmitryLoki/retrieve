@@ -15,9 +15,9 @@ require.config({
     		exports: function($){ return $; }
     	},
     	'setImmediate': { exports: 'window.setImmediate' },
-    	'jquery.jscrollpane': {
-    		deps: ['jquery'],
-    		exports: 'jQuery.fn.jScrollPane'
+        'jquery.jscrollpane': {
+            deps: ['jquery','jquery.mousewheel'],
+            exports: 'jQuery.fn.jScrollPane'
     	},
     	'jquery.mousewheel': {
     		deps: ['jquery'],
