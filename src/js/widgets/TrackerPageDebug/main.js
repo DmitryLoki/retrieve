@@ -112,7 +112,10 @@ define([
 				title: "Player",
 				width: 940,
 				top: 160,
-				left: 90
+				left: 90,
+				xPosition: "center",
+				yPosition: "bottom",
+				bottom: 20
 			},
 			mainMenu: {
 				visible: true,
@@ -121,9 +124,9 @@ define([
 				resizable: false,
 				absoluteCloseIcon: true,
 				width: 940,
+				height: 100,
 				top: 50,
-				left: 90,
-				height: 100
+				xPosition: "center"
 			}
 		},
 		tracksVisualMode: "full",

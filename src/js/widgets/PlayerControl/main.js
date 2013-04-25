@@ -161,6 +161,11 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 		return this;
 	}
 
+	PlayerControl.prototype.switchPlay = function() {
+		this._state(this._state()=="play"?"pause":"play");
+		return this;
+	}
+
 	PlayerControl.prototype.changeSpeed = function(newSpeed) {
 		this._speed(Math.round(ko.utils.unwrapObservable(newSpeed)));
 		return this;

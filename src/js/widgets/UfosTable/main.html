@@ -1,71 +1,49 @@
-<div>
+<div class="airvis-tbl">
 	<!-- ko if: inModalWindow -->
 		<a href="#" class="airvis-window-ec-absolute" data-bind="click:switchMode,css:{'airvis-expand':mode()=='short','airvis-collapse':mode()=='full'}"></a>
 	<!-- /ko -->
-	<div class="arvis-table-head-surrogate"></div>
-	<div class="airvis-table-with-fixed-header">
-		<div class="airvis-table-with-fixed-header-inner">
-			<table border="0" cellpadding="0" cellspacing="0">
-				<thead>
+	<div class="airvis-table-header">
+		<table>
+			<tbody>
+				<tr>
+					<td class="airvis-checkbox"><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
+					<td class="airvis-checkbox" data-bind="visible:mode()=='full'"><!-- ko widget: { data: allTrackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
+					<td class="airvis-pilot-number">#</td>
+					<td class="airvis-pilot-name">Pilot</td>
+					<td class="airvis-pilot-country" data-bind="visible:mode()=='full'">Country</td>
+					<td class="airvis-dist-to-goal">Dist to<br>goal, km</td>
+					<td class="airvis-alt">Alt,<br>m</td>
+					<td class="airvis-gspd">Speed,<br>km/h</td>
+					<td class="airvis-vspd" data-bind="visible:mode()=='full'">Vario,<br>m/s</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="airvis-scrollbar">
+		<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+		<div class="airvis-table-body viewport">
+			<table class="overview">
+				<tbody data-bind="foreach:ufos">
 					<tr>
-						<th class="first-checkbox airvis-checkbox"><div class="th_wrap"><div><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></div></div></th>
-						<!-- ko if: mode() == "full" -->
-							<th class="third-checkbox airvis-checkbox"><div class="th_wrap"><div><!-- ko widget: { data: allTrackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></div></div></th>
-						<!-- /ko -->
-						<th class="pilot-number"><div class="th_wrap"><div>#</div></div></th>
-						<th class="pilot-name"><div class="th_wrap"><div>Pilot</div></div></th>
-						<!-- ko if: mode() == "full" -->
-							<th class="pilot-nation"><div class="th_wrap"><div>Country</div></div></th>
-						<!-- /ko -->
-						<th class="dist-to-goal"><div class="th_wrap"><div>Dist to<br>goal, km</div></div></th>
-						<th class="alt"><div class="th_wrap"><div>Alt,<br>m</div></div></th>
-						<th class="gspd"><div class="th_wrap"><div>Speed,<br>km/h</div></div></th>
-						<!-- ko if: mode() == "full" -->
-							<th class="vspd"><div class="th_wrap"><div>Vario,<br>m/s</div></div></th>
-						<!-- /ko -->
-					</tr>
-					<tr>
-						<th class="first-checkbox airvis-checkbox"><div class="th_wrap"><div><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></div></div></th>
-						<!-- ko if: mode() == "full" -->
-							<th class="third-checkbox airvis-checkbox"><div class="th_wrap"><div><!-- ko widget: { data: allTrackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></div></div></th>
-						<!-- /ko -->
-						<th class="pilot-number"><div class="th_wrap"><div>#</div></div></th>
-						<th class="pilot-name"><div class="th_wrap"><div>Pilot</div></div></th>
-						<!-- ko if: mode() == "full" -->
-							<th class="pilot-nation"><div class="th_wrap"><div>Country</div></div></th>
-						<!-- /ko -->
-						<th class="dist-to-goal"><div class="th_wrap"><div>Dist to<br>goal, km</div></div></th>
-						<th class="alt"><div class="th_wrap"><div>Alt,<br>m</div></div></th>
-						<th class="gspd"><div class="th_wrap"><div>Speed,<br>km/h</div></div></th>
-						<!-- ko if: mode() == "full" -->
-							<th class="vspd"><div class="th_wrap"><div>Vario,<br>m/s</div></div></th>
-						<!-- /ko -->
-					</tr>
-				</thead>
-				<tbody data-bind="foreach: ufos">
-					<tr>
-						<td class="first-checkbox airvis-checkbox">
+						<td class="airvis-checkbox">
 			                <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
 						</td>
-						<!-- ko if: $parent.mode() == "full" -->
-							<td class="third-checkbox airvis-checkbox">
-				                <!-- ko widget: { data: trackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
-							</td>
-						<!-- /ko -->
-						<td class="pilot-number" data-bind="text: $index() + 1"></td>
-						<!-- ko if: $parent.mode() == "short" -->
-							<td class="pilot-name"><span data-bind="text:name"></span><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span></td>
-						<!-- /ko -->
-						<!-- ko if: $parent.mode() == "full" -->
-							<td class="pilot-name" data-bind="text: name"></td>
-							<td class="pilot-nation"><span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span><span data-bind="text:country"></span></td>
-						<!-- /ko -->
-						<td class="dist-to-goal" data-bind="text: statusOrDist" data-bind="text: statusText ? statusText : leftDist() < 4294967295 ? (leftDist()/1000).toFixed(1) : '' "></td>
-						<td class="alt" data-bind="text: alt"></td>
-						<td class="gspd" data-bind="text: tableData.gSpd()"></td>
-						<!-- ko if: $parent.mode() == "full" -->
-							<td class="vspd-with-delay" data-bind="text: tableData.vSpd()"></td>
-						<!-- /ko -->
+						<td class="airvis-checkbox" data-bind="visible:$parent.mode()=='full'">
+			                <!-- ko widget: { data: trackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
+						</td>
+						<td class="airvis-pilot-number" data-bind="text: $index() + 1"></td>
+						<td class="airvis-pilot-name">
+							<span data-bind="text:name"></span>
+							<span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase(),visible:$parent.mode()=='short'"></span>
+						</td>
+						<td class="airvis-pilot-country" data-bind="visible:$parent.mode()=='full'">
+							<span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country.toLowerCase()"></span>
+							<span data-bind="text:country"></span>
+						</td>
+						<td class="airvis-dist-to-goal" data-bind="text: statusOrDist" data-bind="text:statusText?statusText:(leftDist()/1000).toFixed(1)"></td>
+						<td class="airvis-alt" data-bind="text: alt"></td>
+						<td class="airvis-gspd" data-bind="text: tableData.gSpd()"></td>
+						<td class="airvis-vspd" data-bind="text:tableData.vSpd(),visible:$parent.mode()=='full'"></td>
 					</tr>
 				</tbody>
 			</table>

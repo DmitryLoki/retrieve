@@ -1,9 +1,8 @@
-define(["jquery","knockout","widget!Checkbox","jquery.jscrollpane","jquery.mousewheel"],function($,ko,Checkbox){
+define(["jquery","knockout","widget!Checkbox","jquery.tinyscrollbar"],function($,ko,Checkbox){
+//	,"jquery.jscrollpane","jquery.mousewheel"
 	var UfosTable = function(ufos) {
 		this.ufos = ufos;
 		var self = this;
-
-		console.log("scrollpane",$.fn.jScrollPane,$.fn.mousewheel,$.fn.unmousewheel);
 
 		this.inModalWindow = ko.observable(false);
 		this.mode = ko.observable("short");
@@ -51,6 +50,26 @@ define(["jquery","knockout","widget!Checkbox","jquery.jscrollpane","jquery.mouse
         this.allTrackVisibleCheckbox = new Checkbox({checked: this.allTrackVisibleChecked, color: 'blue'});
 	};
 
+	UfosTable.prototype.alignColumns = function(it) {
+		var self = this;
+		if (!this.headerContainer || !this.bodyContainer) return;
+
+		this.headerContainer.find("table").width(this.bodyContainer.find("table").width());
+
+		var columns = this.headerContainer.find("tr:first").find("td");
+		this.bodyContainer.find("tr:first").find("td").each(function(i) {
+			var td = $(this);
+			$(columns.get(i)).width(td.width());
+		});
+		if (!it) {
+			setTimeout(function() {
+				self.alignColumns(1);
+			},100);
+		}
+		if (this.scrollbarContainer)
+			this.scrollbarContainer.tinyscrollbar_update();
+	}
+
 	UfosTable.prototype.domInit = function(element, params) {
 		var self = this;
 
@@ -62,16 +81,40 @@ define(["jquery","knockout","widget!Checkbox","jquery.jscrollpane","jquery.mouse
 			}
 			this.inModalWindow(true);
 		}
+		this.modalWindow.on("resize",function() {
+			self.alignColumns();
+		})
 
 		var div = ko.virtualElements.firstChild(element);
 		while (div && div.nodeType != 1)
 			div = ko.virtualElements.nextSibling(div);
 		this.container = $(div);
+
+		this.headerContainer = this.container.find(".airvis-table-header");
+		this.bodyContainer = this.container.find(".airvis-table-body");
+
+		this.alignColumns();
+
+		this.ufos.subscribe(function() {
+			self.alignColumns();
+		});
+		this.mode.subscribe(function() {
+			self.alignColumns();
+		});
+
+		this.scrollbarContainer = this.container.find(".airvis-scrollbar").tinyscrollbar();
+/*
+		this.bodyContainer.jScrollPane({
+			scrollbarWidth: 0,
+			showArrows: false,
+			contentWidth: 0
+		});
 		this.container.find("div.airvis-table-with-fixed-header-inner").jScrollPane({
 			'scrollbarWidth':0, 
 			'showArrows':false,
 			'contentWidth': '0px'
 		});
+*/
 	};
 
 	UfosTable.prototype.domDestroy = function(elem, params) {

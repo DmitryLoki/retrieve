@@ -17,8 +17,12 @@ define(["jquery","knockout"],function($,ko) {
 			height: "auto",
 			top: 0,
 			left: 0,
+			right: 0,
+			bottom: 0,
 			minWidth: 100,
-			minHeight: 50
+			minHeight: 50,
+			xPosition: "left",
+			yPosition: "top"
 		}
 
 		if (!options) options = {};
@@ -35,8 +39,13 @@ define(["jquery","knockout"],function($,ko) {
 		self.height = this.asObservable(options.height,defaults.height);
 		self.top = this.asObservable(options.top,defaults.top);
 		self.left = this.asObservable(options.left,defaults.left);
+		self.right = this.asObservable(options.right,defaults.right);
+		self.bottom = this.asObservable(options.bottom,defaults.bottom);
 		self.minWidth = this.asObservable(options.minWidth,defaults.minWidth);
 		self.minHeight = this.asObservable(options.minHeight,defaults.minHeight);
+		self.xPosition = this.asObservable(options.xPosition,defaults.xPosition);
+		self.yPosition = this.asObservable(options.yPosition,defaults.yPosition);
+
 
 		self.nodes = ko.observableArray(defaults.nodes);
 		self.css = ko.observable({});
@@ -69,10 +78,30 @@ define(["jquery","knockout"],function($,ko) {
 		while (div && div.nodeType != 1)
 			div = ko.virtualElements.nextSibling(div);
 
+		this.container = $(div);
+
 		if (div) {
 			var obj = $(div);
 			this.width(obj.width());
 			this.height(obj.height());
+
+			if (this.xPosition() == "center") {
+				var x = Math.floor(($(window).width()-this.width())/2);
+				this.left(x);
+			}
+			if (this.xPosition() == "right") {
+				var x = $(window).width() - this.width() - this.right();
+				this.left(x);
+			}
+			if (this.yPosition() == "middle") {
+				var y = Math.floor(($(window).height()-this.height())/2);
+				this.top(y);
+			}
+			if (this.yPosition() == "bottom") {
+				var y = $(window).height() - this.height() - this.bottom();
+				this.top(y);
+			}
+
 			var content = obj.find(".airvis-window-content");
 			var position = content.position();
 			content.addClass("airvis-window-content-absolute").css({top:position.top+"px",left:position.left+"px"});
@@ -107,6 +136,10 @@ define(["jquery","knockout"],function($,ko) {
 
 	Window.prototype.slideUp = function() {
 		var self = this;
+		this.container.fadeOut("fast",function() {
+			self.visible(false);
+		})
+/*
 		this.visible(false);
 		if (this.switchNode) {
 			var target = $(this.switchNode);
@@ -125,10 +158,15 @@ define(["jquery","knockout"],function($,ko) {
 				sq.remove();
 			});
 		}
+*/
 	}
 
 	Window.prototype.slideDown = function() {
 		var self = this;
+		this.container.fadeIn("fast",function() {
+			self.visible(true);
+		});
+/*		
 		if (this.switchNode) {
 			var target = $(this.switchNode);
 			var sq = $("<div class='airvis-slideSq'></div>").appendTo("body");
@@ -149,6 +187,7 @@ define(["jquery","knockout"],function($,ko) {
 		}
 		else
 			self.visible(true);
+*/
 	}
 
 	Window.prototype.templates = ["main"];
