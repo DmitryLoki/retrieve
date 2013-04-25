@@ -9,10 +9,10 @@ define(["jquery","knockout"],function($,ko) {
 			var out = [];
 			$.each(self.items(),function(i,v) {
 				if (v != w && v.visible()) {
-					out.push([v.left(),v.top(),v.left()+v.width(),v.top()]);
-					out.push([v.left(),v.left(),v.left(),v.top()+v.height()]);
-					out.push([v.left()+v.width(),v.top(),v.left()+v.width(),v.top()+v.height()]);
-					out.push([v.left(),v.top()+v.height(),v.left()+v.width(),v.top()+v.height()]);
+					out.push([v.left(),v.top()-5,v.left()+v.width(),v.top()-5]);
+					out.push([v.left(),v.left()-5,v.left(),v.top()+v.height()+10]);
+					out.push([v.left()+v.width(),v.top()-5,v.left()+v.width(),v.top()+v.height()+10]);
+					out.push([v.left(),v.top()+v.height()+10,v.left()+v.width(),v.top()+v.height()+10]);
 				}
 			});
 			return out;
@@ -22,7 +22,7 @@ define(["jquery","knockout"],function($,ko) {
 			var out = [];
 			$.each(self.items(),function(i,v) {
 				if (v != w && v.visible()) {
-					out.push([v.left(),v.top()],[v.left()+v.width(),v.top()],[v.left(),v.top()+v.height()],[v.left()+v.width(),v.top()+v.height()]);
+					out.push([v.left(),v.top()-5],[v.left()+v.width(),v.top()-5],[v.left(),v.top()+v.height()+10],[v.left()+v.width(),v.top()+v.height()+10]);
 				}
 			});
 			return out;
@@ -98,6 +98,7 @@ define(["jquery","knockout"],function($,ko) {
 				}
 				w.top(top);
 				w.left(left);
+				w.emit("drag");
 			}
 			$("body").addClass("airvis-document-overwrite-cursor-move");
 			$(document).on("mousemove",mouseMove).one("mouseup mouseleave",function(e) {
@@ -164,6 +165,7 @@ define(["jquery","knockout"],function($,ko) {
 					w.height(height);
 				if (dir == "right" || dir == "bottom-right")
 					w.width(width);
+				w.emit("resize");
 			}
 			$("body").addClass("airvis-document-overwrite-cursor-" + cursor);
 			$(document).on("mousemove",mouseMove).one("mouseup mouseleave",function(e) {
