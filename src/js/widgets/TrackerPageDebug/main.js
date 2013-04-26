@@ -382,6 +382,7 @@ define([
 	}
 
 	TrackerPageDebug.prototype.setMapPosition = function(data) {
+/*
 		if (this.map && data.center) {
 			console.log("setMapPosition",data.center);
 			this.map.setCameraLookAtPosition({
@@ -389,6 +390,9 @@ define([
 				longitude: data.center.lng
 			});
 		}
+*/
+		if (this.map)
+			this.map.calculateAndSetDefaultPosition();
 	}
 
 	// Новая версия playerInit отличается другим подходам к таймаутам.
@@ -571,9 +575,9 @@ define([
 			type: "race",
 			callback: function(data) {
 				self.setTitles(data);
-				self.setMapPosition(data);
 				self.setRaceStartKey(data);
 				self.loadWaypoints(data);
+				self.setMapPosition(data);
 				self.loadShortWay(data);
 
 				var loadedPilots = 0;
