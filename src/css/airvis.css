@@ -29,7 +29,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 /* common window widget styles */
 .airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
 .airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
-.airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0 11px; text-rendering: optimizelegibility;}
+.airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0; text-rendering: optimizelegibility;}
 .airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat; margin-top: 8px; margin-right: -2px;}
 .airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat;}
 .airvis-window-close:hover,
@@ -53,52 +53,41 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 /*
 .airvis-table-with-fixed-header { position: absolute; bottom: 0; left: 0; right: 0; top: 42px;}
 .airvis-table-with-fixed-header-inner { height: 208px; width: auto !important; position: relative; overflow: visible !important;}
-.airvis-table-with-fixed-header table { margin: 0; overflow: hidden; position: static; width: 100%; font-size: 12px; color: #ffffff;}
-.arvis-table-head-surrogate { width: 100%; height: 42px; background-color: rgba(0,47,64,.50);}
-.airvis-table-with-fixed-header table th { padding: 0; border: 0; font-size: 12px; line-height: 15px; text-align: left; font-weight: normal;}
-.airvis-table-with-fixed-header th div.th_wrap { position: absolute; text-align: center; top: -42px; height: 42px;  }
-.airvis-table-with-fixed-header th + th div.th_wrap { border-left: 1px solid rgba(0,47,64,.15)}
-.airvis-table-with-fixed-header th div.th_wrap div { position: absolute; bottom: 5px; left: 0; right: 0; padding: 0}
-.airvis-table-with-fixed-header tr.airvis-hidden-header th > div { height: 0; overflow-y: hidden; position: static; white-space: nowrap;}
-*/
+.arvis-table-head-surrogate { width: 100%; height: 42px; }*/
+.airvis-window .airvis-table-header-1 table td { font-size: 12px; line-height: 15px; font-weight: normal; padding-bottom: 5px; vertical-align: bottom; height: 37px;}
+.airvis-table-header td div.th_wrap { position: absolute; text-align: center; top: -42px; height: 42px;  }
+.airvis-table-header td + td div.th_wrap { border-left: 1px solid rgba(0,47,64,.15)}
+.airvis-table-header td div.th_wrap div { position: absolute; bottom: 5px; left: 0; right: 0; padding: 0}
+.airvis-table-header-1 tr { background-color: rgba(0,47,64,.50);}
+
 /* redefine font sizes in airvis tables */
-/*
+.airvis-window table { margin: 0; width: 100%; font-size: 12px; color: #ffffff; border-collapse: separate; }
 .airvis-window table tbody tr:nth-child(2n+2) { background-color: rgba(0,47,64,.35);}
-.airvis-window table tbody td { line-height: 20px; padding: 0 10px; text-align: center; vertical-align: top;}
-.airvis-window table tbody tr:first-child td { padding-top: 8px;}
+.airvis-window table tbody td { line-height: 20px; padding: 0; text-align: center; vertical-align: top;}
+.airvis-window .airvis-scrollbar table tbody tr:first-child td { padding-top: 8px;}
 .airvis-window table tbody td + td { border-left: 1px solid rgba(0,47,64,.15)}
 
-.airvis-window th.airvis-checkbox, 
-.airvis-window td.airvis-checkbox { padding: 0; text-align: center; width: 30px;}
-.airvis-window th.airvis-checkbox span.checkbox { background-color: #ffffff !important; background-position: 0 -12px;}
-.airvis-window th.airvis-checkbox span.unchecked { background-position: 0 -100px;}
-.airvis-window th.airvis-checkbox > div, 
-.airvis-window td.airvis-checkbox > div { width: 30px;}
-.airvis-window th.airvis-checkbox > div div { padding: 0;}
-.airvis-window th.airvis-checkbox .checkbox, 
+
+.airvis-window td.airvis-checkbox { text-align: center; width: 29px;}
+.airvis-window tr td.airvis-checkbox:first-child { width: 30px;}
+.airvis-window .airvis-table-header-1 td.airvis-checkbox span.checkbox { background-color: #ffffff !important; background-position: 0 -12px;}
+.airvis-window .airvis-table-header-1 td.airvis-checkbox span.unchecked { background-position: 0 -100px;}
 .airvis-window td.airvis-checkbox .checkbox { top: 1px; position: relative;}
 
-.airvis-window table .pilot-number,
-.airvis-window table .pilot-number div.th_wrap { width: 29px; padding: 0;}
-.airvis-window table th.pilot-name,
-.airvis-window table .pilot-name div.th_wrap { width: 159px; text-align: center;}
-.airvis-window table .pilot-name { text-align: left;}
-.airvis-window table th.dist-to-goal,
-.airvis-window table .dist-to-goal div.th_wrap { width: 59px;}
-.airvis-window table th.alt,
-.airvis-window table .alt div.th_wrap { width: 39px;}
-.airvis-window table th.gspd,
-.airvis-window table .gspd div.th_wrap,
-.airvis-window table th.vspd,
-.airvis-window table .vspd div.th_wrap { width: 49px;}
-.airvis-window table th.pilot-nation,
-.airvis-window table .pilot-nation div.th_wrap { width: 69px;}
+.airvis-window table .airvis-pilot-number { width: 29px;}
+.airvis-window table .airvis-pilot-name { width: 139px; text-align: center; padding: 0 10px;}
+.airvis-window table .airvis-pilot-name { text-align: left;}
+.airvis-window table .airvis-dist-to-goal { width: 59px;}
+.airvis-window table .airvis-alt { width: 39px;}
+.airvis-window table .airvis-gspd,
+.airvis-window table .airvis-vspd { width: 49px;}
+.airvis-window table .airvis-pilot-country { width: 69px;}
 
 .airvis-window table .pilot-name { vertical-align: top;}
 .airvis-window table .pilot-name .countryicon-sprite { margin-left: 10px;}
 
 .airvis-window table .pilot-nation .countryicon-sprite { margin-right: 10px;}
-*/
+
 
 .airvis-tbl {
   position: absolute;
@@ -107,48 +96,23 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
   right: 0;
   bottom: 0;
 }
-.airvis-tbl table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  margin: 0;
-  padding: 0;  
-  width: 100%;
-}
 .airvis-tbl td {
   margin: 0;
   padding: 2px 5px;
   text-align: center;
 }
 
-.airvis-tbl td.airvis-checkbox {
-  width: 12px;
-}
-.airvis-tbl td.airivs-pilot-number {
-  width: 35px;
-  text-align: right;
-}
-.airvis-tbl td.airvis-alt {
-  min-width: 40px;
-}
-.airvis-tbl td.airvis-gspd {
-  min-width: 40px;
-}
-.airvis-tbl td.airvis-vspd {
-  min-width: 40px;
-}
-.airvis-tbl td.airvis-dist-to-goal {
-  min-width: 55px;
-}
 .airvis-table-body {
   position: absolute;
   overflow: hidden;
-  top: 40px;
+  top: 42px;
   left: 0;
   right: 0;
   bottom: 0;
 }
 
-
+.resizeble { background-image: url(../img/corner.png); background-repeat: no-repeat; background-position: 100% 100%;}
+.resizeble .airvis-tbl { bottom: 10px; }
 
 
 
@@ -296,33 +260,25 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .gmap > div > .gmnoprint:nth-child(3n+1),
 .gmap > div > .gmnoprint:last-child { top: 40px !important;}
 
-.jspContainer { position:relative; overflow:hidden; width: auto !important;}
-.jspPane { position:relative; height: 400px; width: auto !important;}
-.jspVerticalBar { position:absolute; top:0; right:6px; background: rgba(0,47,64,.50); border: 1px solid rgba(0, 35, 48, 0.53); 
+
+.airvis-scrollbar .overview { position: absolute; left: 0; top: 0; }
+.airvis-scrollbar .thumb .end,.airvis-scrollbar .thumb { background-color: #003D5D; }
+.airvis-scrollbar .scrollbar { position:absolute; right:11px; z-index: 100;}
+.airvis-scrollbar .track {  background: rgba(0,47,64,.50); border: 1px solid rgba(0, 35, 48, 0.53); position: absolute; top: 4px; bottom: 2px; height: auto !important;
 
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
 
-}
-.jspDrag { background:#ffffff; width:6px; cursor:pointer; position:relative; margin: 0 -2px;
+ }
+.airvis-scrollbar .thumb { background: rgba(255,255,255,.5); width:6px; cursor:pointer; position:relative; margin: -1px -2px 0;
 
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
 
 }
-
-.jspCap, .jspArrow { height: 1px !important;}
-
-
-
-
-.airvis-scrollbar .overview { position: absolute; left: 0; top: 0; }
-.airvis-scrollbar .thumb .end,.airvis-scrollbar .thumb { background-color: #003D5D; }
-.airvis-scrollbar .scrollbar { position: absolute; width: 15px; right: 0; bottom: 0; }
-.airvis-scrollbar .track { background-color: #D8EEFD; height: 100%; width:13px; position: relative; padding: 0 1px; }
-.airvis-scrollbar .thumb { height: 20px; width: 13px; cursor: pointer; overflow: hidden; position: absolute; top: 0; }
-.airvis-scrollbar .thumb .end { overflow: hidden; height: 5px; width: 13px; }
+.airvis-scrollbar .thumb .end { display: none;}
 .airvis-scrollbar .disable{ display: none; }
+.airvis-scrollbar:hover .thumb { background:#ffffff;}
 .noSelect { user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; }

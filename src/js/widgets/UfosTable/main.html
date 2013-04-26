@@ -2,8 +2,8 @@
 	<!-- ko if: inModalWindow -->
 		<a href="#" class="airvis-window-ec-absolute" data-bind="click:switchMode,css:{'airvis-expand':mode()=='short','airvis-collapse':mode()=='full'}"></a>
 	<!-- /ko -->
-	<div class="airvis-table-header">
-		<table>
+	<div class="airvis-table-header-1">
+		<table cellspacing="0" cellpadding="0" border="0">
 			<tbody>
 				<tr>
 					<td class="airvis-checkbox"><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
@@ -22,7 +22,7 @@
 	<div class="airvis-scrollbar">
 		<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
 		<div class="airvis-table-body viewport">
-			<table class="overview">
+			<table class="overview" cellspacing="0" cellpadding="0" border="0">
 				<tbody data-bind="foreach:ufos">
 					<tr>
 						<td class="airvis-checkbox">
