@@ -124,8 +124,8 @@ define([
 				resizable: false,
 				absoluteCloseIcon: true,
 				width: 940,
-				height: 100,
-				top: 50,
+				height: 110,
+				top: 60,
 				xPosition: "center"
 			}
 		},

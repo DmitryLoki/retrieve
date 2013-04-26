@@ -18,7 +18,7 @@
 	</div>
 	<div class="airvis-player-controls-wrapper">
 		<div class="airvis-player-controls">
-			<a data-bind="enable: enabled, click: switchPlay, css: { 'player-button-on': enabled(), 'player-button-off': !enabled() }"><span data-bind="text:_state()=='play'?'PAUSE':'PLAY'"></span></a>
+			<a class="play_pause" data-bind="enable: enabled, click: switchPlay, css: { 'player-button-on': enabled(), 'player-button-off': !enabled() }"><span data-bind="text:_state()=='play'?'PAUSE':'PLAY'"></span></a>
 <!--
 			<a data-bind="enable: enabled, click: play, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }"><span>PLAY</span></a>
 			<a data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }"><span>PAUSE</span></a>

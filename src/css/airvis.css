@@ -161,15 +161,18 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 .airvis-player-controls-wrapper { background: rgba(0, 47, 64, 0.5); height: 40px; position: relative;}
 .airvis-player-controls-wrapper .airvis-player-controls { float: left;}
-.airvis-player-controls a { display: inline-block; min-width: 20px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.75); text-align: center; color: #002a3a; cursor: pointer;
+.airvis-player-controls a { display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden;
 
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
 
 }
-.airvis-player-controls a:hover,
-.airvis-player-controls a.player-button-on { background: #ffffff;}
+.airvis-player-controls a:hover { background: #ffffff;}
+.airvis-player-controls a.player-button-on {  background: rgba(255,255,255,0.75);}
+.airvis-player-controls a.play_pause { background-image: url(../img/player_but.png); background-repeat: no-repeat; background-position: 0 -24px;}
+.airvis-player-controls a.play_pause.player-button-on { background-position: 0 0}
+.airvis-player-controls a.play_pause span { position: absolute; left: -10000px;}
 
 /* Radio */
 .airvis-radio-container { cursor: pointer; display: block; padding: 2px 5px;}
@@ -242,11 +245,11 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-topbar-items a:hover { background-color: #ffffff; color: #002a3a;	}
 
 /* Title */
-.airvis-title { padding: 20px; color: #ffffff; font-size: 16px; font-weight: bold; position: relative;}
-.airvis-title h1 { font-size: 28px; line-height: 28px; margin: 0; padding: 0;}
-.airvis-title .airvis-title-place { float: left; margin: 10px 30px 0 0;}
-.airvis-title .airvis-title-date { float: left; margin: 10px 30px 0 0;}
-.airvis-title .airvis-title-task { float: left; margin: 10px 30px 0 0;}
+.airvis-title { padding: 18px 18px 22px; color: #ffffff; font-size: 18px; position: relative; line-height: 20px;}
+.airvis-title h1 { font-size: 36px; line-height: 36px; margin: 0; padding: 0 0 4px; font-weight: bold;}
+.airvis-title .airvis-title-place { float: left; margin: 10px 30px 0 0; background: url(../img/title_pics.png) no-repeat 0 2px; padding: 0 0 0 24px; font-weight: bold;}
+.airvis-title .airvis-title-date { float: left; margin: 10px 30px 0 0; background: url(../img/title_pics.png) no-repeat 0 -97px; padding: 0 0 0 27px;}
+.airvis-title .airvis-title-task { float: left; margin: 10px 30px 0 0; background: url(../img/title_pics.png) no-repeat 0 -198px; padding: 0 0 0 24px;}
 
 /* Ufos on the map */
 .airvis-ufo {
