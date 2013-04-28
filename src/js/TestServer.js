@@ -1,9 +1,11 @@
 define(["utils"],function(utils) {
 
 	// Тестовый сервер со случайными данными
-	var TestServer = function() {
-		this.generateData = function(options) {
-			this.options = options;
+	var TestServer = function(options) {
+		this.options = options;
+
+		this.generateData = function() {
+			options = this.options.testServerOptions;
 			this.pilots = [];
 			this.events = [];
 			this.waypoints = [];
@@ -11,7 +13,7 @@ define(["utils"],function(utils) {
 				var dtInt = Math.floor((options.endKey-options.startKey)/options.waypointsCnt);
 				var dtOpen = Math.floor((options.startKey + dtInt * i + Math.floor(Math.random()*dtInt/2))/1000)*1000;
 				var dtClose = dtOpen + Math.floor(Math.random()*dtInt/2/1000)*1000;
-				if (i == 0) this.options.raceStartKey = dtOpen;
+				if (i == 0) this.options.testServerOptions.raceStartKey = dtOpen;
 				this.waypoints.push({
 					id: i,
 					name: "Waypoint #" + i,
@@ -48,7 +50,7 @@ define(["utils"],function(utils) {
 					trackColor: colors[i%colors.length],
 					trackWidth: 2,
 					color: toRGB(colors[i%colors.length]),
-					icons: options.icons,
+					icons: this.options.icons,
 					tmp: {
 						lat: options.coords.center.lat + Math.random()*options.coords.dispersion - options.coords.dispersion/2, 
 						lng: options.coords.center.lng + Math.random()*options.coords.dispersion - options.coords.dispersion/2,
@@ -126,17 +128,17 @@ define(["utils"],function(utils) {
 					});
 				}
 				data = {
-					startKey: this.options.startKey,
-					endKey: this.options.endKey,
-					raceStartKey: this.options.raceStartKey,
-					center: this.options.coords.center,
+					startKey: this.options.testServerOptions.startKey,
+					endKey: this.options.testServerOptions.endKey,
+					raceStartKey: this.options.testServerOptions.raceStartKey,
+					center: this.options.testServerOptions.coords.center,
 					waypoints: this.waypoints,
 					optWay: optWay,
 					titles: {
-						mainTitle: this.options.mainTitle,
-						taskTitle: this.options.taskTitle,
-						dateTitle: this.options.dateTitle,
-						placeTitle: this.options.placeTitle
+						mainTitle: this.options.testServerOptions.mainTitle,
+						taskTitle: this.options.testServerOptions.taskTitle,
+						dateTitle: this.options.testServerOptions.dateTitle,
+						placeTitle: this.options.testServerOptions.placeTitle
 					}
 				}
 			}
@@ -175,7 +177,7 @@ define(["utils"],function(utils) {
 			var self = this;
 			setTimeout(function() {
 				self.get(query);
-			},delay || this.options.testDelay);
+			},delay || this.options.testServerOptions.testDelay);
 		}
 	}
 

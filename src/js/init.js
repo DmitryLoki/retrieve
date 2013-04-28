@@ -1,5 +1,5 @@
 require.config({
-	baseUrl: 'js',
+	baseUrl: 'http://airvis03.ragneta.com/js',
 	paths: {
 		'jquery': 'wild-libs/jquery',
 		'jquery-ui': 'wild-libs/jquery-ui',
@@ -23,7 +23,14 @@ require.config({
     		deps: ['jquery'],
     		exports: 'jQuery.mousewheel'
     	}
-	}
+	},
+    config: {
+        text: {
+            useXhr: function (url, protocol, hostname, port) {
+                return true;
+            }
+        }
+    }
 });
 
 require(['core', 'domReady!', 'widget!App'], function(core, doc, App){
