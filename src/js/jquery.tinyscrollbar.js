@@ -92,13 +92,13 @@ define(["jquery"],function($) {
         {
             var sCssSize = sSize.toLowerCase();
 
-            oThumb.obj.css( sDirection, iScroll / oScrollbar.ratio );
+            oThumb.obj.css( sDirection, iScroll / oScrollbar.ratio);
             oContent.obj.css( sDirection, -iScroll );
             iMouse.start = oThumb.obj.offset()[ sDirection ];
 
             oScrollbar.obj.css( sCssSize, oTrack[ options.axis ] );
-            oTrack.obj.css( sCssSize, oTrack[ options.axis ] );
-            oThumb.obj.css( sCssSize, oThumb[ options.axis ] );
+            oTrack.obj.css( sCssSize, oTrack[ options.axis ] - 6);
+            oThumb.obj.css( sCssSize, oThumb[ options.axis ] - 6);
         }
 
         function setEvents()
