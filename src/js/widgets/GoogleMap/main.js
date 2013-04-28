@@ -127,7 +127,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 
 	Ufo.prototype.icon = function(params) {
 		if (this._model)
-			this._model.setIcon(new gmaps.MarkerImage(params.url, new gmaps.Size(params.width, params.height), new gmaps.Point(0,0), new gmaps.Point(params.x, params.y)));
+			this._model.setIcon(new gmaps.MarkerImage(this._map._options.imgRootUrl + params.url, new gmaps.Size(params.width, params.height), new gmaps.Point(0,0), new gmaps.Point(params.x, params.y)));
 		return this;
 	}
 

@@ -80,14 +80,14 @@ define([
 			},
 			// Задержка, с которой тестовый сервер отдает ответ
 			testDelay: 1000,
-			icons: {
-				"flymedium": {url: "/img/ufoFlyMedium.png", width: 32, height: 35, x: 16, y: 35},
-				"landmedium": {url: "/img/ufoLandMedium.png", width: 32, height: 28, x: 16, y: 28},
-				"flysmall": {url: "/img/ufoFlySmall.png", width: 16, height: 17, x: 8, y: 8},
-				"landsmall": {url: "/img/ufoLandSmall.png", width: 16, height: 14, x: 8, y: 7},
-				"flylarge": {url: "/img/ufoFlyLarge.png", width: 64, height: 70, x: 32, y: 70},
-				"landlarge": {url: "/img/ufoLandLarge.png", width: 64, height: 56, x: 32, y: 56}
-			}
+		},
+		icons: {
+			"flymedium": {url: "ufoFlyMedium.png", width: 32, height: 35, x: 16, y: 35},
+			"landmedium": {url: "ufoLandMedium.png", width: 32, height: 28, x: 16, y: 28},
+			"flysmall": {url: "ufoFlySmall.png", width: 16, height: 17, x: 8, y: 8},
+			"landsmall": {url: "ufoLandSmall.png", width: 16, height: 14, x: 8, y: 7},
+			"flylarge": {url: "ufoFlyLarge.png", width: 64, height: 70, x: 32, y: 70},
+			"landlarge": {url: "ufoLandLarge.png", width: 64, height: 56, x: 32, y: 56}
 		},
 		// Установленная по умолчанию скорость в плеере
 		playerSpeed: 1,
@@ -340,9 +340,9 @@ define([
 		this.shortWayVisualMode(this.options.shortWayVisualMode);
 		this.namesVisualMode(this.options.namesVisualMode);
 
-		this.server = new TestServer();
-		this.server.generateData(this.options.testServerOptions);
-
+		this.server = new TestServer(this.options);
+		this.server.generateData();
+//		this.server.generateData(this.options.testServerOptions);
 //		this.server = new RealServer(this.options);
 
 		// Создаем dataSource, устанавливаем ему в качестве источника данных тестовый сервер
@@ -531,6 +531,7 @@ define([
 		this.options.contestId = params.contestId;
 		this.options.raceId = params.raceId;
 		this.options.isOnline = params.isOnline;
+		this.options.imgRootUrl = params.imgRootUrl;
 
 		// Все запросы к серверу считаются асинхронными с callback-ом
 		/*
