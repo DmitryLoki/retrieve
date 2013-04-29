@@ -233,16 +233,23 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-topbar-container { margin: 0 auto; width: 800px;}
 .airvis-topbar-logo { background: transparent url("../img/logo.png") 0 0 no-repeat; display: block; float: left; height: 24px; margin: 8px 0 0 0; width: 216px;}
 .airvis-topbar-items { display: block; float: left; margin: 0; padding: 0; margin-left: 70px;}
-.airvis-topbar-items li { display: block; float: left; list-style: none outside none;}
-.airvis-topbar-items a { display: block; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px; color: #ffffff; background-color: transparent;
-
+.airvis-topbar-items li { display: block; float: left; list-style: none outside none; position: relative; }
+.airvis-topbar-items a { display: block; outline: 0 none; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px; color: #505050; background-color: transparent;
   -webkit-border-radius: 2px; 
   -moz-border-radius: 2px; 
   border-radius: 2px;
-
 }
+
+/* TopBar menu */
+.airvis-topbar-items a.airvis-hover { position: absolute; top: 0; left: 0; color: #ffffff; }
+.airvis-topbar-items a.airvis-on { position: absolute; top: 0; left: 0; background-color: rgba(255,255,255,0.75); color: #002a3a; }
+.airvis-topbar-items a.airvis-on-hover { position: absolute; top: 0; left: 0; background-color: #ffffff; color: #002a3a; }
+
+/*
 .airvis-topbar-items a.airvis-checked { background-color: rgba(255,255,255, 0.75); color: #002a3a; }
 .airvis-topbar-items a:hover { background-color: #ffffff; color: #002a3a;	}
+*/
+
 
 /* Title */
 .airvis-title { padding: 18px 18px 22px; color: #ffffff; font-size: 18px; position: relative; line-height: 20px;}

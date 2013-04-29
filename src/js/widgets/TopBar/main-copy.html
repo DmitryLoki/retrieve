@@ -3,7 +3,7 @@
 		<a class="airvis-topbar-logo" href="/"></a>
 		<ul class="airvis-topbar-items" data-bind="foreach:{data:items,afterRender:registerSwitch,beforeRemove:unregisterSwitch}">
 			<li>
-				<a href="#" data-bind="click:$parent.switchVisibility,event:{mouseover:$parent.mouseover,mouseout:$parent.mouseout},text:title"></a>
+				<a href="#" data-bind="css:{'airvis-checked':buttonOn},click:$parent.switchVisibility,text:title"></a>
 			</li>
 		</ul>
 	</div>

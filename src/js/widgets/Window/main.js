@@ -46,6 +46,7 @@ define(["jquery","knockout"],function($,ko) {
 		self.xPosition = this.asObservable(options.xPosition,defaults.xPosition);
 		self.yPosition = this.asObservable(options.yPosition,defaults.yPosition);
 
+		self.buttonOn = ko.observable(this.visible());
 
 		self.nodes = ko.observableArray(defaults.nodes);
 		self.css = ko.observable({});
@@ -136,9 +137,10 @@ define(["jquery","knockout"],function($,ko) {
 
 	Window.prototype.slideUp = function() {
 		var self = this;
+		self.buttonOn(false);
 		this.container.fadeOut("fast",function() {
 			self.visible(false);
-		})
+		});
 /*
 		this.visible(false);
 		if (this.switchNode) {
@@ -163,6 +165,7 @@ define(["jquery","knockout"],function($,ko) {
 
 	Window.prototype.slideDown = function() {
 		var self = this;
+		self.buttonOn(true);
 		this.container.fadeIn("fast",function() {
 			self.visible(true);
 		});
