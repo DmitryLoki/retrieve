@@ -24,8 +24,8 @@
 			<a data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }"><span>PAUSE</span></a>
 -->
 			<a data-bind="enable: enabled, click: changeSpeed.bind($data,1), css: { 'player-button-on': _speed() == 1, 'player-button-off': _speed() != 1 }"><span>x1</span></a>
+			<a data-bind="enable: enabled, click: changeSpeed.bind($data,2), css: { 'player-button-on': _speed() == 2, 'player-button-off': _speed() != 2 }"><span>x2</span></a>
 			<a data-bind="enable: enabled, click: changeSpeed.bind($data,10), css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }"><span>x10</span></a>
-			<a data-bind="enable: enabled, click: changeSpeed.bind($data,25), css: { 'player-button-on': _speed() == 25, 'player-button-off': _speed() != 25 }"><span>x25</span></a>
 		</div>
 		<div class="airvis-slider-container" data-bind="widget:{data:slider,type:'Slider'}"></div>
 	</div>
