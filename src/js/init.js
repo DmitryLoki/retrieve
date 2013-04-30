@@ -1,5 +1,4 @@
 require.config({
-	baseUrl: 'http://airvis03.ragneta.com/js',
 	paths: {
 		'jquery': 'wild-libs/jquery',
 		'jquery-ui': 'wild-libs/jquery-ui',

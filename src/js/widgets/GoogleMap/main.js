@@ -94,7 +94,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		this._map = params.map;
 		this._visible = false;
 		this._titleVisible = true;
-		this._trackVisible = true;
+		this._trackVisible = false;
 		this._animating = false;
 		this.hasAsyncInit = true;
 	}
