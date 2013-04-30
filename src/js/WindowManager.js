@@ -5,14 +5,17 @@ define(["jquery","knockout"],function($,ko) {
 		this.items = ko.observableArray();
 		this.precision = ko.observable(500);
 
+		this.xSpace = 1;
+		this.ySpace = 1;
+
 		var getSegments = function(w) {
 			var out = [];
 			$.each(self.items(),function(i,v) {
 				if (v != w && v.visible()) {
-					out.push([v.left(),v.top()-5,v.left()+v.width(),v.top()-5]);
-					out.push([v.left(),v.left()-5,v.left(),v.top()+v.height()+10]);
-					out.push([v.left()+v.width(),v.top()-5,v.left()+v.width(),v.top()+v.height()+10]);
-					out.push([v.left(),v.top()+v.height()+10,v.left()+v.width(),v.top()+v.height()+10]);
+					out.push([v.left()-self.xSpace,v.top()-self.ySpace,v.left()+v.width()+self.xSpace,v.top()-self.ySpace]);
+					out.push([v.left()-self.xSpace,v.left()-self.ySpace,v.left()-self.xSpace,v.top()+v.height()+self.ySpace]);
+					out.push([v.left()+v.width()+self.xSpace,v.top()-self.ySpace,v.left()+v.width()+self.xSpace,v.top()+v.height()+self.ySpace]);
+					out.push([v.left()-self.xSpace,v.top()+v.height()+self.ySpace,v.left()+v.width()+self.xSpace,v.top()+v.height()+self.ySpace]);
 				}
 			});
 			return out;
@@ -22,7 +25,7 @@ define(["jquery","knockout"],function($,ko) {
 			var out = [];
 			$.each(self.items(),function(i,v) {
 				if (v != w && v.visible()) {
-					out.push([v.left(),v.top()-5],[v.left()+v.width(),v.top()-5],[v.left(),v.top()+v.height()+10],[v.left()+v.width(),v.top()+v.height()+10]);
+					out.push([v.left()-self.xSpace,v.top()-self.ySpace],[v.left()+v.width()+self.xSpace,v.top()-self.ySpace],[v.left()-self.xSpace,v.top()+v.height()+self.ySpace],[v.left()+v.width()+self.xSpace,v.top()+v.height()+self.ySpace]);
 				}
 			});
 			return out;
@@ -54,16 +57,16 @@ define(["jquery","knockout"],function($,ko) {
 				var width = w.width();
 				var height = w.height();
 				var pois = [
-					[left,top],
-					[left+width,top],
-					[left,top+height],
-					[left+width,top+height]
+					[left-self.xSpace,top-self.ySpace],
+					[left+width+self.xSpace,top-self.ySpace],
+					[left-self.xSpace,top+height+self.ySpace],
+					[left+width+self.xSpace,top+height+self.ySpace]
 				];
 				var segs = [
-					[left,top,left+width,top],
-					[left,top,left,top+height],
-					[left+width,top,left+width,top+height],
-					[left,top+height,left+width,top+height]
+					[left-self.xSpace, top-self.ySpace, left+width+self.xSpace, top-self.ySpace],
+					[left-self.xSpace, top-self.ySpace, left-self.xSpace, top+height+self.ySpace],
+					[left+width+self.xSpace, top-self.ySpace, left+width+self.xSpace, top+height+self.ySpace],
+					[left-self.xSpace, top+height+self.ySpace, left+width+self.xSpace, top+height+self.ySpace]
 				];
 				var v = [0,0];
 				var min = null;
@@ -123,11 +126,11 @@ define(["jquery","knockout"],function($,ko) {
 				var width = Math.max(startPosition.width + e.pageX - startE.pageX,w.minWidth() || 0);
 				var height = Math.max(startPosition.height + e.pageY - startE.pageY,w.minHeight() || 0);
 				var pois = [
-					[left+width,top+height]
+					[left+width+self.xSpace,top+height+self.ySpace]
 				];
 				var segs = [
-					[left+width,top,left+width,top+height],
-					[left,top+height,left+width,top+height]
+					[left+width+self.xSpace,top-self.ySpace,left+width+self.xSpace,top+height+self.ySpace],
+					[left-self.xSpace,top+height+self.ySpace,left+width+self.xSpace,top+height+self.ySpace]
 				]
 
 				var v = [0,0];
