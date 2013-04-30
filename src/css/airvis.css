@@ -38,9 +38,9 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window-content-absolute { bottom: 0; left: 0; position: absolute; right: 0; top: 0px; overflow: visible;}
 .airvis-transparent { background-color: transparent;}
 .airvis-window-resize { position: absolute;}
-.airvis-resize-right { bottom: 0; cursor: e-resize; right: -8px; top: 0; width: 10px;}
-.airvis-resize-bottom { bottom: -8px; cursor: s-resize; height: 10px; left: 0; right: 0;}
-.airvis-resize-bottom-right { bottom: -8px; cursor: se-resize; height: 10px; right: -8px; width: 10px;}
+.airvis-resize-right { bottom: 0; cursor: e-resize; right: -18px; top: 0; width: 20px;}
+.airvis-resize-bottom { bottom: -2px; cursor: s-resize; height: 20px; left: 0; right: 0;}
+.airvis-resize-bottom-right { bottom: -18px; cursor: se-resize; height: 20px; right: -18px; width: 20px;}
 
 .airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) no-repeat;}
 .airvis-collapse { background-position: -24px -24px}

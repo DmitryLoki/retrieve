@@ -136,6 +136,9 @@ define(["jquery"],function($) {
 
         function start( event )
         {
+            event.preventDefault();
+            event.stopPropagation();
+            
             $( "body" ).addClass( "noSelect" );
 
             var oThumbDir   = parseInt( oThumb.obj.css( sDirection ), 10 );
