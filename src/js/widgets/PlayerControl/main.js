@@ -87,10 +87,12 @@ define(['knockout', 'widget!Slider', 'widget!RadioGroup', 'widget!Select'], func
 		this.namesVisualSelect = new Select({data:this.namesVisualMode,label:"Names",values:[{value:"on",title:"On"},{value:"auto",title:"Auto"},{value:"off",title:"Off"}]});
 		
 		var fadeSelects = function(v) {
+			setTimeout(function() {
 			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
 			for (var i = 0; i < selects.length; i++)
 				if (self[selects[i]] != v)
 					self[selects[i]].fade();
+			},10);
 		}
 
 		var unfadeSelects = function() {

@@ -39,6 +39,17 @@ define(["jquery","knockout","utils"],function($,ko,utils) {
 
         this.expanded.subscribe(function(v) {
             self.emit(v?"expand":"collapse",self);
+            if (self.expandContainer) {
+                if (v) self.expandContainer.slideDown();
+                else self.expandContainer.slideUp();
+            }
+        });
+
+        this.faded.subscribe(function(v) {
+            if (self.container) {
+                self.container.find(".airvis-label").stop(true).animate({color:v?"#6d878f":"#ffffff"},200);
+                self.container.find(".airvis-value").stop(true).animate({backgroundColor:v?"#537585":"rgba(255,255,255,0.75)"},200);
+            }
         });
     }
 
@@ -76,6 +87,14 @@ define(["jquery","knockout","utils"],function($,ko,utils) {
     Select.prototype.asObservable = function(v,defaultV) {
         if (ko.isObservable(v) || ko.isComputed(v)) return v;
         return ko.observable(typeof v == "function" ? v() : (typeof v == "undefined" ? defaultV : v));
+    }
+
+    Select.prototype.domInit = function(element,params) {
+        var div = ko.virtualElements.firstChild(element);
+        while (div && div.nodeType != 1)
+            div = ko.virtualElements.nextSibling(div);
+        this.container = $(div);
+        this.expandContainer = this.container.find(".airvis-selectBox");
     }
 
     Select.prototype.templates = ["main"];

@@ -1,11 +1,13 @@
-<div class="airvis-selectContainer" data-bind="css:{'airvis-selectContainerFade':faded}">
+<div class="airvis-selectContainer">
 	<a href="#" class="airvis-select" data-bind="click:click">
 		<div class="airvis-value" data-bind="text:displayValue"></div>
 		<!-- ko if: label().length > 0 -->
 			<div class="airvis-label" data-bind="text:label"></div>
 		<!-- /ko -->
 	</a>
-	<div class="airvis-selectBox" data-bind="visible:expanded,foreach:displayValues,css:selectBoxPosition">
-		<a href="#" data-bind="text:title,click:$parent.setValue.bind($parent,$data),css:{active:$parent.data()==value}"></a>
+	<div class="airvis-selectBox" style="display:none" data-bind="css:selectBoxPosition">
+		<div class="airvis-selectBoxInner" data-bind="foreach:displayValues">
+			<a href="#" data-bind="text:title,click:$parent.setValue.bind($parent,$data),css:{active:$parent.data()==value}"></a>
+		</div>
 	</div>
 </div>
