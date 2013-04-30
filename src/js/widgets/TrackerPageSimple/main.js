@@ -97,13 +97,16 @@ define([
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		var self = this;
-
 		this.options.contestId = params.contestId;
 		this.options.raceId = params.raceId;
+		this.options.width = params.width;
+		this.options.height = params.height;
+		this.rebuild();
+	}
 
-		this.width(params.width);
-		this.height(params.height);
-
+	TrackerPageDebug.prototype.rebuild = function() {
+		this.width(this.options.width);
+		this.height(this.options.height);
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {
@@ -112,6 +115,10 @@ define([
 				self.setMapPosition(data);
 			}
 		});
+	}
+
+	TrackerPageDebug.prototype.setOption = function(p,v) {
+		this.options[p] = v;
 	}
 
 	TrackerPageDebug.prototype.templates = ["main"];

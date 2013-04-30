@@ -10,10 +10,22 @@
 -->
 
   <script data-main="js/initSimple" src="js/require.js"></script>
+
+  <script type="text/javascript">
+  	window.test = function() {
+  		if (window.airvisPage) {
+  			window.airvisPage.setOption("contestId","123");
+  			window.airvisPage.setOption("raceId","123");
+  			window.airvisPage.rebuild();
+  		}
+  	}
+  </script>
+
 </head>
 <body>
   <div role="main" class="airvis-container">
     <!-- ko widget: { data: page, contestId: "cnts-130426-719913251", raceId: "75638ffc-9a13-4e56-ae30-eecfa6441c10", width: "100%", height: "300px" } --><!-- /ko -->
+    <a href="#" onclick="test()">Test</a>
   </div>
 </body>
 </html>
