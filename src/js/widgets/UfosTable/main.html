@@ -7,7 +7,10 @@
 			<tbody>
 				<tr>
 					<td class="airvis-checkbox"><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
-					<td class="airvis-checkbox" data-bind="visible:mode()=='full'"><!-- ko widget: { data: allTrackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
+					<td class="airvis-checkbox" data-bind="visible:mode()=='full'">
+<!-- disableko widget: { data: allTrackVisibleCheckbox, type: 'Checkbox'} --><!-- /disableko -->
+						Full track
+					</td>
 					<td class="airvis-pilot-number">#</td>
 					<td class="airvis-pilot-name">Pilot</td>
 					<td class="airvis-pilot-country" data-bind="visible:mode()=='full'">Country</td>
