@@ -191,11 +191,11 @@ define([
 		this._ufo = this.map.ufo(options);
 
 		this.visibleChecked = ko.observable(true);
-        this.visibleCheckbox = new Checkbox({checked:this.visibleChecked});
+        this.visibleCheckbox = new Checkbox({checked:this.visibleChecked,color:this.color});
 		this.titleVisibleChecked = ko.observable(true);
         this.titleVisibleCheckbox = new Checkbox({checked:this.titleVisibleChecked});
-		this.trackVisibleChecked = ko.observable(true);
-        this.trackVisibleCheckbox = new Checkbox({checked:this.trackVisibleChecked,color:this.color});
+		this.trackVisibleChecked = ko.observable(false);
+        this.trackVisibleCheckbox = new Checkbox({checked:this.trackVisibleChecked});
 
 		this.statusOrDist = "test";
 		this.statusText = "flying";
