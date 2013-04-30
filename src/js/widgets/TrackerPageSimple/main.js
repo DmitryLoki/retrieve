@@ -96,7 +96,6 @@ define([
 	}
 
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
-		var self = this;
 		this.options.contestId = params.contestId;
 		this.options.raceId = params.raceId;
 		this.options.width = params.width;
@@ -105,6 +104,7 @@ define([
 	}
 
 	TrackerPageDebug.prototype.rebuild = function() {
+		var self = this;
 		this.width(this.options.width);
 		this.height(this.options.height);
 		this.dataSource.get({
