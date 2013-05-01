@@ -101,6 +101,9 @@ define([
 		this.options.width = params.width;
 		this.options.height = params.height;
 		this.rebuild();
+		if (params.callback)
+			params.callback(this);
+		this.emit("domInit");
 	}
 
 	TrackerPageDebug.prototype.rebuild = function() {
@@ -113,6 +116,10 @@ define([
 				self.loadWaypoints(data);
 				self.loadShortWay(data);
 				self.setMapPosition(data);
+				self.emit("loaded");
+			},
+			error: function(jqXHR,textStatus,errorThrown) {
+				self.emit("loadingError");
 			}
 		});
 	}

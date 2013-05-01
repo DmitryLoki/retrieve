@@ -159,6 +159,10 @@ define(["utils"],function(utils) {
 
 						if (query.callback)
 							query.callback(data);
+					},
+					error: function(jqXHR,textStatus,errorThrown) {
+						if (query.error)
+							query.error(jqXHR,textStatus,errorThrown);
 					}
 				});
 			}
@@ -207,6 +211,10 @@ define(["utils"],function(utils) {
 						}
 						if (query.callback)
 							query.callback(data);
+					},
+					error: function(jqXHR,textStatus,errorThrown) {
+						if (query.error)
+							query.error(jqXHR,textStatus,errorThrown);
 					}
 				});
 			}

@@ -12,20 +12,30 @@
   <script data-main="js/initSimple" src="js/require.js"></script>
 
   <script type="text/javascript">
-  	window.test = function() {
-  		if (window.airvisPage) {
-  			window.airvisPage.setOption("contestId","123");
-  			window.airvisPage.setOption("raceId","123");
-  			window.airvisPage.rebuild();
-  		}
-  	}
+
+    window.airvisPageLoadedCallback = function(self) {
+      self.on("domInit",function() {
+        $("a.test").click(function() {
+    			self.setOption("contestId","123");
+    			self.setOption("raceId","123");
+    			self.rebuild();
+        });
+      });
+      self.on("loadingError",function() {
+        console.log("LOADING ERROR");
+      });
+      self.on("loaded",function() {
+        console.log("LOADING SUCCESS");
+      });
+    }
+
   </script>
 
 </head>
 <body>
   <div role="main" class="airvis-container">
-    <!-- ko widget: { data: page, contestId: "cnts-130429-3589257087", raceId: "e83b0d78-ca20-41a0-b036-19760103f06d", width: "100%", height: "300px" } --><!-- /ko -->
-    <a href="#" onclick="test()">Test</a>
+    <!-- ko widget: { data: page, contestId: "cnts-130429-3589257087", raceId: "e83b0d78-ca20-41a0-b036-19760103f06d", width: "100%", height: "300px", callback: window.airvisPageLoadedCallback } --><!-- /ko -->
+    <a href="#" class="test">Test</a>
   </div>
 </body>
 </html>
