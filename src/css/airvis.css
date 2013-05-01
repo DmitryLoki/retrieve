@@ -161,7 +161,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 .airvis-player-controls-wrapper { background: rgba(0, 47, 64, 0.5); height: 40px; position: relative;}
 .airvis-player-controls-wrapper .airvis-player-controls { float: left;}
-.airvis-player-controls a { display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden;
+.airvis-player-controls a { display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden; vertical-align: top;
 
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
