@@ -169,10 +169,17 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 }
 .airvis-player-controls a:hover { background: #ffffff;}
-.airvis-player-controls a.player-button-on {  background: rgba(255,255,255,0.75);}
+
+/*
 .airvis-player-controls a.play_pause { background-image: url(../img/player_but.png); background-repeat: no-repeat; background-position: 0 -24px;}
 .airvis-player-controls a.play_pause.player-button-on { background-position: 0 0}
 .airvis-player-controls a.play_pause span { position: absolute; left: -10000px;}
+*/
+.airvis-player-controls a.play_pause { background: rgba(255,255,255,0.25) url("../img/player_but.png") 0 -24px no-repeat; }
+.airvis-player-controls a.play_pause:hover { background-color: rgba(255,255,255,0.75); }
+.airvis-player-controls a.play_pause.player-button-play { background-position: 0 0; }
+
+
 
 /* Radio */
 .airvis-radio-container { cursor: pointer; display: block; padding: 2px 5px;}
