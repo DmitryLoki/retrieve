@@ -71,6 +71,7 @@ define([
 	}
 
 	TrackerPageDebug.prototype.loadWaypoints = function(data,callback) {
+		this.waypoints([]);
 		if (this.map && data.waypoints) {
 			for (var i = 0; i < data.waypoints.length; i++)
 				this.waypoints.push(this.map.waypoint(data.waypoints[i]));
@@ -95,6 +96,14 @@ define([
 		}
 	}
 
+	TrackerPageDebug.prototype.clearMap = function() {
+		if (this.map) {
+			this.map.clearWaypoints();
+			this.map.clearShortWay();
+			this.map.clearUfos();
+		}
+	}
+
 	TrackerPageDebug.prototype.domInit = function(elem, params) {
 		this.options.contestId = params.contestId;
 		this.options.raceId = params.raceId;
@@ -110,6 +119,7 @@ define([
 		var self = this;
 		this.width(this.options.width);
 		this.height(this.options.height);
+		this.clearMap();
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {

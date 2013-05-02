@@ -29,8 +29,10 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		if(!proj)
 			return;
 		var coords = proj.fromLatLngToDivPixel(this._coords);
-		this._div.style.left = coords.x + 'px';
-		this._div.style.top = coords.y + 'px';
+		if (this._div) {
+			this._div.style.left = coords.x + 'px';
+			this._div.style.top = coords.y + 'px';
+		}
 	};
 	MapFloatElem.prototype.onAdd = function(){
 		var div = document.createElement('div');
@@ -502,6 +504,24 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 			self._waypoints.splice(self._waypoints.indexOf(waypoint),1);
 		});
 		return waypoint;
+	}
+
+	GoogleMap.prototype.clearWaypoints = function() {
+		if (!this._waypoints) return;
+		while (this._waypoints.length > 0)
+			this._waypoints[0].destroy();
+	}
+
+	GoogleMap.prototype.clearUfos = function() {
+		if (!this._ufos) return;
+		while (this._ufos.length > 0)
+			this._ufos[0].destroy();
+	}
+
+	GoogleMap.prototype.clearShortWay = function() {
+		if (!this._shortWay) return;
+		if (this._shortWayModel)
+			this._shortWayModel.setMap(null);
 	}
 
 	GoogleMap.prototype.setShortWay = function(ar) {

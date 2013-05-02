@@ -15,9 +15,14 @@
 
     window.airvisPageLoadedCallback = function(self) {
       self.on("domInit",function() {
-        $("a.test").click(function() {
-    			self.setOption("contestId","123");
-    			self.setOption("raceId","123");
+        $("a.test1").click(function() {
+          self.setOption("contestId","cnts-130430-3963286941");
+          self.setOption("raceId","a32ed6ca-c031-4e4d-be07-2086e4785ac0");
+          self.rebuild();
+        });
+        $("a.test2").click(function() {
+    			self.setOption("contestId","cnts-130429-3589257087");
+    			self.setOption("raceId","e83b0d78-ca20-41a0-b036-19760103f06d");
     			self.rebuild();
         });
       });
@@ -35,7 +40,8 @@
 <body>
   <div role="main" class="airvis-container">
     <!-- ko widget: { data: page, contestId: "cnts-130429-3589257087", raceId: "e83b0d78-ca20-41a0-b036-19760103f06d", width: "100%", height: "300px", callback: window.airvisPageLoadedCallback } --><!-- /ko -->
-    <a href="#" class="test">Test</a>
+    <a href="#" class="test1">Test1</a>
+    <a href="#" class="test2">Test2</a>
   </div>
 </body>
 </html>
