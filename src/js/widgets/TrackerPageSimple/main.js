@@ -126,7 +126,7 @@ define([
 				self.loadWaypoints(data);
 				self.loadShortWay(data);
 				self.setMapPosition(data);
-				self.emit("loaded");
+				self.emit("loaded", data);
 			},
 			error: function(jqXHR,textStatus,errorThrown) {
 				self.emit("loadingError");
