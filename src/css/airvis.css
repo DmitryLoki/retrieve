@@ -28,12 +28,33 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 /* common window widget styles */
 .airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
+.airvis-window {
+  transition: width 0.5s ease;
+}
 .airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
 .airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0; text-rendering: optimizelegibility;}
+
+/*
 .airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat; margin-top: 8px; margin-right: -2px;}
 .airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat;}
 .airvis-window-close:hover,
-.airvis-window-close-absolute:hover { background-position: -48px 0}
+.airvis-window-close-absolute:hover { background-position: -48px 0; }
+
+.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) no-repeat;}
+.airvis-collapse { background-position: -24px -24px}
+.airvis-collapse:hover { background-position: -24px 0}
+.airvis-expand { background-position: 0 -24px}
+.airvis-expand:hover { background-position: 0 0}
+*/
+.airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; margin-top: 8px; margin-right: -2px; opacity: 0.3; transition: opacity 0.2s; }
+.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; }
+.airvis-window-close:hover,
+.airvis-window-close-absolute:hover { opacity: 1; }
+
+.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) 0 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; }
+.airvis-window-ec-absolute:hover { opacity: 1; }
+.airvis-collapse { background-position: -24px 0; }
+
 .airvis-window-content { background-color: rgba(0,47,64,.75); position: relative; overflow: auto;}
 .airvis-window-content-absolute { bottom: 0; left: 0; position: absolute; right: 0; top: 0px; overflow: visible;}
 .airvis-transparent { background-color: transparent;}
@@ -42,11 +63,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-resize-bottom { bottom: -2px; cursor: s-resize; height: 20px; left: 0; right: 0;}
 .airvis-resize-bottom-right { bottom: -18px; cursor: se-resize; height: 20px; right: -18px; width: 20px;}
 
-.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) no-repeat;}
-.airvis-collapse { background-position: -24px -24px}
-.airvis-collapse:hover { background-position: -24px 0}
-.airvis-expand { background-position: 0 -24px}
-.airvis-expand:hover { background-position: 0 0}
+
 
 
 /* table with fixed header in ufosTable widget */
@@ -122,7 +139,6 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-player-controls button { margin: 2px;}
 .airvis-current-time { color: #00aeef; font-size: 12.8px; padding: 0 10px; padding-bottom: 5px;}
 .airvis-slider { background-color: rgba(0, 47, 64, 0.75); border: 1px solid rgba(0, 35, 48, 0.53); height: 8px; margin: 4px; position: relative;
-
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
@@ -162,21 +178,24 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-player-controls-wrapper { background: rgba(0, 47, 64, 0.5); height: 40px; position: relative;}
 .airvis-player-controls-wrapper .airvis-player-controls { float: left;}
 .airvis-player-controls a { display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden; vertical-align: top;
-
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
-
+  transition: background-color 0.5s ease;
 }
 .airvis-player-controls a:hover { background: #ffffff;}
-
+.airvis-player-controls a.player-button-on { background: #ffffff; }
 /*
 .airvis-player-controls a.play_pause { background-image: url(../img/player_but.png); background-repeat: no-repeat; background-position: 0 -24px;}
 .airvis-player-controls a.play_pause.player-button-on { background-position: 0 0}
 .airvis-player-controls a.play_pause span { position: absolute; left: -10000px;}
 */
-.airvis-player-controls a.play_pause { background: rgba(255,255,255,0.25) url("../img/player_but.png") 0 -24px no-repeat; }
-.airvis-player-controls a.play_pause:hover { background-color: rgba(255,255,255,0.75); }
+.airvis-player-controls a.play_pause { 
+  background: rgba(255,255,255,0.25) url("../img/player_but.png") 0 -24px no-repeat; 
+  transition: background-color 0.2s ease;
+}
+/*.airvis-player-controls a.play_pause:hover { background-color: rgba(255,255,255,0.75); }*/
+.airvis-player-controls a.play_pause:hover { background-color: #ffffff }
 .airvis-player-controls a.play_pause.player-button-play { background-position: 0 0; }
 
 

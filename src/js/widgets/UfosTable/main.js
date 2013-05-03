@@ -76,8 +76,16 @@ define(["jquery","knockout","widget!Checkbox","jquery.tinyscrollbar"],function($
 		this.modalWindow = params.modalWindow;
 		if (this.modalWindow) {
 			this.switchMode = function() {
-				self.mode(self.mode()=="short"?"full":"short");
-				self.modalWindow.width(self.mode()=="short"?370:520);
+				if (self.mode() == "short") {
+					self.modalWindow.width(570);
+					setTimeout(function() {
+						self.mode("full");
+					},500);
+				}
+				else {
+					self.mode("short");
+					self.modalWindow.width(370);
+				}
 			}
 			this.inModalWindow(true);
 		}
