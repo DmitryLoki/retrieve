@@ -30,6 +30,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
 .airvis-window {
   transition: width 0.5s ease;
+  -webkit-transition: width 0.5s ease;
 }
 .airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
 .airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0; text-rendering: optimizelegibility;}
@@ -46,12 +47,12 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-expand { background-position: 0 -24px}
 .airvis-expand:hover { background-position: 0 0}
 */
-.airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; margin-top: 8px; margin-right: -2px; opacity: 0.3; transition: opacity 0.2s; }
-.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; }
+.airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; margin-top: 8px; margin-right: -2px; opacity: 0.3; transition: opacity 0.2s; -webkit-transition: opacity 0.2s; }
+.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; -webkit-transition: opacity 0.2s; }
 .airvis-window-close:hover,
 .airvis-window-close-absolute:hover { opacity: 1; }
 
-.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) 0 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; }
+.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) 0 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; -webkit-transition: opacity 0.2s; }
 .airvis-window-ec-absolute:hover { opacity: 1; }
 .airvis-collapse { background-position: -24px 0; }
 
@@ -182,6 +183,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
   -moz-border-radius: 3px; 
   border-radius: 3px;
   transition: background-color 0.5s ease;
+  -webkit-transition: background-color 0.5s ease;
 }
 .airvis-player-controls a:hover { background: #ffffff;}
 .airvis-player-controls a.player-button-on { background: #ffffff; }
@@ -193,6 +195,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-player-controls a.play_pause { 
   background: rgba(255,255,255,0.25) url("../img/player_but.png") 0 -24px no-repeat; 
   transition: background-color 0.2s ease;
+  -webkit-transition: background-color 0.2s ease;
 }
 /*.airvis-player-controls a.play_pause:hover { background-color: rgba(255,255,255,0.75); }*/
 .airvis-player-controls a.play_pause:hover { background-color: #ffffff }
