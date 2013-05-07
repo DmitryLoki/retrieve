@@ -316,7 +316,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
    -ms-opacity: 0;
    -o-opacity: 0;
    opacity: 0; 
-   
+
   transition: opacity 0.2s; 
   -webkit-transition: opacity 0.2s;
 
@@ -337,14 +337,17 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
   border-radius: 2px;
 
  }
-.airvis-scrollbar .thumb { background: rgba(255,255,255,.5); width:6px; cursor:pointer; position:relative; margin: -1px -2px 0;
+.airvis-scrollbar .thumb { background-color: rgba(255,255,255,.5); width:6px; cursor:pointer; position:relative; margin: -1px -2px 0;
 
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
 
+  transition: background-color 0.2s; 
+  -webkit-transition: background-color 0.2s;
+
 }
 .airvis-scrollbar .thumb .end { display: none;}
 .airvis-scrollbar .disable{ display: none; }
-.airvis-scrollbar .thumb:hover { background:#ffffff;}
+.airvis-scrollbar .thumb:hover { background-color:#ffffff;}
 .noSelect { user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; }
