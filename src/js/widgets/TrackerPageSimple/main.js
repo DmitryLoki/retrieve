@@ -120,18 +120,20 @@ define([
 		this.width(this.options.width);
 		this.height(this.options.height);
 		this.clearMap();
-		this.dataSource.get({
-			type: "race",
-			callback: function(data) {
-				self.loadWaypoints(data);
-				self.loadShortWay(data);
-				self.setMapPosition(data);
-				self.emit("loaded", data);
-			},
-			error: function(jqXHR,textStatus,errorThrown) {
-				self.emit("loadingError");
-			}
-		});
+		if (this.options.raceId) {
+			this.dataSource.get({
+				type: "race",
+				callback: function(data) {
+					self.loadWaypoints(data);
+					self.loadShortWay(data);
+					self.setMapPosition(data);
+					self.emit("loaded", data);
+				},
+				error: function(jqXHR,textStatus,errorThrown) {
+					self.emit("loadingError");
+				}
+			});
+		}
 	}
 
 	TrackerPageDebug.prototype.setOption = function(p,v) {
