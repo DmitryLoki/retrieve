@@ -145,7 +145,13 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 }
 .airvis-slider-container { padding: 5px; padding-top: 11px; overflow: hidden;}
-.airvis-slider-handle { display: none;}
+.airvis-slider-handle { width: 17px; height: 17px; background: #ffffff; border: 1px solid #000000; position: absolute; margin-left: -9px; top: -5px;
+
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+
+}
 .airvis-slider-range { background-color: #ececec; height: 8px; left: 0; position: absolute;
 
   -webkit-border-radius: 3px; 
@@ -302,7 +308,27 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 .airvis-scrollbar .overview { position: absolute; left: 0; top: 0; }
 .airvis-scrollbar .thumb .end,.airvis-scrollbar .thumb { background-color: #003D5D; }
-.airvis-scrollbar .scrollbar { position:absolute; right:11px; z-index: 100;}
+.airvis-scrollbar .scrollbar { position:absolute; right:11px; z-index: 100;
+
+  -webkit-opacity: 0;
+   -moz-opacity: 0;
+   -ms-opacity: 0;
+   -o-opacity: 0;
+   opacity: 0; 
+
+  transition: opacity 0.2s; 
+  -webkit-transition: opacity 0.2s;
+
+}
+.airvis-scrollbar:hover .scrollbar { 
+
+  -webkit-opacity: 1;
+   -moz-opacity: 1;
+   -ms-opacity: 1;
+   -o-opacity: 1;
+   opacity: 1; 
+
+}
 .airvis-scrollbar .track {  background: rgba(0,47,64,.50); border: 1px solid rgba(0, 35, 48, 0.53); position: absolute; top: 4px; bottom: 2px; height: auto !important;
 
   -webkit-border-radius: 2px;
@@ -310,14 +336,17 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
   border-radius: 2px;
 
  }
-.airvis-scrollbar .thumb { background: rgba(255,255,255,.5); width:6px; cursor:pointer; position:relative; margin: -1px -2px 0;
+.airvis-scrollbar .thumb { background-color: rgba(255,255,255,.5); width:6px; cursor:pointer; position:relative; margin: -1px -2px 0;
 
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
 
+  transition: background-color 0.2s; 
+  -webkit-transition: background-color 0.2s;
+
 }
 .airvis-scrollbar .thumb .end { display: none;}
 .airvis-scrollbar .disable{ display: none; }
-.airvis-scrollbar:hover .thumb { background:#ffffff;}
+.airvis-scrollbar .thumb:hover { background-color:#ffffff;}
 .noSelect { user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; }
