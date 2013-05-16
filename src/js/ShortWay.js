@@ -118,8 +118,16 @@ define(function() {
 		var p1y = (DdX+Math.abs(dy)*sqrt)/dr/dr;
 		var p2x = (DdY-dx*s*sqrt)/dr/dr;
 		var p2y = (DdX-Math.abs(dy)*sqrt)/dr/dr;
-		var p = Math.pow(p1x-x1,2)+Math.pow(p1y-y1,2)<Math.pow(p2x-x1,2)+Math.pow(p2y-y1,2) ? [p1x,p1y] : [p2x,p2y];
-		if (this.isBetween(p1x,p[0],p2x) && this.isBetween(p1y,p[1],p2y)) return p;
+
+		var p1between = this.isBetween(x1,p1x,x2) && this.isBetween(y1,p1y,y2);
+		var p2between = this.isBetween(x1,p2x,x2) && this.isBetween(y1,p2y,y2);
+
+		if (p1between && p2between)
+			return Math.pow(p1x-x1,2)+Math.pow(p1y-y1,2)<Math.pow(p2x-x1,2)+Math.pow(p2y-y1,2) ? [p1x,p1y] : [p2x,p2y];
+		else if (p1between)
+			return [p1x,p1y];
+		else if (p2between)
+			return [p2x,p2y];
 		return null;
 	}
 

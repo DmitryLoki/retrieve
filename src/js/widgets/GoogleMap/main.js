@@ -1,59 +1,5 @@
-define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko,utils,EventEmitter,gmaps){
+define(["jquery","knockout","utils","EventEmitter","google.maps","config"],function($,ko,utils,EventEmitter,gmaps,config) {
 
-	// requestAnim shim layer by Paul Irish
-    var requestAnimFrame = (function() {
-      return  window.requestAnimationFrame       || 
-              window.webkitRequestAnimationFrame || 
-              window.mozRequestAnimationFrame    || 
-              window.oRequestAnimationFrame      || 
-              window.msRequestAnimationFrame     || 
-              function(/* function */ callback, /* DOMElement */ element){
-                window.setTimeout(callback, 1000 / 60);
-              };
-    })();
-
-
-
-	var MapFloatElem = function(params){
-		this._params = params;
-	};
-	MapFloatElem.prototype = new gmaps.OverlayView;
-	MapFloatElem.prototype.onRemove = function() {
-		ko.cleanNode(this._div);
-		this._div.parentNode.removeChild(this._div);
-	};
-	MapFloatElem.prototype.draw = function(){
-		if(!this._coords)
-			return;
-		var proj = this.getProjection();
-		if(!proj)
-			return;
-		var coords = proj.fromLatLngToDivPixel(this._coords);
-		if (this._div) {
-			this._div.style.left = coords.x + 'px';
-			this._div.style.top = coords.y + 'px';
-		}
-	};
-	MapFloatElem.prototype.onAdd = function(){
-		var div = document.createElement('div');
-		div.style.position = 'absolute';
-		div.style.left = '99999px';
-		div.style.top = '99999px';
-		div.innerHTML = this._params.template;
-		var panes = this.getPanes();
-		panes.floatPane.appendChild(div);
-		this._div = div;
-		ko.applyBindings(this._params.data, div);
-	};
-	MapFloatElem.prototype.move = function(coords){
-		this._coords = coords;
-		this.draw();
-	};
-	MapFloatElem.prototype.setPosition = function(coords) {
-		return this.move(coords);
-	}
-
-/*
 	var MapFloatElem = function(params) {
 		this._params = params;
 	}
@@ -61,36 +7,39 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 	MapFloatElem.prototype.onRemove = function() {
 		ko.cleanNode(this._div);
 		this._div.parentNode.removeChild(this._div);
-	};
-	MapFloatElem.prototype.draw = function(){
-		if(!this._coords) return;
+	}
+	MapFloatElem.prototype.draw = function() {
+		if(!this._coords)
+			return;
 		var proj = this.getProjection();
-		if(!proj) return;
+		if(!proj)
+			return;
 		var coords = proj.fromLatLngToDivPixel(this._coords);
-		this._div.style.left = coords.x + 'px';
-		this._div.style.top = coords.y + 'px';
-	};
-	MapFloatElem.prototype.onAdd = function(){
-		var div = document.createElement('div');
-		div.style.position = 'absolute';
-		div.style.left = '99999px';
-		div.style.top = '99999px';
-		div.innerHTML = "<div class='airvis-ufo' style='color:" + this._params.data.color + "'>" + this._params.data.title + "</div>";
+		if (this._div) {
+			this._div.style.left = coords.x + "px";
+			this._div.style.top = coords.y + "px";
+		}
+	}
+	MapFloatElem.prototype.onAdd = function() {
+		var div = document.createElement("div");
+		div.style.position = "absolute";
+		div.style.left = "99999px";
+		div.style.top = "99999px";
+		div.innerHTML = this._params.template;
 		var panes = this.getPanes();
 		panes.floatPane.appendChild(div);
 		this._div = div;
-	};
-	MapFloatElem.prototype.move = function(coords){
+		ko.applyBindings(this._params.data, div);
+	}
+	MapFloatElem.prototype.move = function(coords) {
 		this._coords = coords;
 		this.draw();
-	};
+	}
 	MapFloatElem.prototype.setPosition = function(coords) {
 		return this.move(coords);
 	}
-*/
 
-
-
+/*
 	var Ufo = function(params) {
 		this._params = params;
 		this._map = params.map;
@@ -160,6 +109,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 
 
 	Ufo.prototype.move = function(coords) {
+		if (coords.lon && !coords.lng) coords.lng = coords.lon;
 		this._params.lat = coords.lat;
 		this._params.lng = coords.lng;
 		this._params.elevation = coords.elevation;
@@ -171,91 +121,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 			this._titleModel.setPosition(latLng);
 		return this;
 	}
-
-/*
-	Ufo.prototype.move = function(coords,duration) {
-		var self = this;
-
-		// При инициализации может не быть начального положения, тогда мгновенно туда переставляем и все
-		if (!this._params.lat || !this._params.lng || !this._params.elevation) {
-			this._params.lat = coords.lat;
-			this._params.lng = coords.lng;
-			this._params.elevation = coords.elevation;
-			this._params.yaw = coords.yaw;
-			self.move(coords);
-			return this;
-		}
-		// Если уже идет анимация, значит она была запущена предыдущим кадром и мы не успели ее закончить.
-		// В этом случае заканчиваем старую анимацию.
-		if (this._animating) {
-			this._animating = false;
-			var latLng = new gmaps.LatLng(this._params.lat,this._params.lng);
-			this._model.setPosition(latLng);
-			this._titleModel.setPosition(latLng);
-		}
-
-		// Анимации нет. Если не указан duration, то просто мгновенно переставляем модель на новое положение и все.
-		if (!duration || duration == 0) {
-			this._params.lat = coords.lat;
-			this._params.lng = coords.lng;
-			this._params.elevation = coords.elevation;
-			this._params.yaw = coords.yaw;
-			var latLng = new gmaps.LatLng(this._params.lat,this._params.lng);
-			this._model.setPosition(latLng);
-			this._titleModel.setPosition(latLng);
-			return this;
-		}
-		// Основной случай. Анимация указана.
-		// animationStartCoords - стартовые координаты, с которых начинаем анимацию. 
-		// В данный момент модель должна находится в этих координатах.
-		this._animationStartCoords = {
-			lat: this._params.lat,
-			lng: this._params.lng,
-			elevation: this._params.elevation,
-			yaw: this._params.yaw
-		}
-		// в _params ставим конечные координаты. 
-		// Как бы координаты уже проставлены, но фактическое положение модели запаздывает и придет в них после анимации.
-		this._params.lat = coords.lat;
-		this._params.lng = coords.lng;
-		this._params.elevation = coords.elevation;
-		this._params.yaw = coords.yaw;
-
-		this._animationStartTime = (new Date).getTime();
-
-		var animate = function() {
-			var p = ((new Date).getTime() - self._animationStartTime) / duration;
-			// Заканчиваем анимацию
-			if (p >= 1) {
-				p = 1;
-				self._animating = false;
-			}
-
-			var yawDelta = self._params.yaw - self._animationStartCoords.yaw;
-			if (yawDelta > 180) yawDelta -= 360;
-			if (yawDelta < -180) yawDelta += 360;
-
-			coords = {
-				lat: self._animationStartCoords.lat + (self._params.lat - self._animationStartCoords.lat) * p,
-				lng: self._animationStartCoords.lng + (self._params.lng - self._animationStartCoords.lng) * p,
-				elevation: self._animationStartCoords.elevation + (self._params.elevation - self._animationStartCoords.elevation) * p,
-				yaw: self._animationStartCoords.yaw + yawDelta * p
-			}
-
-			var latLng = new gmaps.LatLng(coords.lat,coords.lng);
-			this._model.setPosition(latLng);
-			this._titleModel.setPosition(latLng);
-			if (self._animating)
-				requestAnimFrame(animate);
-		}
-
-		this._animating = true;
-		animate();
-
-		return this;
-	}
-*/
-
 
 	Ufo.prototype.visible = function(flag) {
 		if (this._visible != flag) {
@@ -321,6 +186,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		// Добавляем точки из data, которых нет в _trackLastData
 		var ind = 0;
 		for (var i in data.data) {
+
 			if (data.data.hasOwnProperty(i)) {
 				if (!this._trackLastData || !this._trackLastData.data[i]) {
 					var latLng = new gmaps.LatLng(data.data[i].lat,data.data[i].lng);
@@ -335,153 +201,373 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		path.push(new gmaps.LatLng(this._params.lat,this._params.lng));
 		this._trackLastData = data;
 	}
+*/
 
-	var Waypoint = function(params) {
-		this._params = params;
-		this._map = params.map;
-		this._currentKey = 0;
-		this.redraw();
-	}
 
-	utils.extend(Waypoint.prototype,EventEmitter.prototype);
-
-	Waypoint.prototype.setCurrentKey = function(key) {
-		this._currentKey = key;
-	}
-
-	// Облегченная версия redraw, которая только красит цилиндры, если их состояние изменилось
-	Waypoint.prototype.recolor = function() {
-		var state = this._params.openTime < this._currentKey ? "opened" : "closed";
-		if (this._state == state) return;
-		this._state = state;
-		var colors = this._map._options.waypointsColors[this._params.type || "default"];
-		var color = colors ? colors[state] : "#000000";
-		if (this._model) {
-			this._model.set("strokeColor",color);
-			this._model.set("fillColor",color);
-		}
-		if (this._titleModel)
-			this._titleModel.set("color",color);
-	}
-
-	Waypoint.prototype.redraw = function() {
-		var state = this._params.openTime < this._currentKey ? "opened" : "closed";
-		if (!this._model) 
-			this._model = new gmaps.Circle({
-			strokeColor: "#000000",
-			strokeOpacity: 0.8,
-			strokeWeight: 1,
-			fillOpacity: 0.2,
-			fillColor: "#ffffff",
-			map: this._map._map,
-			center: new gmaps.LatLng(this._params.lat,this._params.lng),
-			radius: this._params.radius
-		});
-		if (!this._titleModel)
-			this._titleModel = new MapFloatElem({
-			template: this._params.titleTemplate,
-			data: {
-				title: this._params.name,
-				color: "#000000"
-			}
-		});
-		if (this._map.cylindersVisualMode() == "off") {
-			this._model.setMap(null);
-			this._titleModel.setMap(null);
-		}
-		else {
-			this._model.set("fillOpacity",this._map.cylindersVisualMode() == "full" ? 0.2 : 0);
-			this._model.setMap(this._map._map);
-			this._titleModel.setMap(this._map._map);
-			this._titleModel.move(this._model.getBounds().getNorthEast());
-			this.recolor();
-		}
-	}
-
-	Waypoint.prototype.destroy = function() {
-		if (this._model)
-			this._model.setMap(null);
-		this.emit("destroy");
-	}
 
 
 	var GoogleMap = function(options) {
-		this._options = options;
-		this.width = ko.observable('320px');
-		this.height = ko.observable('240px');
-
 		var self = this;
-		function updateSize() {
-			if(self.map)
-				gmaps.event.trigger(self.map, 'resize');
-		}
-		this.width.subscribe(updateSize);
-		this.height.subscribe(updateSize);
-		
-		this._ufos = [];
-		this._waypoints = [];
 
-		this.tracksVisualMode = ko.observable();
-		this.cylindersVisualMode = ko.observable();
-		this.modelsVisualMode = ko.observable();
-		this.shortWayVisualMode = ko.observable();
-		this.namesVisualMode = ko.observable();
-	}
+		this.ufos = options.ufos;
+		this.waypoints = options.waypoints;
+		this.shortWay = options.shortWay;
+		this.tracksVisualMode = options.tracksVisualMode;
+		this.cylindersVisualMode = options.cylindersVisualMode;
+		this.modelsVisualMode = options.modelsVisualMode;
+		this.shortWayVisualMode = options.shortWayVisualMode;
+		this.namesVisualMode = options.namesVisualMode;
+		this.currentKey = options.currentKey;
+		this.imgRootUrl = options.imgRootUrl;
+		this.zoom = ko.observable(config.map.zoom);
+		this.isReady = ko.observable(false);
 
-	GoogleMap.prototype.setTracksVisualMode = function(v) {
-		this.tracksVisualMode(v);
-	}
+		this.mapWaypoints = [];
+		this.waypoints.subscribe(function(waypoints) {
+			if (!self.isReady()) return;
+			var rev1 = {}, rev2 = {};
+			for (var i = 0; i < waypoints.length; i++)
+				rev1[waypoints[i].id()] = i;
+			for (var i = 0; i < self.mapWaypoints.length; i++)
+				rev2[self.mapWaypoints[i].id()] = i;
+			for (var i = 0; i < waypoints.length; i++) {
+				if (rev2[waypoints[i].id()] == null) {
+					self.mapWaypoints.push(self.createWaypoint(waypoints[i]));
+					rev2[waypoints[i].id()] = self.mapWaypoints.length - 1;
+				}
+			}
+			for (var i = 0; i < self.mapWaypoints.length; i++) {
+				if (rev1[self.mapWaypoints[i].id()] == null) {
+					self.destroyWaypoint(self.mapWaypoints[i]);
+					self.mapWaypoints.splice(i,1);
+					i--;
+				}
+			}
+		});
 
-	GoogleMap.prototype.setCylindersVisualMode = function(v) {
-		this.cylindersVisualMode(v);
-		this._waypoints.forEach(function(waypoint) {
-			waypoint.redraw();
+		this.mapUfos = [];
+		this.ufos.subscribe(function(ufos) {
+			if (!self.isReady()) return;
+			var rev1 = {}, rev2 = {};
+			for (var i = 0; i < ufos.length; i++)
+				rev1[ufos[i].id()] = i;
+			for (var i = 0; i < self.mapUfos.length; i++)
+				rev2[self.mapUfos[i].id()] = i;
+			for (var i = 0; i < ufos.length; i++) {
+				if (rev2[ufos[i].id()] == null) {
+					self.mapUfos.push(self.createUfo(ufos[i]));
+					rev2[ufos[i].id()] = self.mapUfos.length - 1;
+				}
+			}
+			for (var i = 0; i < self.mapUfos.length; i++) {
+				if (rev1[self.mapUfos[i].id()] == null) {
+					self.detroyUfo(self.mapUfos[i]);
+					self.mapUfos.splice(i,1);
+					i--;
+				}
+			}
+		});
+
+		this.mapShortWay = null;
+		this.shortWay.subscribe(function(w) {
+			if (!self.isReady()) return;
+			self.destroyShortWay();
+			self.createShortWay(w);
 		});
 	}
 
-	GoogleMap.prototype.setModelsVisualMode = function(v) {
-		this.modelsVisualMode(v);
-		this.redrawUfos();
-	}
-
-	GoogleMap.prototype.setShortWayVisualMode = function(v) {
-		this.shortWayVisualMode(v);
-		this.redrawShortWay();
-	}
-
-	GoogleMap.prototype.setNamesVisualMode = function(v) {
-		this.namesVisualMode(v);
-		this.redrawUfos();
-	}
-
-	GoogleMap.prototype.redrawUfos = function() {
-		for (var i = 0; i < this._ufos.length; i++)
-			this._ufos[i].redraw();
-	}
-
-	GoogleMap.prototype.setCameraPosition = function(p) {
-		if (this._map && p && p.latitude && p.longitude) {
-			this._map.setCenter(new gmaps.LatLng(p.latitude,p.longitude));
+	GoogleMap.prototype.createWaypoint = function(data) {
+		var self = this;
+		var w = {
+			id: data.id,
+			name: data.name,
+			type: data.type,
+			center: data.center,
+			radius: data.radius,
+			openKey: data.openKey,
 		}
+		w.state = ko.computed(function() {
+			return w.openKey() < self.currentKey() ? "opened" : "closed";
+		});
+		w.color = ko.computed(function() {
+			return  config.waypointsColors[w.type()] ? config.waypointsColors[w.type()][w.state()] : config.waypoint.color;
+		});
+		w.fillOpacity = ko.computed(function() {
+			return self.cylindersVisualMode() == "empty" ? 0 : config.waypoint.fillOpacity;
+		});
+		w.visible = ko.computed(function() {
+			return self.cylindersVisualMode() == "off" ? false : true;
+		});
+		w._model = new gmaps.Circle({
+			strokeColor: w.color(),
+			strokeOpacity: config.waypoint.strokeOpacity,
+			strokeWeight: config.waypoint.strokeWeight,
+			fillOpacity: w.fillOpacity(),
+			fillColor: w.color(),
+			map: self.map,
+			center: new gmaps.LatLng(w.center().lat,w.center().lng),
+			radius: w.radius(),
+		});
+		w._titleModel = new MapFloatElem({
+			template: self.templates.waypointTitle,
+			data: {
+				title: w.name,
+				color: w.color
+			}
+		});
+		w._titleModel.setMap(self.map);
+		w._titleModel.setPosition(w._model.getBounds().getNorthEast());
+		w.visible.subscribe(function(v) {
+			w._model.setMap(v?self.map:null);
+			w._titleModel.setMap(v?self.map:null);
+		});
+		w.color.subscribe(function(v) {
+			w._model.set("strokeColor",v);
+			w._model.set("fillColor",v);
+		});
+		w.fillOpacity.subscribe(function(v) {
+			w._model.set("fillOpacity",v);
+		});
+		w.center.subscribe(function(v) {
+			w._model.setPosition(new gmaps.LatLng(v.lat,v.lng));
+			w._titleModel.setPosition(w._model.getBounds().getNorthEast());
+		});
+		w.radius.subscribe(function(v) {
+			w._model.set("radius",v);
+		});
+		return w;
 	}
 
-	// Добавлен для соответствия с OwgMap
-	GoogleMap.prototype.setCameraLookAtPosition = function(p) {
-		if (this._map && p && p.latitude && p.longitude) {
-			this._map.setCenter(new gmaps.LatLng(p.latitude,p.longitude));
+	GoogleMap.prototype.destroyWaypoint = function(w) {
+		if (w._model)
+			w._model.setMap(null);
+		if (w._titleModel)
+			w._titleModel.setMap(null);
+		delete w._model;
+		delete w._titleModel;
+	}
+
+	GoogleMap.prototype.createUfo = function(data) {
+		var self = this;
+		var u = {
+			id: data.id,
+			name: data.name,
+			color: data.color,
+			state: data.state,
+			position: data.position,
+			track: data.track,
+			visible: data.visible,
+			trackVisible: data.trackVisible,
+			noData: data.noData
+		}
+		u._model = new gmaps.Marker({
+			flat: config.ufo.flat,
+			map: self.map
+		});
+		u._titleModel = new MapFloatElem({
+			template: self.templates.markerTitle,
+			data: {
+				title: u.name,
+				color: u.color
+			}
+		});
+		u._trackModel = new gmaps.Polyline({
+			strokeColor: u.color(),
+			strokeOpacity: config.ufo.trackStrokeOpacity,
+			strokeWeight: config.ufo.trackStrokeWeight,
+			map: self.map
+		});
+		u._trackBeginModel = new gmaps.Polyline({
+			strokeColor: u.color(),
+			strokeOpacity: config.ufo.trackStrokeOpacity,
+			strokeWeight: config.ufo.trackStrokeWeight,
+			map: self.map
+		});
+
+		u.color.subscribe(function(v) {
+			u._trackModel.set("strokeColor",v);
+			u._trackBeginModel.set("strokeColor",v);
+		});
+
+		u.modelVisible = ko.computed(function() {
+			return u.visible() && !u.noData();
+		});
+
+		u.titleVisible = ko.computed(function() {
+			return u.visible() && !u.noData() && (self.namesVisualMode() == "on" || (self.namesVisualMode() == "auto" && self.zoom() >= config.namesVisualModeAutoMinZoom));
+		});
+
+		u.trackVisible = ko.computed(function() {
+			return u.visible() && !u.trackVisible() && (self.tracksVisualMode() == "full" || self.tracksVisualMode() == "10min");
+		});
+
+		u.icon = ko.computed(function() {
+			u.visible();
+//			return u.state() + self.modelsVisualMode();
+			var icon = "fly" + self.modelsVisualMode();
+			return icon;
+		});
+
+		u.modelVisible.subscribe(function(v) {
+			u._model.setMap(v?self.map:null);
+		});
+
+		u.titleVisible.subscribe(function(v) {
+			u._titleModel.setMap(v?self.map:null);
+		});
+
+		u.trackVisible.subscribe(function(v) {
+			u._trackModel.setMap(v?self.map:null);
+			u._trackBeginModel.setMap(v?self.map:null);
+		});
+
+		u.icon.subscribe(function(v) {
+			var params = config.icons[v];
+			if (v && params)
+				u._model.setIcon(new gmaps.MarkerImage(self.imgRootUrl()+params.url, new gmaps.Size(params.width,params.height),new gmaps.Point(0,0),new gmaps.Point(params.x,params.y)));
+		});
+
+		u.position.subscribe(function(v) {
+			if (v && v.lat && v.lng) {
+				var ll = new gmaps.LatLng(v.lat,v.lng);
+				u._model.setPosition(ll);
+				u._titleModel.setPosition(ll);
+			}
+		});
+
+		u.track.subscribe(function(v) {
+			if (self.tracksVisualMode() == "full" || self.tracksVisualMode() == "10min") {
+				var path = u._trackModel.getPath();
+				if (v.dt == null) {
+					console.log("clear path",v,u.id(),u.position());
+					path.clear();
+				}
+				else
+					path.push(new gmaps.LatLng(v.lat,v.lng));
+			}
+		});
+
+		u._trackBegin = ko.computed(function() {
+			if (u.track() && u.track().dt && u.position() && u.position().lat && u.position().lng && (self.tracksVisualMode() == "full" || self.tracksVisualMode() == "10min")) {
+				var path = [
+					new gmaps.LatLng(u.track().lat,u.track().lng),
+					new gmaps.LatLng(u.position().lat,u.position().lng)
+				];
+				u._trackBeginModel.setPath(path);
+			}
+		});
+
+
+
+		u.position.valueHasMutated();
+		u.visible.valueHasMutated();
+
+		return u;
+	}
+
+	GoogleMap.prototype.destroyUfo = function(u) {
+		if (u._model)
+			u._model.setMap(null);
+		if (u._titleModel)
+			u._titleModel.setMap(null);
+		if (u._trackModel)
+			u._trackModel.setMap(null);
+		delete u._model;
+		delete u._titleModel;
+		delete u._trackModel;
+	}
+
+	GoogleMap.prototype.createShortWay = function(data) {
+		var self = this;
+		if (!data) return;
+		var ar = [];
+		for (var i = 0; i < data.length; i++)
+			ar.push(new gmaps.LatLng(data[i].lat,data[i].lng));
+		var w = {};
+		w.style = ko.computed(function() {
+			return config.shortWay[self.shortWayVisualMode()];
+		});
+		w.visible = ko.computed(function() {
+			return self.shortWayVisualMode() == "off" ? 0 : 1;
+		});
+		w._model = new gmaps.Polyline(w.style());
+		w._model.setMap(this.map);
+		w._model.setPath(ar);
+		w.style.subscribe(function(v) {
+			w._model.setOptions(v);
+		});
+		w.visible.subscribe(function(v) {
+			w._model.setMap(v?self.map:null);
+		});
+		this.mapShortWay = w;
+	}
+
+	GoogleMap.prototype.destroyShortWay = function() {
+		if (this.mapShortWay) {
+			if (this.mapShortWay._model)
+				this.mapShortWay._model.setMap(null);
+			delete this.mapShortWay;
 		}
 	}
 
 	GoogleMap.prototype.calculateAndSetDefaultPosition = function() {
-		if (!this._map || !this._waypoints) return;
+		if (!this.map || !this.mapWaypoints) return;
 		var bounds = new gmaps.LatLngBounds();
-		for (var i = 0; i < this._waypoints.length; i++) {
-			w = this._waypoints[i];
-			bounds.extend(new gmaps.LatLng(w._params.lat,w._params.lng));
+		for (var i = 0; i < this.mapWaypoints.length; i++) {
+			w = this.mapWaypoints[i];
+			bounds.extend(new gmaps.LatLng(w.center().lat,w.center().lng));
 		}
-		this._map.fitBounds(bounds);
+		this.map.fitBounds(bounds);
 	}
 
+	GoogleMap.prototype.domInit = function(elem,params) {
+		var self = this;
+		var div = ko.virtualElements.firstChild(elem);
+		while(div && div.nodeType != 1)
+			div = ko.virtualElements.nextSibling(div);
+		ko.virtualElements.prepend(elem,div);
+		this.map = new gmaps.Map(div,{
+			zoom: config.map.zoom,
+			center: new gmaps.LatLng(config.map.center.lat,config.map.center.lng),
+			mapTypeId: gmaps.MapTypeId[config.map.type]
+		});
+		gmaps.event.addListener(this.map,"zoom_changed",function() {
+			self.zoom(self.map.getZoom());
+		});
+		this.isReady(true);
+	}
+	
+	GoogleMap.prototype.domDestroy = function(elem,params) {
+		delete this.map;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 	GoogleMap.prototype.ufo = function(params) {
 		var self = this;
 		params.map = self;
@@ -492,24 +578,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 			self._ufos.splice(self._ufos.indexOf(ufo),1);
 		});
 		return ufo;
-	}
-
-	GoogleMap.prototype.waypoint = function(params) {
-		var self = this;
-		params.map = self;
-		params.titleTemplate = self.templates.waypointTitle;
-		var waypoint = new Waypoint(params);
-		this._waypoints.push(waypoint);
-		waypoint.on("destroy",function() {
-			self._waypoints.splice(self._waypoints.indexOf(waypoint),1);
-		});
-		return waypoint;
-	}
-
-	GoogleMap.prototype.clearWaypoints = function() {
-		if (!this._waypoints) return;
-		while (this._waypoints.length > 0)
-			this._waypoints[0].destroy();
 	}
 
 	GoogleMap.prototype.clearUfos = function() {
@@ -547,35 +615,9 @@ define(["jquery","knockout","utils","EventEmitter","google.maps"], function($,ko
 		this._shortWayModel.setPath(ar);
 	}
 
-	GoogleMap.prototype.domInit = function(elem,params) {
-		var self = this;
+*/
 
-		if (params.width)
-			this.width(params.width);
-		if (params.height)
-			this.height(params.height);
-
-		var div = ko.virtualElements.firstChild(elem);
-		while(div && div.nodeType != 1)
-			div = ko.virtualElements.nextSibling(div);
-		ko.virtualElements.prepend(elem,div);
-		
-		this._map = new gmaps.Map(div,{
-			zoom: 9,
-			center: new gmaps.LatLng(55.748758, 37.6174),
-			mapTypeId: gmaps.MapTypeId.TERRAIN
-		});
-
-		gmaps.event.addListener(this._map,"zoom_changed",function() {
-			self.redrawUfos();
-		});
-	}
-	
-	GoogleMap.prototype.domDestroy = function(elem,params) {
-		delete this._map;
-	};
-
-	GoogleMap.prototype.templates = ['main', 'markerTitle', 'waypointTitle'];
+	GoogleMap.prototype.templates = ["main", "markerTitle", "waypointTitle"];
 
 	return GoogleMap;
 });

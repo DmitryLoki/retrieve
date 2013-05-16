@@ -1,7 +1,7 @@
 
 /* overall container */
 document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;}
-.airvis-container { min-height: 100%; margin: 0; padding: 0;}
+.airvis-container { margin: 0; padding: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
 
 
 /* clearfix */
@@ -30,7 +30,6 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
 .airvis-window {
   transition: width 0.5s ease;
-  -webkit-transition: width 0.5s ease;
 }
 .airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
 .airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0; text-rendering: optimizelegibility;}

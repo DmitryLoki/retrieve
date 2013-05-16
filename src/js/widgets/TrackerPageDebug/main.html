@@ -1,19 +1,22 @@
+<!-- ko if:isReady -->
+<div style="display:none" data-bind="visible:isReady,style:{width:width,height:height}">
+	<div data-bind="style:{width:width,height:height}">
+		<!-- ko widget: { data: map, type: mapType } --><!-- /ko -->
+	</div>
+	<!-- ko if: mode() == "full" -->
+		<!-- ko widget: {data: topBar, type: 'TopBar'} --><!-- /ko -->
 
+		<!-- ko widget: { data: mainMenuWindow, type: 'Window', contentCss: 'airvis-transparent'} -->
+			<!-- ko widget: {data: mainMenu, type: 'MainMenu'} --><!-- /ko -->
+		<!-- /ko -->
 
-<div style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: hidden;">
-<!-- ko widget: { data: map, type: mapType, width: "100%", height: "100%" } --><!-- /ko -->
+		<!-- ko widget: { data: playerControlWindow, type: 'Window'} -->
+			<!-- ko widget: { data: playerControl, type: 'PlayerControl' } --><!-- /ko -->
+		<!-- /ko -->
+
+		<!-- ko widget: {data: ufosTableWindow, type: 'Window'} -->
+			<!-- ko widget: { data: ufosTable, type: 'UfosTable', modalWindow: ufosTableWindow } --><!-- /ko -->
+		<!-- /ko -->
+	<!-- /ko -->
 </div>
-
-<!-- ko widget: {data: topBar, type: 'TopBar'} --><!-- /ko -->
-
-<!-- ko widget: { data: mainMenuWindow, type: 'Window', contentCss: 'airvis-transparent'} -->
-	<!-- ko widget: {data: mainMenu, type: 'MainMenu'} --><!-- /ko -->
-<!-- /ko -->
-
-<!-- ko widget: { data: playerControlWindow, type: 'Window'} -->
-	<!-- ko widget: { data: playerControl, type: 'PlayerControl' } --><!-- /ko -->
-<!-- /ko -->
-
-<!-- ko widget: {data: ufosTableWindow, type: 'Window'} -->
-	<!-- ko widget: { data: ufosTable, type: 'UfosTable', modalWindow: ufosTableWindow } --><!-- /ko -->
 <!-- /ko -->

@@ -18,15 +18,10 @@
 	</div>
 	<div class="airvis-player-controls-wrapper">
 		<div class="airvis-player-controls">
-			<a class="play_pause" data-bind="enable: enabled, click: switchPlay, css: {'player-button-play': enabled() && _state()=='play', 'player-button-pause': enabled() && _state()=='pause', 'player-button-off': !enabled() }"></a>
-<!--
-	<span data-bind="text:_state()=='play'?'PAUSE':'PLAY'"></span>
-			<a data-bind="enable: enabled, click: play, css: { 'player-button-on': _state() == 'play', 'player-button-off': _state() != 'play' }"><span>PLAY</span></a>
-			<a data-bind="enable: enabled, click: pause, css: { 'player-button-on': _state() == 'pause', 'player-button-off': _state() != 'pause' }"><span>PAUSE</span></a>
--->
-			<a data-bind="enable: enabled, click: changeSpeed.bind($data,1), css: { 'player-button-on': _speed() == 1, 'player-button-off': _speed() != 1 }"><span>x1</span></a>
-			<a data-bind="enable: enabled, click: changeSpeed.bind($data,2), css: { 'player-button-on': _speed() == 2, 'player-button-off': _speed() != 2 }"><span>x2</span></a>
-			<a data-bind="enable: enabled, click: changeSpeed.bind($data,10), css: { 'player-button-on': _speed() == 10, 'player-button-off': _speed() != 10 }"><span>x10</span></a>
+			<a class="play_pause" data-bind="click:switchState,css:{'player-button-play':playerState()=='play','player-button-pause':playerState()=='pause'}"></a>
+			<a data-bind="click: changeSpeed.bind($data,1), css: { 'player-button-on': playerSpeed() == 1, 'player-button-off': playerSpeed() != 1 }"><span>x1</span></a>
+			<a data-bind="click: changeSpeed.bind($data,2), css: { 'player-button-on': playerSpeed() == 2, 'player-button-off': playerSpeed() != 2 }"><span>x2</span></a>
+			<a data-bind="click: changeSpeed.bind($data,10), css: { 'player-button-on': playerSpeed() == 10, 'player-button-off': playerSpeed() != 10 }"><span>x10</span></a>
 		</div>
 		<div class="airvis-slider-container" data-bind="widget:{data:slider,type:'Slider'}"></div>
 	</div>

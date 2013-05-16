@@ -1,61 +1,55 @@
-define(["jquery","knockout","widget!Checkbox","jquery.tinyscrollbar"],function($,ko,Checkbox){
-//	,"jquery.jscrollpane","jquery.mousewheel"
-	var UfosTable = function(ufos) {
-		this.ufos = ufos;
+define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], function($,ko,Checkbox,config) {
+	var UfosTable = function(options) {
 		var self = this;
 
+		this.ufos = options.ufos;
 		this.inModalWindow = ko.observable(false);
-		this.mode = ko.observable("short");
+		this.mode = ko.observable(config.ufosTable.mode);
 
-	    this.allVisibleChecked = ko.computed({
-	        read: function(){
-	            return !self.ufos().some(function(item){
-	                return !item.visibleCheckbox.checked();
-	            });
-	        },
-	        write: function(val){
-	        	self.ufos().forEach(function(item){
-	        		item.visibleCheckbox.checked(val);
-	        	});
-	        }
-	    });
-        this.allVisibleCheckbox = new Checkbox({checked: this.allVisibleChecked, color: 'blue'});
+		this.tableUfos = ko.computed(function() {
+			var out = [];
+			self.ufos().forEach(function(w) {
+				out.push(self.createUfo(w));
+			});
+			return out;
+		});
 
-	    this.allTitleVisibleChecked = ko.computed({
-	        read: function(){
-	            return !self.ufos().some(function(item){
-	                return !item.titleVisibleCheckbox.checked();
-	            });
-	        },
-	        write: function(val){
-	        	self.ufos().forEach(function(item){
-	        		item.titleVisibleCheckbox.checked(val);
-	        	});
-	        }
-	    });
-        this.allTitleVisibleCheckbox = new Checkbox({checked: this.allTitleVisibleChecked, color: 'blue'});
+		this.allVisible = ko.computed({
+			read: function() {
+				return !self.ufos().some(function(w) { 
+					return !w.visible();
+				});
+			},
+			write: function(val) {
+				self.ufos().forEach(function(w) {
+					w.visible(val);
+				});
+			}
+		});
+		this.allVisibleCheckbox = new Checkbox({checked:this.allVisible,color:config.ufosTable.allVisibleCheckboxColor});
+	}
 
-	    this.allTrackVisibleChecked = ko.computed({
-	        read: function(){
-	            return !self.ufos().some(function(item){
-	                return !item.trackVisibleCheckbox.checked();
-	            });
-	        },
-	        write: function(val){
-	        	self.ufos().forEach(function(item){
-	        		item.trackVisibleCheckbox.checked(val);
-	        	});
-	        }
-	    });
-        this.allTrackVisibleCheckbox = new Checkbox({checked: this.allTrackVisibleChecked, color: 'blue'});
-	};
+	UfosTable.prototype.createUfo = function(data) {
+		var w = {
+			id: data.id,
+			name: data.name,
+			country: data.country,
+			color: data.color,
+			status: data.status,
+			visible: data.visible,
+			trackVisible: data.trackVisible,
+			noData: data.noData,
+			tableData: data.tableData
+		}
+		w.visibleCheckbox = new Checkbox({checked:w.visible,color:w.color});
+		w.trackVisibleCheckbox = new Checkbox({checked:w.trackVisible,color:w.color});
+		return w;
+	}
 
 	UfosTable.prototype.alignColumns = function(it) {
 		var self = this;
 		if (!this.headerContainer || !this.bodyContainer) return;
-
 		this.headerContainer.find("table").width(this.bodyContainer.find("table").width());
-
 		var columns = this.headerContainer.find("tr:first").find("td");
 		this.bodyContainer.find("tr:first").find("td").each(function(i) {
 			var td = $(this);
@@ -78,6 +72,7 @@ define(["jquery","knockout","widget!Checkbox","jquery.tinyscrollbar"],function($
 			this.switchMode = function() {
 				if (self.mode() == "short") {
 					self.modalWindow.width(570);
+					// В css при изменении ширины идет transition: width 0.1s, поэтому здесь - костыльный таймаут
 					setTimeout(function() {
 						self.mode("full");
 					},500);
@@ -88,10 +83,10 @@ define(["jquery","knockout","widget!Checkbox","jquery.tinyscrollbar"],function($
 				}
 			}
 			this.inModalWindow(true);
+			this.modalWindow.on("resize",function() {
+				self.alignColumns();
+			})
 		}
-		this.modalWindow.on("resize",function() {
-			self.alignColumns();
-		})
 
 		var div = ko.virtualElements.firstChild(element);
 		while (div && div.nodeType != 1)
@@ -111,24 +106,9 @@ define(["jquery","knockout","widget!Checkbox","jquery.tinyscrollbar"],function($
 		});
 
 		this.scrollbarContainer = this.container.find(".airvis-scrollbar").tinyscrollbar();
-/*
-		this.bodyContainer.jScrollPane({
-			scrollbarWidth: 0,
-			showArrows: false,
-			contentWidth: 0
-		});
-		this.container.find("div.airvis-table-with-fixed-header-inner").jScrollPane({
-			'scrollbarWidth':0, 
-			'showArrows':false,
-			'contentWidth': '0px'
-		});
-*/
 	};
 
-	UfosTable.prototype.domDestroy = function(elem, params) {
-	};
-	
-	UfosTable.prototype.templates = ['main'];
+	UfosTable.prototype.templates = ["main"];
 
 	return UfosTable;
 });

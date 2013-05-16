@@ -16,7 +16,8 @@ define([
     'TestServer',
     'RealServer',
     'DataSource',
-    'ShortWay'
+    'ShortWay',
+    'config'
 ], function(
 	utils,
 	walk,
@@ -35,134 +36,9 @@ define([
     TestServer,
     RealServer,
     DataSource,
-    ShortWay
+    ShortWay,
+    config
 ){
-
-	var TrackerPageDebug = function() { 
-		this.initialize();
-	}
-
-	TrackerPageDebug.prototype.options = {
-		// Настройки тестового сервера
-		testServerOptions: {
-			mainTitle: "52th FAI european paragliding championship",
-			taskTitle: "Task1 - 130km",
-			dateTitle: "22 Sep, 2012",
-			placeTitle: "France, Saint Andre les Alpes",
-			pilotsCnt: 15,
-			waypointsCnt: 5,
-			startKey: (new Date).getTime() - 120000,
-			endKey: (new Date).getTime() - 60000,
-			dtStep: 1000,
-			// Данные для генератора координат
-			coords: {
-				center: {
-					lat: 55.75,
-					lng: 37.61,
-					elevation: 500
-				},
-				// Разброс стартового положения пилотов
-				dispersion: 0.02,
-				elevationDispersion: 100,
-				// Максимальная дистанция, на которую пилот может улететь за 1 шаг
-				maxStep: 0.005,
-				elevationMaxStep: 100,
-				// Вероятность того, что пилот не будет двигаться на текущем шаге
-				holdProbability: 0,
-				// угол в градусах, на который максимум может повернуться параплан
-				directionMaxStep: 30
-			},
-			waypoints: {
-				dispersion: 0.1,
-				maxRadius: 1600,
-				minRadius: 600,
-				height: 500,
-			},
-			// Задержка, с которой тестовый сервер отдает ответ
-			testDelay: 1000,
-		},
-		icons: {
-			"flymedium": {url: "ufoFlyMedium.png", width: 32, height: 35, x: 16, y: 35},
-			"landmedium": {url: "ufoLandMedium.png", width: 32, height: 28, x: 16, y: 28},
-			"flysmall": {url: "ufoFlySmall.png", width: 16, height: 17, x: 8, y: 8},
-			"landsmall": {url: "ufoLandSmall.png", width: 16, height: 14, x: 8, y: 7},
-			"flylarge": {url: "ufoFlyLarge.png", width: 64, height: 70, x: 32, y: 70},
-			"landlarge": {url: "ufoLandLarge.png", width: 64, height: 56, x: 32, y: 56}
-		},
-		// Установленная по умолчанию скорость в плеере
-		playerSpeed: 1,
-		// Задержка, с которой обновляются данные в таблице
-		renderTableDataInterval: 1000,
-		windows: {
-			ufosTable: {
-				visible: true,
-				title: "Leaderboard",
-				resizable: false,
-				resizableY: true,
-				height: 300,
-				width: 370,
-				top: 380,
-				left: 90
-			},
-			playerControl: {
-				visible: true,
-				showHeader: false,
-				resizable: false,
-				absoluteCloseIcon: true,
-				title: "Player",
-				width: 940,
-				top: 160,
-				left: 90,
-				xPosition: "center",
-				yPosition: "bottom",
-				bottom: 20
-			},
-			mainMenu: {
-				visible: true,
-				title: "Title",
-				showHeader: false,
-				resizable: false,
-				absoluteCloseIcon: true,
-				width: 940,
-				height: 110,
-				top: 60,
-				xPosition: "center"
-			}
-		},
-		tracksVisualMode: "full",
-		cylindersVisualMode: "empty",
-		modelsVisualMode: "medium",
-		shortWayVisualMode: "wide",
-		namesVisualMode: "auto",
-		shortWayWide: {
-			color: "#336699",
-			strokeOpacity: 0.5,
-			strokeWeight: 5
-		},
-		shortWayThin: {
-			color: "#336699",
-			strokeOpacity: 1,
-			strokeWeight: 2
-		},
-		namesVisualAutoMinZoom: 12,
-		waypointsColors: {
-			to: {
-				closed: "#ff0000",
-				opened: "#00ff00"
-			},
-			waypoint: {
-				closed: "#909090",
-				opened: "#909090"
-			},
-			goal: {
-				closed: "#0000ff",
-				opened: "#0000ff"
-			}
-		}
-	}
-
-
-
 
 	// requestAnim shim layer by Paul Irish
     var requestAnimFrame = (function() {
@@ -176,109 +52,154 @@ define([
               };
     })();
 
+	var Waypoint = function(options) {
+		this.id = ko.observable(options.id);
+		this.name = ko.observable(options.name);
+		this.type = ko.observable(options.type);
+		this.center = ko.observable({lat:options.center.lat,lng:options.center.lng});
+		this.radius = ko.observable(options.radius);
+		this.openKey = ko.observable(options.openKey);
+	}
 
-
-
-	var Pilot = function(options) {
-		this.id = options.id;
-		this.name = options.name;
-		this.country = options.country;
-		this.map = options.map;
-		this.icon = options.icon;
-		this.trackColor = options.trackColor;
-		this.color = options.color;
-
-		this._ufo = this.map.ufo(options);
-
-		this.visibleChecked = ko.observable(true);
-        this.visibleCheckbox = new Checkbox({checked:this.visibleChecked,color:this.color});
-		this.titleVisibleChecked = ko.observable(true);
-        this.titleVisibleCheckbox = new Checkbox({checked:this.titleVisibleChecked});
-		this.trackVisibleChecked = ko.observable(false);
-        this.trackVisibleCheckbox = new Checkbox({checked:this.trackVisibleChecked});
-
-		this.statusOrDist = "test";
-		this.statusText = "flying";
-		this.alt = "test";
-		this.gSpd = ko.observable(0);
-		this.vSpd = ko.observable(0);
+	var Ufo = function(options) {
+		this.id = ko.observable(options.id);
+		this.name = ko.observable(options.name);
+		this.country = ko.observable(options.country);
+		this.color = ko.observable(options.color || config.ufo.color);
+		this.state = ko.observable(null);
+		this.position = ko.observable({lat:null,lng:null});
+		this.track = ko.observable({lat:null,lng:null,dt:null});
+		this.alt = ko.observable(null);
+		this.dist = ko.observable(null);
+		this.gSpd = ko.observable(null);
+		this.vSpd = ko.observable(null);
+		this.visible = ko.observable(config.ufo.visible);
+		this.trackVisible = ko.observable(config.ufo.trackVisible);
+		this.noData = ko.observable(true);
 		this.tableData = {
-			gSpd: ko.observable(0),
-			vSpd: ko.observable(0)
-		}
-//		this.calculateSpeed = function(step) {
-//			var prevStep = (step > 0 ? step : this.route.length) - 1;
-//			this.gSpd(parseInt((this.route[step].lat - this.route[prevStep].lat)*10000));
-//			this.vSpd(parseInt((this.route[step].lng - this.route[prevStep].lng)*10000));
-//		}
-//		this.moveToStep = function(step) {
-//			this.coordsUpdate(this.route[step]);
-//			this.calculateSpeed(step);
-//		}
-		this.visibleChecked.subscribe(function(val){
-			this._ufo.visible(val);
-		},this);
-		this.titleVisibleChecked.subscribe(function(val) {
-			this._ufo.titleVisible(val);
-		},this);
-		this.trackVisibleChecked.subscribe(function(val) {
-			this._ufo.trackVisible(val);
-		},this);
-	}
-
-	utils.extend(Pilot.prototype,EventEmitter.prototype);
-
-	Pilot.prototype.initialize = function() {
-		var self = this;
-		if (this._ufo.hasAsyncInit)
-			this._ufo.asyncInit(function() {
-				self.initialized();
-				self.emit("loaded",self);
-			});
-		else {
-			self.initialized();
-			self.emit("loaded",self);
+			dist: ko.observable(null),
+			gSpd: ko.observable(null),
+			vSpd: ko.observable(null),
+			alt: ko.observable(null)
 		}
 	}
 
-	Pilot.prototype.initialized = function() {
-		this._ufo.redraw();
-		this._ufo.visible(true);
-	}
- 
-	Pilot.prototype.coordsUpdate = function(data,duration) {
-		this._ufo.move(data,duration);
+	Ufo.prototype.updateTableData = function() {
+		this.tableData.dist(this.dist());
+		this.tableData.gSpd(this.gSpd());
+		this.tableData.vSpd(this.vSpd());
+		this.tableData.alt(this.alt());
 	}
 
-	Pilot.prototype.trackUpdate = function(data) {
-		this._ufo.trackUpdate(data);
+	Ufo.prototype.resetTrack = function() {
+		// dt=null - специальное значение. Карта его отслеживает и убивает у себя трек при dt=null
+		console.log("resetTrack",this.position());
+		this.track({lat:null,lng:null,dt:null});
 	}
 
-	Pilot.prototype.updateTableData = function() {
-			// пока выключим, непонятно, как считать скорость
-			// this.tableData.gSpd(this.gSpd());
-			// this.tableData.vSpd(this.vSpd());
-	}
-
-
-
-
-	TrackerPageDebug.prototype.initialize = function() {
+	var TrackerPageDebug = function() { 
 		var self = this;
+		this.options = config;
+		this.width = ko.observable(this.options.width);
+		this.height = ko.observable(this.options.height);
+		this.imgRootUrl = ko.observable(this.options.imgRootUrl);
+		this.mapWidget = ko.observable(this.options.mapWidget);
+		this.mode = ko.observable(this.options.mode);
+		this.tracksVisualMode = ko.observable(this.options.tracksVisualMode);
+		this.cylindersVisualMode = ko.observable(this.options.cylindersVisualMode);
+		this.modelsVisualMode = ko.observable(this.options.modelsVisualMode);
+		this.shortWayVisualMode = ko.observable(this.options.shortWayVisualMode);
+		this.namesVisualMode = ko.observable(this.options.namesVisualMode);
+		this.startKey = ko.observable(0);
+		this.endKey = ko.observable(0);
+		this.currentKey = ko.observable(0);
+		this.raceKey = ko.observable(0);
+		this.playerState = ko.observable(this.options.playerState);
+		this.playerSpeed = ko.observable(this.options.playerSpeed);
+		this.isReady = ko.observable(false);
 
 		this.ufos = ko.observableArray();
 		this.waypoints = ko.observableArray();
+		this.shortWay = ko.observable(null);
 
-//		if (this.options.mapWidget == "3d")
-//			this.map = new OwgMap(this.options);
-//		else
-		this.map = new GoogleMap(this.options);
-		this.mapType = "GoogleMap";
+		this.shortWayInitializer = ko.computed(function() {
+			if (self.isReady() && self.waypoints && self.waypoints().length > 0) {
+				var shortWayCalculator = new ShortWay();
+				var data = [];
+				for (var i = 0; i < self.waypoints().length; i++) {
+					var w = self.waypoints()[i];
+					data.push({
+						lat: w.center().lat,
+						lng: w.center().lng,
+						radius: w.radius()
+					});
+				}
+				self.shortWay(shortWayCalculator.calculate(data));
+			}
+			else {
+				self.shortWay(null);
+			}
+		});
 
-		this.ufosTable = new UfosTable(this.ufos);
+		this.mapInitializer = ko.computed(function() {
+			if (self.isReady()) {
+				if (self.map)
+					self.map.destroy();
+				if (self.mapWidget() == "2d") {
+					self.map = new GoogleMap({
+						ufos: self.ufos,
+						waypoints: self.waypoints,
+						shortWay: self.shortWay,
+						tracksVisualMode: self.tracksVisualMode,
+						cylindersVisualMode: self.cylindersVisualMode,
+						modelsVisualMode: self.modelsVisualMode,
+						shortWayVisualMode: self.shortWayVisualMode,
+						namesVisualMode: self.namesVisualMode,
+						currentKey: self.currentKey,
+						imgRootUrl: self.imgRootUrl
+					});
+					self.mapType = "GoogleMap";
+				}
+				else if (self.mapWidget() == "3d") {
+					self.map = new OwgMap({
+						ufos: self.ufos,
+						waypoints: self.waypoints,
+						shortWay: self.shortWay,
+						tracksVisualMode: self.tracksVisualMode,
+						cylindersVisualMode: self.cylindersVisualMode,
+						modelsVisualMode: self.modelsVisualMode,
+						shortWayVisualMode: self.shortWayVisualMode,
+						namesVisualMode: self.namesVisualMode,
+						currentKey: self.currentKey,
+						imgRootUrl: self.imgRootUrl
+					});
+					self.mapType = "OwgMap";
+				}
+			}
+			else {
+				self.map = null;
+				self.mapType = null;
+			}
+		});
+
+		this.ufosTable = new UfosTable({
+			ufos: this.ufos
+		});
 		this.ufosTableWindow = new Window(this.options.windows.ufosTable);
 
-		this.playerControl = new PlayerControl();
+		this.playerControl = new PlayerControl({
+			startKey: self.startKey,
+			endKey: self.endKey,
+			currentKey: self.currentKey,
+			raceKey: self.raceKey,
+			tracksVisualMode: self.tracksVisualMode,
+			cylindersVisualMode: self.cylindersVisualMode,
+			modelsVisualMode: self.modelsVisualMode,
+			shortWayVisualMode: self.shortWayVisualMode,
+			namesVisualMode: self.namesVisualMode,
+			playerState: self.playerState,
+			playerSpeed: self.playerSpeed
+		});
 		this.playerControlWindow = new Window(this.options.windows.playerControl);
 
 		this.mainMenu = new MainMenu();
@@ -286,339 +207,216 @@ define([
 
 		this.topBar = new TopBar();
 		this.topBar.items.push(this.mainMenuWindow,this.ufosTableWindow,this.playerControlWindow);
-		
+
 		this.windowManager = new WindowManager();
 		this.windowManager.items.push(this.ufosTableWindow,this.playerControlWindow,this.mainMenuWindow);
 
-		this.tracksVisualMode = ko.observable("");
-		this.cylindersVisualMode = ko.observable("");
-		this.modelsVisualMode = ko.observable("");
-		this.shortWayVisualMode = ko.observable("");
-		this.namesVisualMode = ko.observable("");
-		this.playerControl.on("setTracksVisualMode",function(v) {
-			self.tracksVisualMode(v);
-		});
-		this.playerControl.on("setCylindersVisualMode",function(v) {
-			self.cylindersVisualMode(v);
-		});
-		this.playerControl.on("setModelsVisualMode",function(v) {
-			self.modelsVisualMode(v);
-		});
-		this.playerControl.on("setShortWayVisualMode",function(v) {
-			self.shortWayVisualMode(v);
-		});
-		this.playerControl.on("setNamesVisualMode",function(v) {
-			self.namesVisualMode(v);
-		});
-		this.tracksVisualMode.subscribe(function(v) {
-			self.playerControl.setTracksVisualMode(v);
-			self.map.setTracksVisualMode(v);
-			if (self.ufos)
-				self.ufos().forEach(function(ufo) {
-					ufo.trackVisibleChecked(v != "off");
-				});
-		});
-		this.cylindersVisualMode.subscribe(function(v) {
-			self.playerControl.setCylindersVisualMode(v);
-			self.map.setCylindersVisualMode(v);
-		});
-		this.modelsVisualMode.subscribe(function(v) {
-			self.playerControl.setModelsVisualMode(v);
-			self.map.setModelsVisualMode(v);
-		});
-		this.shortWayVisualMode.subscribe(function(v) {
-			self.playerControl.setShortWayVisualMode(v);
-			self.map.setShortWayVisualMode(v);
-		});
-		this.namesVisualMode.subscribe(function(v) {
-			self.playerControl.setNamesVisualMode(v);
-			self.map.setNamesVisualMode(v);
-		});
-		this.tracksVisualMode(this.options.tracksVisualMode);
-		this.cylindersVisualMode(this.options.cylindersVisualMode);
-		this.modelsVisualMode(this.options.modelsVisualMode);
-		this.shortWayVisualMode(this.options.shortWayVisualMode);
-		this.namesVisualMode(this.options.namesVisualMode);
-
-		this.server = new TestServer(this.options);
-		this.server.generateData();
-//		this.server.generateData(this.options.testServerOptions);
-//		this.server = new RealServer(this.options);
-
-		// Создаем dataSource, устанавливаем ему в качестве источника данных тестовый сервер
+//		this.server = new TestServer(this.options);
+//		this.server.generateData();
+		this.server = new RealServer(this.options);
 		this.dataSource = new DataSource({
 			server: this.server
 		});
 	}
 
-	TrackerPageDebug.prototype.setTitles = function(data) {
-		if (this.mainMenu)
-			this.mainMenu.setTitles(data.titles);
+	TrackerPageDebug.prototype.domInit = function(elem,params) {
+		if (params.contestId)
+			this.options.contestId = params.contestId;
+		if (params.raceId)
+			this.options.raceId = params.raceId;
+		if (params.imgRootUrl)
+			this.options.imgRootUrl = params.imgRootUrl;
+		if (params.width)
+			this.options.width = params.width;
+		if (params.height)
+			this.options.height = params.height;
+		if (params.mode)
+			this.options.mode = params.mode;
+		if (params.mapWidget)
+			this.options.mapWidget = params.mapWidget;
+		this.rebuild();
+		if (params.callback)
+			params.callback(this);
+		this.emit("domInit");
 	}
 
-	TrackerPageDebug.prototype.setRaceStartKey = function(data) {
-		if (this.playerControl)
-			this.playerControl.setRaceStartKey(data.raceStartKey);
+	TrackerPageDebug.prototype.setOption = function(p,v) {
+		this.options[p] = v;
 	}
 
-	TrackerPageDebug.prototype.loadWaypoints = function(data,callback) {
-		// Рисуем цилиндры
-		if (this.map && data.waypoints) {
-			for (var i = 0; i < data.waypoints.length; i++)
-				this.waypoints.push(this.map.waypoint(data.waypoints[i]));
-		}
-		if (callback)
-			callback();
-	}
-
-	TrackerPageDebug.prototype.loadShortWay = function(data,callback) {
-		// Рисуем оптимальный путь
-		if (this.map && data.waypoints) {
-			var shortWay = new ShortWay();
-			this.map.setShortWay({data:shortWay.calculate(data.waypoints),options:{wide:this.options.shortWayWide,thin:this.options.shortWayThin}});
-		}
-		if (callback)
-			callback();
-	}
-
-	TrackerPageDebug.prototype.setMapPosition = function(data) {
-/*
-		if (this.map && data.center) {
-			console.log("setMapPosition",data.center);
-			this.map.setCameraLookAtPosition({
-				latitude: data.center.lat,
-				longitude: data.center.lng
+	TrackerPageDebug.prototype.rebuild = function() {
+		var self = this;
+		self.clear();
+		self.width(self.options.width);
+		self.height(self.options.height);
+		self.imgRootUrl(self.options.imgRootUrl);
+		self.mode(self.options.mode);
+		self.mapWidget(self.options.mapWidget);
+		self.isReady(!!self.options.raceId);
+		if (self.isReady()) {
+			self.loadRaceData(function() {
+				if (self.mode() == "full") {
+					self.loadUfosData(function() {
+						self.playerInit();
+						self.emit("loaded");
+					});
+				}
+				else
+					self.emit("loaded");
 			});
 		}
-*/
-		if (this.map)
-			this.map.calculateAndSetDefaultPosition();
 	}
 
-	// Новая версия playerInit отличается другим подходам к таймаутам.
-	// Раньше тик зависел от скорости, на speed=1 тикал раз в секунду, запрашивал через dataSource данные, двигал маркеры
-	// Теперь попробуем тикать независимо от скорости с тиком, подходящим для анимации.
-	// Будем гораздо чаще запрашивать у dataSource данные, но на то он и кеш. 
-	// dataSource должен будет внутри себя интерполировать данные, и для дробной секунды выдавать хотя бы линейное среднее 
-	// между окружающими ее целыми секундами.
-	TrackerPageDebug.prototype.playerInitNew = function(data) {
+	TrackerPageDebug.prototype.clear = function() {
+		this.ufos([]);
+		this.waypoints([]);
+	}
+
+	TrackerPageDebug.prototype.loadRaceData = function(callback) {
 		var self = this;
+		this.dataSource.get({
+			type: "race",
+			callback: function(data) {
+				self.startKey(data.startKey);
+				self.endKey(data.endKey);
+				self.currentKey(data.startKey);
+				self.raceKey(data.raceKey||data.startKey);
+				if (self.mainMenu && data.titles)
+					self.mainMenu.setTitles(data.titles);
+				var waypoints2load = [];
+				if (data.waypoints) {
+					for (var i = 0; i < data.waypoints.length; i++) {
+						var w = new Waypoint(data.waypoints[i]);
+						waypoints2load.push(w);
+					}
+				}
+				self.waypoints(waypoints2load);
+				if (self.map)
+					self.map.calculateAndSetDefaultPosition();
+				if (callback && typeof callback == "function")
+					callback();				
+			},
+			error: function(jqXHR,textStatus,errorThrown) {
+				self.emit("loadingError");
+			}
+		});
+	}
 
+	TrackerPageDebug.prototype.loadUfosData = function(callback) {
+		var self = this;
+		var loadedUfos = 0;
+		self.dataSource.get({
+			type: "ufos",
+			callback: function(ufos) {
+				var ufos2load = [];
+				if (ufos) {
+					for (var i = 0; i < ufos.length; i++) {
+						var w = new Ufo(ufos[i]);
+						ufos2load.push(w);
+					}
+				}
+				self.ufos(ufos2load);
+				if (callback && typeof callback == "function")
+					callback();
+			},
+			error: function(jqXHR,textStatus,errorThrown) {
+				self.emit("loadingError");
+			}
+		});
+	}
 
-		// Даннные в милисекундах, время начала и конца гонки. Текущее время плеера устанавливается на начало гонки
-		var playerStartKey = data.startKey;
-		var playerEndKey = data.endKey;
-		var playerCurrentKey = data.startKey;
-		var playerSpeed = this.options.playerSpeed;
-
-		// Текущее актуальное время
-		var playerCurrentTime = (new Date).getTime();
-
-		var timerHandle = null;
-		var tableTimerHandle = null;
-
+	TrackerPageDebug.prototype.playerInit = function() {
+		var self = this;
 		var renderFrame = function(callback) {
 			self.dataSource.get({
 				type: "timeline",
-				dt: playerCurrentKey,
-				timeMultiplier: playerSpeed,
-				dtStart: playerStartKey,
+				dt: self.currentKey(),
+				timeMultiplier: self.playerSpeed(),
+				dtStart: self.startKey(),
 				callback: function(data) {
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.ufos().forEach(function(ufo) {
-						data[ufo.id]["time"] = playerCurrentKey;
-						ufo.coordsUpdate(data[ufo.id]);
+						if (data && data[ufo.id()]) {
+							rw = data[ufo.id()];
+							ufo.alt(rw.alt);
+							ufo.dist(rw.dist);
+							ufo.gSpd(rw.gspd);
+							ufo.vSpd(rw.vspd);
+							if (!ufo.position() || 
+								!ufo.position().lat || 
+								!ufo.position().lng ||
+								Math.abs(rw.position.lat-ufo.position().lat) > 0.0000001 ||
+								Math.abs(rw.position.lng-ufo.position().lng) > 0.0000001) 
+								ufo.position({lat:rw.position.lat,lng:rw.position.lng});
+							if (!ufo.track() || !ufo.track().dt || ufo.track().dt != rw.track.dt)
+								ufo.track({lat:rw.track.lat,lng:rw.track.lng,dt:rw.track.dt});
+							if (rw.state)
+								ufo.state(rw.state);
+							ufo.noData(false);
+						}
+						else
+							ufo.noData(true);
 					});
-					// Цилиндры нужно перекрасить если пришло время
-					self.waypoints().forEach(function(waypoint) {
-						waypoint.setCurrentKey(playerCurrentKey);
-						waypoint.recolor();
-					});
-					// Передвинем бегунок в playerControl-е
-					self.playerControl.setTimePos(playerCurrentKey);
 					if (callback)
 						callback(data);
-
-					// Теперь здесь сделаем запрос на получение инфы о треке
-					// потому что если делать отдельно, вначале при загрузке еще нет данных в кеше
-					if (self.tracksVisualMode() != "off") {
-						self.dataSource.get({
-							type: "tracks",
-							dt: playerCurrentKey,
-							dtStart: playerStartKey,
-							restrict: self.tracksVisualMode() == "10min" ? 10 : null,
-							callback: function(data) {
-								self.ufos().forEach(function(ufo) {
-									ufo.trackUpdate(data[ufo.id]);
-								});
-							}
-						});
-					}
 				}
 			});
 		}
 
-		// Следующие 3 метода - обновление данных таблицы. 
-		// Обновление должно происходить со своей задержкой, независимо от скорости обновления данных 
-		var renderTableData = function() {
+		var run = function(callback) {
+			renderFrame(function() {
+				if (self.playerState() == "play") {
+					dt = (new Date).getTime();
+					requestAnimFrame(function() {
+						var t = (new Date).getTime();
+						var key = self.currentKey()+(t-dt)*self.playerSpeed();
+						if (key > self.endKey()) {
+							key = self.endKey();
+							self.playerState("pause");
+						}
+						self.currentKey(key);
+						run();
+					});
+				}
+				if (callback && typeof callback == "function")
+					callback();
+			});
+		}
+
+		var resetUfosTracks = function() {
+			self.ufos().forEach(function(ufo) {
+				ufo.resetTrack();
+			});
+		}
+
+		var tableTimerHandle = null;
+		var updateTableData = function() {
 			self.ufos().forEach(function(ufo) {
 				ufo.updateTableData();
 			});
 		}
-		var playTableData = function() {
-			renderTableData();
-			tableTimerHandle = setTimeout(playTableData,self.options.renderTableDataInterval);
-		}
-		var pauseTableData = function() {
-			renderTableData();
-			clearTimeout(tableTimerHandle);
-		}
-
-		// При инициализации и когда вручную тащим бегунок слайдера, нужно уметь задавать положение на определенное время
-		// При этом ессно обновлять данные таблицы, а то вдруг у нас состояние pause, при котором данные не обновляются автоматически
-		var setSpecificFrame = function(time) {
-			playerCurrentKey = time;
-			renderFrame(function() {
-				renderTableData();
-			});
+		var runTableData = function() {
+			updateTableData();
+			if (self.playerState() == "play") {
+				if (tableTimerHandle)
+					clearTimeout(tableTimerHandle);
+				tableTimerHandle = setTimeout(runTableData,self.options.renderTableDataInterval);
+			}
 		}
 
-		var timelineIntervalCycler = function() {
-			renderFrame(function() {
-				if (self.playerControl.getState() != "play") return;
-				playerCurrentTime = (new Date).getTime();
-				requestAnimFrame(function() {
-					var t = (new Date).getTime();
-					playerCurrentKey += (t - playerCurrentTime) * playerSpeed;
-					playerCurrentTime = t;
-					if (playerCurrentKey >= playerEndKey) {
-						playerCurrentKey = playerEndKey;
-						self.playerControl.pause();
-						return;
-					}
-					timelineIntervalCycler();
-				});
-			});
-		}
+		self.playerControl.on("change",function(v) {
+			self.currentKey(v);
+			resetUfosTracks();
+			run(runTableData);
+		});
 
-		self.playerControl
-		.on("play",function() {
-			timelineIntervalCycler();
-			playTableData();
-		})
-		.on("pause",function() {
-			pauseTableData();
-		})
-		.on("speed",function(speed) {
-			playerSpeed = speed;
-		})
-		.on("change",function(time) {
-			setSpecificFrame(time);
-		})
-		.on("setTracksVisualMode",function(v) {
-			setSpecificFrame(playerCurrentKey);
-		})
-		.initTimeInterval(playerStartKey,playerEndKey)
-		.pause();
-
-		// Нужно проставить маркеры, для этого нужно получить их начальное положение и после этого проставить данные в таблице
-		setSpecificFrame(playerStartKey);
-	}
-
-	TrackerPageDebug.prototype.domInit = function(elem, params) {
-		var self = this;
-
-		this.options.contestId = params.contestId;
-		this.options.raceId = params.raceId;
-		this.options.isOnline = params.isOnline;
-		this.options.imgRootUrl = params.imgRootUrl;
-
-		// Все запросы к серверу считаются асинхронными с callback-ом
-		/*
-		this.dataSource.get({
-			type: "race",
-			callback: function(data) {
-				self.loadPilots(function() {
-					self.setTitles(data);
-					self.setRaceStartKey(data);
-					self.loadWaypoints(data);
-					self.loadShortWay(data);
-					self.playerInitNew(data);
-				});
+		self.playerState.subscribe(function(state) {
+			if (state == "play") {
+				run(runTableData);
 			}
 		});
 
-	TrackerPageDebug.prototype.loadPilots = function(callback) {
-		var self = this, loadedPilots = 0;
-		this.ufos([]);
-		this.dataSource.get({
-			type: "pilots",
-			callback: function(data) {
-				for (var i = 0; i < data.length; i++) {
-					var pilot = new Pilot(utils.extend(data[i],{
-						map: self.map
-					}));
-					pilot.on("loaded",function(p) {
-						self.ufos.push(p);
-						loadedPilots++;
-						if (loadedPilots == data.length && callback)
-							callback();
-					});
-					pilot.initialize();
-				}
-			}
-		});
-	}
-
-		*/
-
-		this.dataSource.get({
-			type: "race",
-			callback: function(data) {
-				self.setTitles(data);
-				self.setRaceStartKey(data);
-				self.loadWaypoints(data);
-				self.setMapPosition(data);
-				self.loadShortWay(data);
-
-				var loadedPilots = 0;
-				self.ufos([]);
-				self.dataSource.get({
-					type: "pilots",
-					callback: function(pilots) {
-						for (var i = 0; i < pilots.length; i++) {
-							var pilot = new Pilot(utils.extend(pilots[i],{
-								map: self.map
-							}));
-							pilot.on("loaded",function(p) {
-								self.ufos.push(p);
-								loadedPilots++;
-								if (loadedPilots == pilots.length) {
-									self.playerInitNew(data);
-								}
-							});
-							pilot.initialize();
-						}
-					}
-				});
-			}
-		});
-
-/*
-		self.loadPilots(function() {
-			self.dataSource.get({
-				type: "race",
-				callback: function(data) {
-					self.setTitles(data);
-					self.setRaceStartKey(data);
-					self.loadWaypoints(data);
-					self.loadShortWay(data);
-					self.playerInitNew(data);
-				}
-			});
-		});
-*/
-
+		run(runTableData);
 	}
 
 	TrackerPageDebug.prototype.templates = ["main"];

@@ -19,10 +19,8 @@ define(function() {
 				// Если интервал есть, но скоро кончается, и после него данные не загружены, то нужно отдавать данные сейчас + 
 				// + ставить на загрузку следующий интервал. Если на момент dt данные не загружены, но уже грузятся,
 				// то нужно ждать и вызывать callback после того запроса, что сейчас в процессе.
-
 				// Еще момент: можем просмотреть всю гонку на скорости x25, а потом перекрутить на начало и смотреть на x1.
 				// В этом случае глупо не использовать кеш из x25.
-
 				// TODO: придумать название
 				// Фрейм - это то, что приходит с сервера и складывается в кеш, т.е. start data + список events
 				// Функция по данному frame вычисляет мгновенные данные всех объектов на момент dt
@@ -30,26 +28,6 @@ define(function() {
 				// Как работает: сначала пробегает по timeline по убыванию времени и складывает в data[pilot_id] 
 				// первое найденое значение для каждого пилота.
 				// Потом пробегает по start-данным, и проставляет значения пилотам, для которых не нашлось событий в timeline
-				/*
-				var getDataFromFrame = function(frame,dt) {
-					var data = {}, keys = [];
-					for (var i in frame.timeline)
-						if (frame.timeline.hasOwnProperty(i))
-							keys.push(i);
-					keys.sort().reverse();
-					for (var i = 0; i < keys.length; i++) {
-						var key = keys[i];
-						if (key > dt) continue;
-						for (var pilot_id in frame.timeline[key])
-							if (frame.timeline[key].hasOwnProperty(pilot_id) && !data[pilot_id])
-									data[pilot_id] = frame.timeline[key][pilot_id];
-					}
-					for (var pilot_id in frame.start)
-						if (frame.start.hasOwnProperty(pilot_id) && !data[pilot_id])
-							data[pilot_id] = frame.start[pilot_id];
-					return data;
-				}
-				*/
 				// Значит эта вся логика остается. И добавляется логика, нужная для анимации. 
 				// Нам нужны не только координаты "до" dt, но и ближайшие "после".
 				// Для каждого пилота нужно первое событие (по изменению его координат), которое произойдет после dt. 
@@ -59,15 +37,15 @@ define(function() {
 				// было бы событие по изменению координат.
 				var getDataFromFrame = function(frame,dt) {
 					var data = {}, dataBefore = {}, dataAfter = {}, keys = [];
-
-					// Пробегаем по всем событиям фрейма и ищем ближайшие события до и после dt
+					// Пробегаем по всем событиям фрейма и для каждого пилота ищем ближайшие события до и после dt
 					for (var i in frame.timeline)
 						if (frame.timeline.hasOwnProperty(i))
 							for (var pilot_id in frame.timeline[i])
 								if (frame.timeline[i].hasOwnProperty(pilot_id)) {
-									if ((i <= dt) && (!dataBefore[pilot_id] || dataBefore[pilot_id].dt < i))
+									i = Math.floor(i);
+									if ((i <= dt) && (!dataBefore[pilot_id] || Math.floor(dataBefore[pilot_id].dt) < i))
 										dataBefore[pilot_id] = frame.timeline[i][pilot_id];
-									if ((i >= dt) && (!dataAfter[pilot_id] || dataAfter[pilot_id].dt > i))
+									if ((i >= dt) && (!dataAfter[pilot_id] || Math.floor(dataAfter[pilot_id].dt) > i))
 										dataAfter[pilot_id] = frame.timeline[i][pilot_id];
 								}
 
@@ -78,30 +56,58 @@ define(function() {
 							if (!dataAfter[pilot_id]) dataAfter[pilot_id] = dataBefore[pilot_id];
 						}
 
+					// Все равно может не быть dataBefore или dataAfter (вначале гонки пилот еще не включил трекер)
+					// На таких пилотов забиваем, отдаем только тех, у которых есть данные dataBefore
+
 					// По событиям до и после строим линейную пропорцию и получаем мгновенные координаты пилота
 					for (var pilot_id in dataBefore)
 						if (dataBefore.hasOwnProperty(pilot_id)) {
 							var d1 = dataBefore[pilot_id], d2 = dataAfter[pilot_id];
-							if (d1.dt == d2.dt) {
-								data[pilot_id] = dataBefore[pilot_id];
-							}
-							else {
-								var p = (dt - d1.dt) / (d2.dt - d1.dt);
-								var yawDelta = d2.yaw - d1.yaw;
-								if (yawDelta > 180) yawDelta -= 360;
-								if (yawDelta < -180) yawDelta += 360;
+							if (!d2 || d1.dt == d2.dt)
 								data[pilot_id] = {
-									lat: d1.lat + (d2.lat - d1.lat) * p,
-									lng: d1.lng + (d2.lng - d1.lng) * p,
-									elevation: d1.elevation + (d2.elevation - d1.elevation) * p,
-									yaw: d1.yaw + yawDelta * p
+									dist: d1.dist,
+									gspd: d1.gspd,
+									vspd: d1.vspd,
+									position: {
+										lat: d1.position.lat,
+										lng: d1.position.lng,
+									},
+									track: {
+										lat: d1.position.lat,
+										lng: d1.position.lng,
+										dt: d1.dt
+									},
+									alt: d1.alt,
+									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
+									dt: d1.dt
+								}
+							else {
+								var p = (dt-d1.dt)/(d2.dt-d1.dt);
+								data[pilot_id] = {
+									dist: d1.dist,
+									gspd: d1.gspd,
+									vspd: d1.vspd,
+									position: {
+										lat: d1.position.lat+(d2.position.lat-d1.position.lat)*p,
+										lng: d1.position.lng+(d2.position.lng-d1.position.lng)*p,
+									},
+									track: {
+										lat: d1.position.lat,
+										lng: d1.position.lng,
+										dt: d1.dt
+									},
+									alt: d1.alt,
+									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
+									dt: d1.dt
 								}
 							}
 						}
 
+
 					// Upd. теперь нужна еще и траектория. Ограничимся опять-таки текущим фреймом.
 					// Собственно, это значит, что весь фрейм и нужно вернуть.
 					// Пока что не будем наворачивать логику в этом методе выше, и так сложная, еще раз по массивам пробежимся.
+					/*
 					for (var pilot_id in frame.start)
 						if (frame.start.hasOwnProperty(pilot_id) && data[pilot_id]) {
 							data[pilot_id].track = [];
@@ -110,9 +116,11 @@ define(function() {
 					for (var i in frame.timeline)
 						if (frame.timeline.hasOwnProperty(i)) 
 							for (var pilot_id in frame.timeline[i])
-								if (frame.timeline[i].hasOwnProperty(pilot_id) && data[pilot_id])
+								if (frame.timeline[i].hasOwnProperty(pilot_id) && data[pilot_id]) {
+									if (!data[pilot_id].track) data[pilot_id].track = [];
 									data[pilot_id].track.push(frame.timeline[i][pilot_id]);
-
+								}
+					*/
 					return data;
 				}
 
@@ -138,7 +146,8 @@ define(function() {
 				var cachedFrame = getCachedFrame(this.cache,dtOffset);
 
 				// Размер интервала в секундах, т.е. грузим либо на 5, либо на 50, либо на 125 секунд
-				var inSize = 5 * query.timeMultiplier;
+				var inSize = 30 * query.timeMultiplier;
+
 				// Количество интервалов, прошедших с начала гонки
 				var inOffset = Math.floor(dtOffset / inSize);
 				// Начало интервала в милисекундах
