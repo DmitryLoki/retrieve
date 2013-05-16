@@ -71,6 +71,7 @@ define(function() {
 									position: {
 										lat: d1.position.lat,
 										lng: d1.position.lng,
+										dt: dt
 									},
 									track: {
 										lat: d1.position.lat,
@@ -90,6 +91,7 @@ define(function() {
 									position: {
 										lat: d1.position.lat+(d2.position.lat-d1.position.lat)*p,
 										lng: d1.position.lng+(d2.position.lng-d1.position.lng)*p,
+										dt: dt
 									},
 									track: {
 										lat: d1.position.lat,
