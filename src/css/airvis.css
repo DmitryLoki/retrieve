@@ -94,6 +94,8 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window table .airvis-pilot-number { width: 29px;}
 .airvis-window table .airvis-pilot-name { width: 139px; text-align: center; padding: 0 10px;}
 .airvis-window table .airvis-pilot-name { text-align: left;}
+.airvis-window table .airvis-pilot-name .countryicon-sprite { margin-left: 10px; }
+
 .airvis-window table .airvis-dist-to-goal { width: 59px;}
 .airvis-window table .airvis-alt { width: 39px;}
 .airvis-window table .airvis-gspd,

@@ -85,7 +85,7 @@ define([
 	}
 
 	Ufo.prototype.updateTableData = function() {
-		this.tableData.dist(this.dist());
+		this.tableData.dist((this.dist()/1000).toFixed(1));
 		this.tableData.gSpd(this.gSpd());
 		this.tableData.vSpd(this.vSpd());
 		this.tableData.alt(this.alt());
@@ -394,6 +394,7 @@ define([
 			self.ufos().forEach(function(ufo) {
 				ufo.updateTableData();
 			});
+			self.ufosTable.sortTableRows();
 		}
 		var runTableData = function() {
 			updateTableData();

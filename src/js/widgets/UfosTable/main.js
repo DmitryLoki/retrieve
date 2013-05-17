@@ -6,12 +6,35 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		this.inModalWindow = ko.observable(false);
 		this.mode = ko.observable(config.ufosTable.mode);
 
-		this.tableUfos = ko.computed(function() {
-			var out = [];
-			self.ufos().forEach(function(w) {
-				out.push(self.createUfo(w));
-			});
-			return out;
+		this.tableUfos = ko.observableArray([]);
+		this.ufos.subscribe(function(ufos) {
+			if (self.tableUfos().length == 0) {
+				var ufos2add = [];
+				for (var i = 0; i < ufos.length; i++)
+					ufos2add.push(self.createUfo(ufos[i]));
+				self.tableUfos(ufos2add);
+			}
+			else {
+				var rev1 = {}, rev2 = {};
+				for (var i = 0, l = ufos.length; i < l; i++)
+					rev1[ufos[i].id()] = i;
+				for (var i = 0, l = self.tableUfos().length; i < l; i++)
+					rev2[self.tableUfos()[i].id()] = i;
+				for (var i = 0, l = ufos.length; i < l; i++) {
+					if (rev2[ufos[i].id()] == null) {
+						self.tableUfos.push(self.createUfo(ufos[i]));
+						rev2[ufos[i].id()] = self.tableUfos().length - 1;
+					}
+				}
+				for (var i = 0, l = self.tableUfos().length; i < l; i++) {
+					if (rev1[self.tableUfos()[i].id()] == null) {
+						self.detroyUfo(self.tableUfos()[i]);
+						self.tableUfos.splice(i,1);
+						i--;
+					}
+				}
+			}
+			self.sortTableRows();
 		});
 
 		this.allVisible = ko.computed({
@@ -29,6 +52,18 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		this.allVisibleCheckbox = new Checkbox({checked:this.allVisible,color:config.ufosTable.allVisibleCheckboxColor});
 	}
 
+	UfosTable.prototype.sortTableRows = function() {
+		this.tableUfos.sort(function(a,b) {
+			d1 = (a && a.tableData && a.tableData.dist && a.tableData.dist() > 0) ? a.tableData.dist() : null;
+			d2 = (b && b.tableData && b.tableData.dist && b.tableData.dist() > 0) ? b.tableData.dist() : null;
+			if (d1 > 0 && d2 > 0)
+				return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
+			if (d2 > 0) return 1;
+			if (d1 > 0) return -1;
+			return 0;
+		});
+	}
+
 	UfosTable.prototype.createUfo = function(data) {
 		var w = {
 			id: data.id,
@@ -44,6 +79,9 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		w.visibleCheckbox = new Checkbox({checked:w.visible,color:w.color});
 		w.trackVisibleCheckbox = new Checkbox({checked:w.trackVisible,color:w.color});
 		return w;
+	}
+
+	UfosTable.prototype.destroyUfo = function(ufo) {
 	}
 
 	UfosTable.prototype.alignColumns = function(it) {
