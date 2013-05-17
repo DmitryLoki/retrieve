@@ -63,6 +63,9 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-resize-bottom { bottom: -2px; cursor: s-resize; height: 20px; left: 0; right: 0;}
 .airvis-resize-bottom-right { bottom: -18px; cursor: se-resize; height: 20px; right: -18px; width: 20px;}
 
+/* css for markers on google map */
+.airvis-marker-title { font-size: 12px; }
+
 
 
 
@@ -95,6 +98,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window table .airvis-pilot-name { width: 139px; text-align: center; padding: 0 10px;}
 .airvis-window table .airvis-pilot-name { text-align: left;}
 .airvis-window table .airvis-pilot-name .countryicon-sprite { margin-left: 10px; }
+.airvis-window table .airvis-pilot-country .countryicon-sprite { margin-right: 5px; }
 
 .airvis-window table .airvis-dist-to-goal { width: 59px;}
 .airvis-window table .airvis-alt { width: 39px;}

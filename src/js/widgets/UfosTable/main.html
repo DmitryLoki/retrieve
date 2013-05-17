@@ -35,7 +35,7 @@
 						</td>
 						<td class="airvis-pilot-number" data-bind="text: $index()+1"></td>
 						<td class="airvis-pilot-name">
-							<span data-bind="text:name() + ' |' + id() + '|'"></span>
+							<span data-bind="text:name() + ' (' + id() + ')'"></span>
 							<span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country().toLowerCase(),visible:$parent.mode()=='short'"></span>
 						</td>
 						<td class="airvis-pilot-country" data-bind="visible:$parent.mode()=='full'">
