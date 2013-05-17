@@ -13,6 +13,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.namesVisualMode = options.namesVisualMode;
 		this.playerState = options.playerState;
 		this.playerSpeed = options.playerSpeed;
+		this.isOnline = options.isOnline;
 
 		this.dragKey = ko.observable(0);
 		this.dragging = ko.observable(false);

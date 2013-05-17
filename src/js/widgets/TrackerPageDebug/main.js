@@ -117,6 +117,7 @@ define([
 		this.playerState = ko.observable(this.options.playerState);
 		this.playerSpeed = ko.observable(this.options.playerSpeed);
 		this.isReady = ko.observable(false);
+		this.isOnline = ko.observable(false);
 
 		this.ufos = ko.observableArray();
 		this.waypoints = ko.observableArray();
@@ -198,7 +199,8 @@ define([
 			shortWayVisualMode: self.shortWayVisualMode,
 			namesVisualMode: self.namesVisualMode,
 			playerState: self.playerState,
-			playerSpeed: self.playerSpeed
+			playerSpeed: self.playerSpeed,
+			isOnline: self.isOnline
 		});
 		this.playerControlWindow = new Window(this.options.windows.playerControl);
 
