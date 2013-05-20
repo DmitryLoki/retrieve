@@ -255,15 +255,15 @@ define([
 		self.mapWidget(self.options.mapWidget);
 		self.isReady(!!self.options.raceId);
 		if (self.isReady()) {
-			self.loadRaceData(function() {
+			self.loadRaceData(function(raceData) {
 				if (self.mode() == "full") {
 					self.loadUfosData(function() {
 						self.playerInit();
-						self.emit("loaded");
+						self.emit("loaded",raceData);
 					});
 				}
 				else
-					self.emit("loaded");
+					self.emit("loaded",raceData);
 			});
 		}
 	}
@@ -295,7 +295,7 @@ define([
 				if (self.map)
 					self.map.calculateAndSetDefaultPosition();
 				if (callback && typeof callback == "function")
-					callback();				
+					callback(data);
 			},
 			error: function(jqXHR,textStatus,errorThrown) {
 				self.emit("loadingError");

@@ -1,0 +1,493 @@
+.countryicon-sprite.iconset-shiny {
+  width: 16px; height: 11px;
+  margin: 0; padding: 0;
+  background-image: url('../img/shiny-sprite.png');
+  display:inline-block;
+}
+
+.countryicon-sprite.iconset-shiny.countrycode-ad,
+.countryicon-sprite.iconset-shiny.countrycode-and { background-position: 0 -10px}
+.countryicon-sprite.iconset-shiny.countrycode-ae,
+.countryicon-sprite.iconset-shiny.countrycode-are { background-position: 0 -31px}
+.countryicon-sprite.iconset-shiny.countrycode-af,
+.countryicon-sprite.iconset-shiny.countrycode-afg { background-position: 0 -52px}
+.countryicon-sprite.iconset-shiny.countrycode-ag,
+.countryicon-sprite.iconset-shiny.countrycode-atg { background-position: 0 -73px}
+.countryicon-sprite.iconset-shiny.countrycode-ai,
+.countryicon-sprite.iconset-shiny.countrycode-aia { background-position: 0 -94px}
+.countryicon-sprite.iconset-shiny.countrycode-al,
+.countryicon-sprite.iconset-shiny.countrycode-alb { background-position: 0 -115px}
+.countryicon-sprite.iconset-shiny.countrycode-am,
+.countryicon-sprite.iconset-shiny.countrycode-arm { background-position: 0 -136px}
+.countryicon-sprite.iconset-shiny.countrycode-an { background-position: 0 -157px}
+.countryicon-sprite.iconset-shiny.countrycode-ao,
+.countryicon-sprite.iconset-shiny.countrycode-ago { background-position: 0 -178px}
+.countryicon-sprite.iconset-shiny.countrycode-ar,
+.countryicon-sprite.iconset-shiny.countrycode-arg { background-position: 0 -199px}
+.countryicon-sprite.iconset-shiny.countrycode-as,
+.countryicon-sprite.iconset-shiny.countrycode-asm { background-position: 0 -220px}
+.countryicon-sprite.iconset-shiny.countrycode-at,
+.countryicon-sprite.iconset-shiny.countrycode-aut { background-position: 0 -241px}
+.countryicon-sprite.iconset-shiny.countrycode-au,
+.countryicon-sprite.iconset-shiny.countrycode-aus { background-position: 0 -262px}
+.countryicon-sprite.iconset-shiny.countrycode-aw,
+.countryicon-sprite.iconset-shiny.countrycode-abw { background-position: 0 -283px}
+.countryicon-sprite.iconset-shiny.countrycode-ax,
+.countryicon-sprite.iconset-shiny.countrycode-ala { background-position: 0 -304px}
+.countryicon-sprite.iconset-shiny.countrycode-az,
+.countryicon-sprite.iconset-shiny.countrycode-aze { background-position: 0 -325px}
+.countryicon-sprite.iconset-shiny.countrycode-ba,
+.countryicon-sprite.iconset-shiny.countrycode-bih { background-position: 0 -346px}
+.countryicon-sprite.iconset-shiny.countrycode-bb,
+.countryicon-sprite.iconset-shiny.countrycode-brb { background-position: 0 -367px}
+.countryicon-sprite.iconset-shiny.countrycode-bd,
+.countryicon-sprite.iconset-shiny.countrycode-bgd { background-position: 0 -388px}
+.countryicon-sprite.iconset-shiny.countrycode-be,
+.countryicon-sprite.iconset-shiny.countrycode-bel { background-position: 0 -409px}
+.countryicon-sprite.iconset-shiny.countrycode-bf,
+.countryicon-sprite.iconset-shiny.countrycode-bfa { background-position: 0 -430px}
+.countryicon-sprite.iconset-shiny.countrycode-bg,
+.countryicon-sprite.iconset-shiny.countrycode-bgr { background-position: 0 -451px}
+.countryicon-sprite.iconset-shiny.countrycode-bh,
+.countryicon-sprite.iconset-shiny.countrycode-bhr { background-position: 0 -472px}
+.countryicon-sprite.iconset-shiny.countrycode-bi,
+.countryicon-sprite.iconset-shiny.countrycode-bdi { background-position: 0 -493px}
+.countryicon-sprite.iconset-shiny.countrycode-bj,
+.countryicon-sprite.iconset-shiny.countrycode-ben { background-position: 0 -514px}
+.countryicon-sprite.iconset-shiny.countrycode-bm,
+.countryicon-sprite.iconset-shiny.countrycode-bmu { background-position: 0 -535px}
+.countryicon-sprite.iconset-shiny.countrycode-bn,
+.countryicon-sprite.iconset-shiny.countrycode-brn { background-position: 0 -556px}
+.countryicon-sprite.iconset-shiny.countrycode-bo,
+.countryicon-sprite.iconset-shiny.countrycode-bol { background-position: 0 -577px}
+.countryicon-sprite.iconset-shiny.countrycode-br,
+.countryicon-sprite.iconset-shiny.countrycode-bra { background-position: 0 -598px}
+.countryicon-sprite.iconset-shiny.countrycode-bs,
+.countryicon-sprite.iconset-shiny.countrycode-bhs { background-position: 0 -619px}
+.countryicon-sprite.iconset-shiny.countrycode-bt,
+.countryicon-sprite.iconset-shiny.countrycode-btn { background-position: 0 -640px}
+.countryicon-sprite.iconset-shiny.countrycode-bv,
+.countryicon-sprite.iconset-shiny.countrycode-bvt { background-position: 0 -661px}
+.countryicon-sprite.iconset-shiny.countrycode-bw,
+.countryicon-sprite.iconset-shiny.countrycode-bwa { background-position: 0 -682px}
+.countryicon-sprite.iconset-shiny.countrycode-by,
+.countryicon-sprite.iconset-shiny.countrycode-blr { background-position: 0 -703px}
+.countryicon-sprite.iconset-shiny.countrycode-bz,
+.countryicon-sprite.iconset-shiny.countrycode-blz { background-position: 0 -724px}
+.countryicon-sprite.iconset-shiny.countrycode-ca,
+.countryicon-sprite.iconset-shiny.countrycode-can { background-position: 0 -745px}
+.countryicon-sprite.iconset-shiny.countrycode-catalonia { background-position: 0 -766px}
+.countryicon-sprite.iconset-shiny.countrycode-cc,
+.countryicon-sprite.iconset-shiny.countrycode-cck { background-position: 0 -787px}
+.countryicon-sprite.iconset-shiny.countrycode-cd,
+.countryicon-sprite.iconset-shiny.countrycode-cod { background-position: 0 -808px}
+.countryicon-sprite.iconset-shiny.countrycode-cf,
+.countryicon-sprite.iconset-shiny.countrycode-caf { background-position: 0 -829px}
+.countryicon-sprite.iconset-shiny.countrycode-cg,
+.countryicon-sprite.iconset-shiny.countrycode-cog { background-position: 0 -850px}
+.countryicon-sprite.iconset-shiny.countrycode-ch,
+.countryicon-sprite.iconset-shiny.countrycode-che { background-position: 0 -871px}
+.countryicon-sprite.iconset-shiny.countrycode-ci,
+.countryicon-sprite.iconset-shiny.countrycode-civ { background-position: 0 -892px}
+.countryicon-sprite.iconset-shiny.countrycode-ck,
+.countryicon-sprite.iconset-shiny.countrycode-cok { background-position: 0 -913px}
+.countryicon-sprite.iconset-shiny.countrycode-cl,
+.countryicon-sprite.iconset-shiny.countrycode-chl { background-position: 0 -934px}
+.countryicon-sprite.iconset-shiny.countrycode-cm,
+.countryicon-sprite.iconset-shiny.countrycode-cmr { background-position: 0 -955px}
+.countryicon-sprite.iconset-shiny.countrycode-cn,
+.countryicon-sprite.iconset-shiny.countrycode-chn { background-position: 0 -976px}
+.countryicon-sprite.iconset-shiny.countrycode-co,
+.countryicon-sprite.iconset-shiny.countrycode-col { background-position: 0 -997px}
+.countryicon-sprite.iconset-shiny.countrycode-cr,
+.countryicon-sprite.iconset-shiny.countrycode-cri { background-position: 0 -1018px}
+.countryicon-sprite.iconset-shiny.countrycode-cs { background-position: 0 -1039px}
+.countryicon-sprite.iconset-shiny.countrycode-cu,
+.countryicon-sprite.iconset-shiny.countrycode-cub { background-position: 0 -1060px}
+.countryicon-sprite.iconset-shiny.countrycode-cv,
+.countryicon-sprite.iconset-shiny.countrycode-cpv { background-position: 0 -1081px}
+.countryicon-sprite.iconset-shiny.countrycode-cx,
+.countryicon-sprite.iconset-shiny.countrycode-cxr { background-position: 0 -1102px}
+.countryicon-sprite.iconset-shiny.countrycode-cy,
+.countryicon-sprite.iconset-shiny.countrycode-cyp { background-position: 0 -1123px}
+.countryicon-sprite.iconset-shiny.countrycode-cz,
+.countryicon-sprite.iconset-shiny.countrycode-cze { background-position: 0 -1144px}
+.countryicon-sprite.iconset-shiny.countrycode-de,
+.countryicon-sprite.iconset-shiny.countrycode-deu { background-position: 0 -1165px}
+.countryicon-sprite.iconset-shiny.countrycode-dj,
+.countryicon-sprite.iconset-shiny.countrycode-dji { background-position: 0 -1186px}
+.countryicon-sprite.iconset-shiny.countrycode-dk,
+.countryicon-sprite.iconset-shiny.countrycode-dnk { background-position: 0 -1207px}
+.countryicon-sprite.iconset-shiny.countrycode-dm,
+.countryicon-sprite.iconset-shiny.countrycode-dma { background-position: 0 -1228px}
+.countryicon-sprite.iconset-shiny.countrycode-do,
+.countryicon-sprite.iconset-shiny.countrycode-dom { background-position: 0 -1249px}
+.countryicon-sprite.iconset-shiny.countrycode-dz,
+.countryicon-sprite.iconset-shiny.countrycode-dza { background-position: 0 -1270px}
+.countryicon-sprite.iconset-shiny.countrycode-ec,
+.countryicon-sprite.iconset-shiny.countrycode-ecu { background-position: 0 -1291px}
+.countryicon-sprite.iconset-shiny.countrycode-ee,
+.countryicon-sprite.iconset-shiny.countrycode-est { background-position: 0 -1312px}
+.countryicon-sprite.iconset-shiny.countrycode-eg,
+.countryicon-sprite.iconset-shiny.countrycode-egy { background-position: 0 -1333px}
+.countryicon-sprite.iconset-shiny.countrycode-eh,
+.countryicon-sprite.iconset-shiny.countrycode-esh { background-position: 0 -1354px}
+.countryicon-sprite.iconset-shiny.countrycode-england { background-position: 0 -1375px}
+.countryicon-sprite.iconset-shiny.countrycode-er,
+.countryicon-sprite.iconset-shiny.countrycode-eri { background-position: 0 -1396px}
+.countryicon-sprite.iconset-shiny.countrycode-es,
+.countryicon-sprite.iconset-shiny.countrycode-esp { background-position: 0 -1417px}
+.countryicon-sprite.iconset-shiny.countrycode-et,
+.countryicon-sprite.iconset-shiny.countrycode-eth { background-position: 0 -1438px}
+.countryicon-sprite.iconset-shiny.countrycode-europeanunion { background-position: 0 -1459px}
+.countryicon-sprite.iconset-shiny.countrycode-fam { background-position: 0 -1480px}
+.countryicon-sprite.iconset-shiny.countrycode-fi,
+.countryicon-sprite.iconset-shiny.countrycode-fin { background-position: 0 -1501px}
+.countryicon-sprite.iconset-shiny.countrycode-fj,
+.countryicon-sprite.iconset-shiny.countrycode-fji { background-position: 0 -1522px}
+.countryicon-sprite.iconset-shiny.countrycode-fk,
+.countryicon-sprite.iconset-shiny.countrycode-flk { background-position: 0 -1543px}
+.countryicon-sprite.iconset-shiny.countrycode-fm,
+.countryicon-sprite.iconset-shiny.countrycode-fsm { background-position: 0 -1564px}
+.countryicon-sprite.iconset-shiny.countrycode-fo,
+.countryicon-sprite.iconset-shiny.countrycode-fro { background-position: 0 -1585px}
+.countryicon-sprite.iconset-shiny.countrycode-fr,
+.countryicon-sprite.iconset-shiny.countrycode-fra { background-position: 0 -1606px}
+.countryicon-sprite.iconset-shiny.countrycode-ga,
+.countryicon-sprite.iconset-shiny.countrycode-gab { background-position: 0 -1627px}
+.countryicon-sprite.iconset-shiny.countrycode-gb,
+.countryicon-sprite.iconset-shiny.countrycode-gbr { background-position: 0 -1648px}
+.countryicon-sprite.iconset-shiny.countrycode-gd,
+.countryicon-sprite.iconset-shiny.countrycode-grd { background-position: 0 -1669px}
+.countryicon-sprite.iconset-shiny.countrycode-ge,
+.countryicon-sprite.iconset-shiny.countrycode-geo { background-position: 0 -1690px}
+.countryicon-sprite.iconset-shiny.countrycode-gf,
+.countryicon-sprite.iconset-shiny.countrycode-guf { background-position: 0 -1711px}
+.countryicon-sprite.iconset-shiny.countrycode-gh,
+.countryicon-sprite.iconset-shiny.countrycode-gha { background-position: 0 -1732px}
+.countryicon-sprite.iconset-shiny.countrycode-gi,
+.countryicon-sprite.iconset-shiny.countrycode-gib { background-position: 0 -1753px}
+.countryicon-sprite.iconset-shiny.countrycode-gl,
+.countryicon-sprite.iconset-shiny.countrycode-grl { background-position: 0 -1774px}
+.countryicon-sprite.iconset-shiny.countrycode-gm,
+.countryicon-sprite.iconset-shiny.countrycode-gmb { background-position: 0 -1795px}
+.countryicon-sprite.iconset-shiny.countrycode-gn,
+.countryicon-sprite.iconset-shiny.countrycode-gin { background-position: 0 -1816px}
+.countryicon-sprite.iconset-shiny.countrycode-gp,
+.countryicon-sprite.iconset-shiny.countrycode-glp { background-position: 0 -1837px}
+.countryicon-sprite.iconset-shiny.countrycode-gq,
+.countryicon-sprite.iconset-shiny.countrycode-gnq { background-position: 0 -1858px}
+.countryicon-sprite.iconset-shiny.countrycode-gr,
+.countryicon-sprite.iconset-shiny.countrycode-grc { background-position: 0 -1879px}
+.countryicon-sprite.iconset-shiny.countrycode-gs,
+.countryicon-sprite.iconset-shiny.countrycode-sgs { background-position: 0 -1900px}
+.countryicon-sprite.iconset-shiny.countrycode-gt,
+.countryicon-sprite.iconset-shiny.countrycode-gtm { background-position: 0 -1921px}
+.countryicon-sprite.iconset-shiny.countrycode-gu,
+.countryicon-sprite.iconset-shiny.countrycode-gum { background-position: 0 -1942px}
+.countryicon-sprite.iconset-shiny.countrycode-gw,
+.countryicon-sprite.iconset-shiny.countrycode-gnb { background-position: 0 -1963px}
+.countryicon-sprite.iconset-shiny.countrycode-gy,
+.countryicon-sprite.iconset-shiny.countrycode-guy { background-position: 0 -1984px}
+.countryicon-sprite.iconset-shiny.countrycode-hk,
+.countryicon-sprite.iconset-shiny.countrycode-hkg { background-position: -26px -10px}
+.countryicon-sprite.iconset-shiny.countrycode-hm,
+.countryicon-sprite.iconset-shiny.countrycode-hmd { background-position: -26px -31px}
+.countryicon-sprite.iconset-shiny.countrycode-hn,
+.countryicon-sprite.iconset-shiny.countrycode-hnd { background-position: -26px -52px}
+.countryicon-sprite.iconset-shiny.countrycode-hr,
+.countryicon-sprite.iconset-shiny.countrycode-hrv { background-position: -26px -73px}
+.countryicon-sprite.iconset-shiny.countrycode-ht,
+.countryicon-sprite.iconset-shiny.countrycode-hti { background-position: -26px -94px}
+.countryicon-sprite.iconset-shiny.countrycode-hu,
+.countryicon-sprite.iconset-shiny.countrycode-hun { background-position: -26px -115px}
+.countryicon-sprite.iconset-shiny.countrycode-id,
+.countryicon-sprite.iconset-shiny.countrycode-idn { background-position: -26px -136px}
+.countryicon-sprite.iconset-shiny.countrycode-ie,
+.countryicon-sprite.iconset-shiny.countrycode-irl { background-position: -26px -157px}
+.countryicon-sprite.iconset-shiny.countrycode-il,
+.countryicon-sprite.iconset-shiny.countrycode-isr { background-position: -26px -178px}
+.countryicon-sprite.iconset-shiny.countrycode-in,
+.countryicon-sprite.iconset-shiny.countrycode-ind { background-position: -26px -199px}
+.countryicon-sprite.iconset-shiny.countrycode-io,
+.countryicon-sprite.iconset-shiny.countrycode-iot { background-position: -26px -220px}
+.countryicon-sprite.iconset-shiny.countrycode-iq,
+.countryicon-sprite.iconset-shiny.countrycode-irq { background-position: -26px -241px}
+.countryicon-sprite.iconset-shiny.countrycode-ir,
+.countryicon-sprite.iconset-shiny.countrycode-irn { background-position: -26px -262px}
+.countryicon-sprite.iconset-shiny.countrycode-is,
+.countryicon-sprite.iconset-shiny.countrycode-isl { background-position: -26px -283px}
+.countryicon-sprite.iconset-shiny.countrycode-it,
+.countryicon-sprite.iconset-shiny.countrycode-ita { background-position: -26px -304px}
+.countryicon-sprite.iconset-shiny.countrycode-jm,
+.countryicon-sprite.iconset-shiny.countrycode-jam { background-position: -26px -325px}
+.countryicon-sprite.iconset-shiny.countrycode-jo,
+.countryicon-sprite.iconset-shiny.countrycode-jor { background-position: -26px -346px}
+.countryicon-sprite.iconset-shiny.countrycode-jp,
+.countryicon-sprite.iconset-shiny.countrycode-jpn { background-position: -26px -367px}
+.countryicon-sprite.iconset-shiny.countrycode-ke,
+.countryicon-sprite.iconset-shiny.countrycode-ken { background-position: -26px -388px}
+.countryicon-sprite.iconset-shiny.countrycode-kg,
+.countryicon-sprite.iconset-shiny.countrycode-kgz { background-position: -26px -409px}
+.countryicon-sprite.iconset-shiny.countrycode-kh,
+.countryicon-sprite.iconset-shiny.countrycode-khm { background-position: -26px -430px}
+.countryicon-sprite.iconset-shiny.countrycode-ki,
+.countryicon-sprite.iconset-shiny.countrycode-kir { background-position: -26px -451px}
+.countryicon-sprite.iconset-shiny.countrycode-km,
+.countryicon-sprite.iconset-shiny.countrycode-com { background-position: -26px -472px}
+.countryicon-sprite.iconset-shiny.countrycode-kn,
+.countryicon-sprite.iconset-shiny.countrycode-kna { background-position: -26px -493px}
+.countryicon-sprite.iconset-shiny.countrycode-kp,
+.countryicon-sprite.iconset-shiny.countrycode-prk { background-position: -26px -514px}
+.countryicon-sprite.iconset-shiny.countrycode-kr,
+.countryicon-sprite.iconset-shiny.countrycode-kor { background-position: -26px -535px}
+.countryicon-sprite.iconset-shiny.countrycode-kw,
+.countryicon-sprite.iconset-shiny.countrycode-kwt { background-position: -26px -556px}
+.countryicon-sprite.iconset-shiny.countrycode-ky,
+.countryicon-sprite.iconset-shiny.countrycode-cym { background-position: -26px -577px}
+.countryicon-sprite.iconset-shiny.countrycode-kz,
+.countryicon-sprite.iconset-shiny.countrycode-kaz { background-position: -26px -598px}
+.countryicon-sprite.iconset-shiny.countrycode-la,
+.countryicon-sprite.iconset-shiny.countrycode-lao { background-position: -26px -619px}
+.countryicon-sprite.iconset-shiny.countrycode-lb,
+.countryicon-sprite.iconset-shiny.countrycode-lbn { background-position: -26px -640px}
+.countryicon-sprite.iconset-shiny.countrycode-lc,
+.countryicon-sprite.iconset-shiny.countrycode-lca { background-position: -26px -661px}
+.countryicon-sprite.iconset-shiny.countrycode-li,
+.countryicon-sprite.iconset-shiny.countrycode-lie { background-position: -26px -682px}
+.countryicon-sprite.iconset-shiny.countrycode-lk,
+.countryicon-sprite.iconset-shiny.countrycode-lka { background-position: -26px -703px}
+.countryicon-sprite.iconset-shiny.countrycode-lr,
+.countryicon-sprite.iconset-shiny.countrycode-lbr { background-position: -26px -724px}
+.countryicon-sprite.iconset-shiny.countrycode-ls,
+.countryicon-sprite.iconset-shiny.countrycode-lso { background-position: -26px -745px}
+.countryicon-sprite.iconset-shiny.countrycode-lt,
+.countryicon-sprite.iconset-shiny.countrycode-ltu { background-position: -26px -766px}
+.countryicon-sprite.iconset-shiny.countrycode-lu,
+.countryicon-sprite.iconset-shiny.countrycode-lux { background-position: -26px -787px}
+.countryicon-sprite.iconset-shiny.countrycode-lv,
+.countryicon-sprite.iconset-shiny.countrycode-lva { background-position: -26px -808px}
+.countryicon-sprite.iconset-shiny.countrycode-ly,
+.countryicon-sprite.iconset-shiny.countrycode-lby { background-position: -26px -829px}
+.countryicon-sprite.iconset-shiny.countrycode-ma,
+.countryicon-sprite.iconset-shiny.countrycode-mar { background-position: -26px -850px}
+.countryicon-sprite.iconset-shiny.countrycode-mc,
+.countryicon-sprite.iconset-shiny.countrycode-mco { background-position: -26px -871px}
+.countryicon-sprite.iconset-shiny.countrycode-md,
+.countryicon-sprite.iconset-shiny.countrycode-mda { background-position: -26px -892px}
+.countryicon-sprite.iconset-shiny.countrycode-me,
+.countryicon-sprite.iconset-shiny.countrycode-mne { background-position: -26px -913px}
+.countryicon-sprite.iconset-shiny.countrycode-mg,
+.countryicon-sprite.iconset-shiny.countrycode-mdg { background-position: -26px -935px}
+.countryicon-sprite.iconset-shiny.countrycode-mh,
+.countryicon-sprite.iconset-shiny.countrycode-mhl { background-position: -26px -956px}
+.countryicon-sprite.iconset-shiny.countrycode-mk,
+.countryicon-sprite.iconset-shiny.countrycode-mkd { background-position: -26px -977px}
+.countryicon-sprite.iconset-shiny.countrycode-ml,
+.countryicon-sprite.iconset-shiny.countrycode-mli { background-position: -26px -998px}
+.countryicon-sprite.iconset-shiny.countrycode-mm,
+.countryicon-sprite.iconset-shiny.countrycode-mmr { background-position: -26px -1019px}
+.countryicon-sprite.iconset-shiny.countrycode-mn,
+.countryicon-sprite.iconset-shiny.countrycode-mng { background-position: -26px -1040px}
+.countryicon-sprite.iconset-shiny.countrycode-mo,
+.countryicon-sprite.iconset-shiny.countrycode-mac { background-position: -26px -1061px}
+.countryicon-sprite.iconset-shiny.countrycode-mp,
+.countryicon-sprite.iconset-shiny.countrycode-mnp { background-position: -26px -1082px}
+.countryicon-sprite.iconset-shiny.countrycode-mq,
+.countryicon-sprite.iconset-shiny.countrycode-mtq { background-position: -26px -1103px}
+.countryicon-sprite.iconset-shiny.countrycode-mr,
+.countryicon-sprite.iconset-shiny.countrycode-mrt { background-position: -26px -1124px}
+.countryicon-sprite.iconset-shiny.countrycode-ms,
+.countryicon-sprite.iconset-shiny.countrycode-msr { background-position: -26px -1145px}
+.countryicon-sprite.iconset-shiny.countrycode-mt,
+.countryicon-sprite.iconset-shiny.countrycode-mlt { background-position: -26px -1166px}
+.countryicon-sprite.iconset-shiny.countrycode-mu,
+.countryicon-sprite.iconset-shiny.countrycode-mus { background-position: -26px -1187px}
+.countryicon-sprite.iconset-shiny.countrycode-mv,
+.countryicon-sprite.iconset-shiny.countrycode-mdv { background-position: -26px -1208px}
+.countryicon-sprite.iconset-shiny.countrycode-mw,
+.countryicon-sprite.iconset-shiny.countrycode-mwi { background-position: -26px -1229px}
+.countryicon-sprite.iconset-shiny.countrycode-mx,
+.countryicon-sprite.iconset-shiny.countrycode-mex { background-position: -26px -1250px}
+.countryicon-sprite.iconset-shiny.countrycode-my,
+.countryicon-sprite.iconset-shiny.countrycode-mys { background-position: -26px -1271px}
+.countryicon-sprite.iconset-shiny.countrycode-mz,
+.countryicon-sprite.iconset-shiny.countrycode-moz { background-position: -26px -1292px}
+.countryicon-sprite.iconset-shiny.countrycode-na,
+.countryicon-sprite.iconset-shiny.countrycode-nam { background-position: -26px -1313px}
+.countryicon-sprite.iconset-shiny.countrycode-nc,
+.countryicon-sprite.iconset-shiny.countrycode-ncl { background-position: -26px -1334px}
+.countryicon-sprite.iconset-shiny.countrycode-ne,
+.countryicon-sprite.iconset-shiny.countrycode-ner { background-position: -26px -1355px}
+.countryicon-sprite.iconset-shiny.countrycode-nf,
+.countryicon-sprite.iconset-shiny.countrycode-nfk { background-position: -26px -1376px}
+.countryicon-sprite.iconset-shiny.countrycode-ng,
+.countryicon-sprite.iconset-shiny.countrycode-nga { background-position: -26px -1397px}
+.countryicon-sprite.iconset-shiny.countrycode-ni,
+.countryicon-sprite.iconset-shiny.countrycode-nic { background-position: -26px -1418px}
+.countryicon-sprite.iconset-shiny.countrycode-nl,
+.countryicon-sprite.iconset-shiny.countrycode-nld { background-position: -26px -1439px}
+.countryicon-sprite.iconset-shiny.countrycode-no,
+.countryicon-sprite.iconset-shiny.countrycode-nor { background-position: -26px -1460px}
+.countryicon-sprite.iconset-shiny.countrycode-np,
+.countryicon-sprite.iconset-shiny.countrycode-npl { background-position: -26px -1481px}
+.countryicon-sprite.iconset-shiny.countrycode-nr,
+.countryicon-sprite.iconset-shiny.countrycode-nru { background-position: -26px -1502px}
+.countryicon-sprite.iconset-shiny.countrycode-nu,
+.countryicon-sprite.iconset-shiny.countrycode-niu { background-position: -26px -1523px}
+.countryicon-sprite.iconset-shiny.countrycode-nz,
+.countryicon-sprite.iconset-shiny.countrycode-nzl { background-position: -26px -1544px}
+.countryicon-sprite.iconset-shiny.countrycode-om,
+.countryicon-sprite.iconset-shiny.countrycode-omn { background-position: -26px -1565px}
+.countryicon-sprite.iconset-shiny.countrycode-pa,
+.countryicon-sprite.iconset-shiny.countrycode-pan { background-position: -26px -1586px}
+.countryicon-sprite.iconset-shiny.countrycode-pe,
+.countryicon-sprite.iconset-shiny.countrycode-per { background-position: -26px -1607px}
+.countryicon-sprite.iconset-shiny.countrycode-pf,
+.countryicon-sprite.iconset-shiny.countrycode-pyf { background-position: -26px -1628px}
+.countryicon-sprite.iconset-shiny.countrycode-pg,
+.countryicon-sprite.iconset-shiny.countrycode-png { background-position: -26px -1649px}
+.countryicon-sprite.iconset-shiny.countrycode-ph,
+.countryicon-sprite.iconset-shiny.countrycode-phl { background-position: -26px -1670px}
+.countryicon-sprite.iconset-shiny.countrycode-pk,
+.countryicon-sprite.iconset-shiny.countrycode-pak { background-position: -26px -1691px}
+.countryicon-sprite.iconset-shiny.countrycode-pl,
+.countryicon-sprite.iconset-shiny.countrycode-pol { background-position: -26px -1712px}
+.countryicon-sprite.iconset-shiny.countrycode-pm,
+.countryicon-sprite.iconset-shiny.countrycode-spm { background-position: -26px -1733px}
+.countryicon-sprite.iconset-shiny.countrycode-pn,
+.countryicon-sprite.iconset-shiny.countrycode-pcn { background-position: -26px -1754px}
+.countryicon-sprite.iconset-shiny.countrycode-pr,
+.countryicon-sprite.iconset-shiny.countrycode-pri { background-position: -26px -1775px}
+.countryicon-sprite.iconset-shiny.countrycode-ps,
+.countryicon-sprite.iconset-shiny.countrycode-pse { background-position: -26px -1796px}
+.countryicon-sprite.iconset-shiny.countrycode-pt,
+.countryicon-sprite.iconset-shiny.countrycode-prt { background-position: -26px -1817px}
+.countryicon-sprite.iconset-shiny.countrycode-pw,
+.countryicon-sprite.iconset-shiny.countrycode-plw { background-position: -26px -1838px}
+.countryicon-sprite.iconset-shiny.countrycode-py,
+.countryicon-sprite.iconset-shiny.countrycode-pry { background-position: -26px -1859px}
+.countryicon-sprite.iconset-shiny.countrycode-qa,
+.countryicon-sprite.iconset-shiny.countrycode-qat { background-position: -26px -1880px}
+.countryicon-sprite.iconset-shiny.countrycode-re,
+.countryicon-sprite.iconset-shiny.countrycode-reu { background-position: -26px -1901px}
+.countryicon-sprite.iconset-shiny.countrycode-ro,
+.countryicon-sprite.iconset-shiny.countrycode-rou { background-position: -26px -1922px}
+.countryicon-sprite.iconset-shiny.countrycode-rs,
+.countryicon-sprite.iconset-shiny.countrycode-srb { background-position: -26px -1943px}
+.countryicon-sprite.iconset-shiny.countrycode-ru,
+.countryicon-sprite.iconset-shiny.countrycode-rus { background-position: -26px -1964px}
+.countryicon-sprite.iconset-shiny.countrycode-rw,
+.countryicon-sprite.iconset-shiny.countrycode-rwa { background-position: -26px -1985px}
+.countryicon-sprite.iconset-shiny.countrycode-sa,
+.countryicon-sprite.iconset-shiny.countrycode-sau { background-position: -52px -10px}
+.countryicon-sprite.iconset-shiny.countrycode-sb,
+.countryicon-sprite.iconset-shiny.countrycode-slb { background-position: -52px -31px}
+.countryicon-sprite.iconset-shiny.countrycode-sc,
+.countryicon-sprite.iconset-shiny.countrycode-syc { background-position: -52px -52px}
+.countryicon-sprite.iconset-shiny.countrycode-scotland { background-position: -52px -73px}
+.countryicon-sprite.iconset-shiny.countrycode-sd,
+.countryicon-sprite.iconset-shiny.countrycode-sdn { background-position: -52px -94px}
+.countryicon-sprite.iconset-shiny.countrycode-se,
+.countryicon-sprite.iconset-shiny.countrycode-swe { background-position: -52px -115px}
+.countryicon-sprite.iconset-shiny.countrycode-sg,
+.countryicon-sprite.iconset-shiny.countrycode-sgp { background-position: -52px -136px}
+.countryicon-sprite.iconset-shiny.countrycode-sh,
+.countryicon-sprite.iconset-shiny.countrycode-shn { background-position: -52px -157px}
+.countryicon-sprite.iconset-shiny.countrycode-si,
+.countryicon-sprite.iconset-shiny.countrycode-svn { background-position: -52px -178px}
+.countryicon-sprite.iconset-shiny.countrycode-sj,
+.countryicon-sprite.iconset-shiny.countrycode-sjm { background-position: -52px -199px}
+.countryicon-sprite.iconset-shiny.countrycode-sk,
+.countryicon-sprite.iconset-shiny.countrycode-svk { background-position: -52px -220px}
+.countryicon-sprite.iconset-shiny.countrycode-sl,
+.countryicon-sprite.iconset-shiny.countrycode-sle { background-position: -52px -241px}
+.countryicon-sprite.iconset-shiny.countrycode-sm,
+.countryicon-sprite.iconset-shiny.countrycode-smr { background-position: -52px -262px}
+.countryicon-sprite.iconset-shiny.countrycode-sn,
+.countryicon-sprite.iconset-shiny.countrycode-sen { background-position: -52px -283px}
+.countryicon-sprite.iconset-shiny.countrycode-so,
+.countryicon-sprite.iconset-shiny.countrycode-som { background-position: -52px -304px}
+.countryicon-sprite.iconset-shiny.countrycode-sr,
+.countryicon-sprite.iconset-shiny.countrycode-sur { background-position: -52px -325px}
+.countryicon-sprite.iconset-shiny.countrycode-st,
+.countryicon-sprite.iconset-shiny.countrycode-stp { background-position: -52px -346px}
+.countryicon-sprite.iconset-shiny.countrycode-sv,
+.countryicon-sprite.iconset-shiny.countrycode-slv { background-position: -52px -367px}
+.countryicon-sprite.iconset-shiny.countrycode-sy,
+.countryicon-sprite.iconset-shiny.countrycode-syr { background-position: -52px -388px}
+.countryicon-sprite.iconset-shiny.countrycode-sz,
+.countryicon-sprite.iconset-shiny.countrycode-swz { background-position: -52px -409px}
+.countryicon-sprite.iconset-shiny.countrycode-tc,
+.countryicon-sprite.iconset-shiny.countrycode-tca { background-position: -52px -430px}
+.countryicon-sprite.iconset-shiny.countrycode-td,
+.countryicon-sprite.iconset-shiny.countrycode-tcd { background-position: -52px -451px}
+.countryicon-sprite.iconset-shiny.countrycode-tf,
+.countryicon-sprite.iconset-shiny.countrycode-atf { background-position: -52px -472px}
+.countryicon-sprite.iconset-shiny.countrycode-tg,
+.countryicon-sprite.iconset-shiny.countrycode-tgo { background-position: -52px -493px}
+.countryicon-sprite.iconset-shiny.countrycode-th,
+.countryicon-sprite.iconset-shiny.countrycode-tha { background-position: -52px -514px}
+.countryicon-sprite.iconset-shiny.countrycode-tj,
+.countryicon-sprite.iconset-shiny.countrycode-tjk { background-position: -52px -535px}
+.countryicon-sprite.iconset-shiny.countrycode-tk,
+.countryicon-sprite.iconset-shiny.countrycode-tkl { background-position: -52px -556px}
+.countryicon-sprite.iconset-shiny.countrycode-tl,
+.countryicon-sprite.iconset-shiny.countrycode-tls { background-position: -52px -577px}
+.countryicon-sprite.iconset-shiny.countrycode-tm,
+.countryicon-sprite.iconset-shiny.countrycode-tkm { background-position: -52px -598px}
+.countryicon-sprite.iconset-shiny.countrycode-tn,
+.countryicon-sprite.iconset-shiny.countrycode-tun { background-position: -52px -619px}
+.countryicon-sprite.iconset-shiny.countrycode-to,
+.countryicon-sprite.iconset-shiny.countrycode-ton { background-position: -52px -640px}
+.countryicon-sprite.iconset-shiny.countrycode-tr,
+.countryicon-sprite.iconset-shiny.countrycode-tur { background-position: -52px -661px}
+.countryicon-sprite.iconset-shiny.countrycode-tt,
+.countryicon-sprite.iconset-shiny.countrycode-tto { background-position: -52px -682px}
+.countryicon-sprite.iconset-shiny.countrycode-tv,
+.countryicon-sprite.iconset-shiny.countrycode-tuv { background-position: -52px -703px}
+.countryicon-sprite.iconset-shiny.countrycode-tw,
+.countryicon-sprite.iconset-shiny.countrycode-twn { background-position: -52px -724px}
+.countryicon-sprite.iconset-shiny.countrycode-tz,
+.countryicon-sprite.iconset-shiny.countrycode-tza { background-position: -52px -745px}
+.countryicon-sprite.iconset-shiny.countrycode-ua,
+.countryicon-sprite.iconset-shiny.countrycode-ukr { background-position: -52px -766px}
+.countryicon-sprite.iconset-shiny.countrycode-ug,
+.countryicon-sprite.iconset-shiny.countrycode-uga { background-position: -52px -787px}
+.countryicon-sprite.iconset-shiny.countrycode-um,
+.countryicon-sprite.iconset-shiny.countrycode-umi { background-position: -52px -808px}
+.countryicon-sprite.iconset-shiny.countrycode-us,
+.countryicon-sprite.iconset-shiny.countrycode-usa { background-position: -52px -829px}
+.countryicon-sprite.iconset-shiny.countrycode-uy,
+.countryicon-sprite.iconset-shiny.countrycode-ury { background-position: -52px -850px}
+.countryicon-sprite.iconset-shiny.countrycode-uz,
+.countryicon-sprite.iconset-shiny.countrycode-uzb { background-position: -52px -871px}
+.countryicon-sprite.iconset-shiny.countrycode-va,
+.countryicon-sprite.iconset-shiny.countrycode-vat { background-position: -52px -892px}
+.countryicon-sprite.iconset-shiny.countrycode-vc,
+.countryicon-sprite.iconset-shiny.countrycode-vct { background-position: -52px -913px}
+.countryicon-sprite.iconset-shiny.countrycode-ve,
+.countryicon-sprite.iconset-shiny.countrycode-ven { background-position: -52px -934px}
+.countryicon-sprite.iconset-shiny.countrycode-vg,
+.countryicon-sprite.iconset-shiny.countrycode-vgb { background-position: -52px -955px}
+.countryicon-sprite.iconset-shiny.countrycode-vi,
+.countryicon-sprite.iconset-shiny.countrycode-vir { background-position: -52px -976px}
+.countryicon-sprite.iconset-shiny.countrycode-vn,
+.countryicon-sprite.iconset-shiny.countrycode-vnm { background-position: -52px -997px}
+.countryicon-sprite.iconset-shiny.countrycode-vu,
+.countryicon-sprite.iconset-shiny.countrycode-vut { background-position: -52px -1018px}
+.countryicon-sprite.iconset-shiny.countrycode-wales { background-position: -52px -1039px}
+.countryicon-sprite.iconset-shiny.countrycode-wf,
+.countryicon-sprite.iconset-shiny.countrycode-wlf { background-position: -52px -1060px}
+.countryicon-sprite.iconset-shiny.countrycode-ws,
+.countryicon-sprite.iconset-shiny.countrycode-wsm { background-position: -52px -1081px}
+.countryicon-sprite.iconset-shiny.countrycode-ye,
+.countryicon-sprite.iconset-shiny.countrycode-yem { background-position: -52px -1102px}
+.countryicon-sprite.iconset-shiny.countrycode-yt,
+.countryicon-sprite.iconset-shiny.countrycode-myt { background-position: -52px -1123px}
+.countryicon-sprite.iconset-shiny.countrycode-za,
+.countryicon-sprite.iconset-shiny.countrycode-zaf { background-position: -52px -1144px}
+.countryicon-sprite.iconset-shiny.countrycode-zm,
+.countryicon-sprite.iconset-shiny.countrycode-zmb { background-position: -52px -1165px}
+.countryicon-sprite.iconset-shiny.countrycode-zw,
+.countryicon-sprite.iconset-shiny.countrycode-zwe { background-position: -52px -1186px} 
