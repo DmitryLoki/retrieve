@@ -56,8 +56,11 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		this.tableUfos.sort(function(a,b) {
 			d1 = (a && a.tableData && a.tableData.dist && a.tableData.dist() > 0) ? a.tableData.dist() : null;
 			d2 = (b && b.tableData && b.tableData.dist && b.tableData.dist() > 0) ? b.tableData.dist() : null;
-			if (d1 > 0 && d2 > 0)
+			if (d1 > 0 && d2 > 0) {
+				d1 = Math.floor(d1*10);
+				d2 = Math.floor(d2*10);
 				return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
+			}
 			if (d2 > 0) return 1;
 			if (d1 > 0) return -1;
 			return 0;

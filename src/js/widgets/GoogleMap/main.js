@@ -290,7 +290,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 					u.trackData.push(v);
 				}
 				if (self.tracksVisualMode() == "10min") {
-					console.log("remove begining: v.dt=",v.dt,"u.trackData[0]=",u.trackData[0]);
 					while (u.trackData[0] && (v.dt > u.trackData[0].dt + 60000)) {
 						path.removeAt(0);
 						u.trackData.splice(0,1);

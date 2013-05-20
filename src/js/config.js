@@ -26,7 +26,7 @@ define({
 	},
 	playerState: "pause",
 	playerSpeed: 1,
-	renderTableDataInterval: 2000,
+	renderTableDataInterval: 400,
 	windows: {
 		ufosTable: {
 			visible: true,

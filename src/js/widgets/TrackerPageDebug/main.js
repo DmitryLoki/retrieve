@@ -93,7 +93,6 @@ define([
 
 	Ufo.prototype.resetTrack = function() {
 		// dt=null - специальное значение. Карта его отслеживает и убивает у себя трек при dt=null
-		console.log("resetTrack",this.position());
 		this.track({lat:null,lng:null,dt:null});
 	}
 
