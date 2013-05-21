@@ -225,6 +225,8 @@ define([
 			this.options.contestId = params.contestId;
 		if (params.raceId)
 			this.options.raceId = params.raceId;
+		if (params.apiVersion)
+			this.options.apiVersion = params.apiVersion;
 		if (params.imgRootUrl)
 			this.options.imgRootUrl = params.imgRootUrl;
 		if (params.width)

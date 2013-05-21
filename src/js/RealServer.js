@@ -8,7 +8,7 @@
 		var mult = 1000;
 		if (query.type == "race") {
 			$.ajax({
-				url: "http://api.airtribune.com/v0.1/contest/" + this.options.contestId + "/race/" + this.options.raceId,
+				url: "http://api.airtribune.com/" + this.options.apiVersion + "/contest/" + this.options.contestId + "/race/" + this.options.raceId,
 				dataType: "json",
 				success: function(result) {
 					var data = {
@@ -54,7 +54,7 @@
 		}
 		else if (query.type == "ufos") {
 			$.ajax({
-				url: "http://api.airtribune.com/v0.1/contest/" + this.options.contestId + "/race/" + this.options.raceId + "/paragliders",
+				url: "http://api.airtribune.com/" + this.options.apiVersion + "/contest/" + this.options.contestId + "/race/" + this.options.raceId + "/paragliders",
 				dataType: "json",
 				success: function(result) {
 					var data = [];
@@ -78,7 +78,7 @@
 		}
 		else if (query.type == "timeline") {
 			$.ajax({
-				url: "http://api.airtribune.com/v0.1/race/" + this.options.raceId + "/tracks",
+				url: "http://api.airtribune.com/" + this.options.apiVersion + "/race/" + this.options.raceId + "/tracks",
 				dataType: "json",
 				data: {
 					from_time: Math.floor(query.first/1000),

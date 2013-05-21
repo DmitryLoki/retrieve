@@ -27,7 +27,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-document-overwrite-cursor-s-resize { cursor: s-resize !important;}
 
 /* common window widget styles */
-.airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute;}
+.airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute; font-weight: normal; }
 .airvis-window {
   transition: width 0.5s ease;
 }
@@ -132,6 +132,9 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
   left: 0;
   right: 0;
   bottom: 0;
+}
+.airvis-table-body td {
+	font-weight: normal;
 }
 
 .resizeble { background-image: url(../img/corner.png); background-repeat: no-repeat; background-position: 100% 100%;}
