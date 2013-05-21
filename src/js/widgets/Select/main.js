@@ -7,6 +7,12 @@ define(["jquery","knockout","utils"],function($,ko,utils) {
         this.expanded = ko.observable(false);
         this.faded = ko.observable(false);
         this.values = ko.observableArray(params.values || []);
+        this.highlighted = ko.observable(null);
+
+        this.high = ko.computed(function() {
+            if (self.highlighted()) return self.highlighted();
+            return self.data();
+        });
 
         this.displayValues = ko.computed(function() {
             var out = [];
@@ -82,6 +88,15 @@ define(["jquery","knockout","utils"],function($,ko,utils) {
             this.data(elem.value);
             this.emit("changed",this.data());
         }
+    }
+
+    Select.prototype.setHighlighted = function(elem) {
+        this.highlighted(elem.value);
+    }
+
+    Select.prototype.clearHighlighted = function(elem) {
+        if (this.highlighted() == elem.value)
+            this.highlighted(null);
     }
 
     Select.prototype.asObservable = function(v,defaultV) {

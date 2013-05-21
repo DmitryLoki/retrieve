@@ -133,7 +133,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
   right: 0;
   bottom: 0;
 }
-.airvis-table-body td {
+.airvis-table-body td,.airvis-table-body td > span {
 	font-weight: normal;
 }
 
