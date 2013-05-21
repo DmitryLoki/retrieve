@@ -55,7 +55,7 @@ define(["jquery","utils","knockout","jquery.color"],function($,utils,ko) {
 			if (item.buttonOn())
 				t.animate({backgroundColor:"rgba(255,255,255,0.75)",color:"#002a3a"});
 			else
-				t.animate({backgroundColor:"transparent",color:"#555555"},200);
+				t.animate({backgroundColor:"transparent",color:"#c0c0c0"},200);
 		}
 	}
 
