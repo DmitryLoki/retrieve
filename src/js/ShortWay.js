@@ -18,7 +18,7 @@ define(function() {
 		data[data.length-1].aPoint = this.calculateEndPoint(data[data.length-1],data[data.length-2].aPoint);
 		var out = [];
 		for (var i = 0; i < data.length; i++)
-			out.push({lat:data[i].aPoint.lat,lng:data[i].aPoint.lng});
+			out.push({lat:data[i].aPoint.lat,lng:data[i].aPoint.lng,id:data[i].id});
 		return out;
 	}
 

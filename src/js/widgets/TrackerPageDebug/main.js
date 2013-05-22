@@ -137,7 +137,8 @@ define([
 					data.push({
 						lat: w.center().lat,
 						lng: w.center().lng,
-						radius: w.radius()
+						radius: w.radius(),
+						id: w.id()
 					});
 				}
 				self.shortWay(shortWayCalculator.calculate(data));

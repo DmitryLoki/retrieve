@@ -138,6 +138,15 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w.visible = ko.computed(function() {
 			return self.cylindersVisualMode() == "off" ? false : true;
 		});
+		w.titlePosition = ko.computed(function() {
+			if (!self.shortWay())
+				return w.center();
+			for (var i = 0, l = self.shortWay().length; i < l; i++) {
+				if (self.shortWay()[i].id == w.id())
+					return self.shortWay()[i];
+			}
+			return null;
+		});
 		w._model = new gmaps.Circle({
 			strokeColor: w.color(),
 			strokeOpacity: config.waypoint.strokeOpacity,
@@ -156,7 +165,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			}
 		});
 		w._titleModel.setMap(self.map);
-		w._titleModel.setPosition(w._model.getBounds().getNorthEast());
+//		w._titleModel.setPosition(w._model.getBounds().getNorthEast());
+		w._titleModel.setPosition(new gmaps.LatLng(w.titlePosition().lat,w.titlePosition().lng));
 		w.visible.subscribe(function(v) {
 			w._model.setMap(v?self.map:null);
 			w._titleModel.setMap(v?self.map:null);
@@ -170,8 +180,11 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 		w.center.subscribe(function(v) {
 			w._model.setPosition(new gmaps.LatLng(v.lat,v.lng));
-			w._titleModel.setPosition(w._model.getBounds().getNorthEast());
+//			w._titleModel.setPosition(w._model.getBounds().getNorthEast());
 		});
+		w.titlePosition.subscribe(function(v) {
+			w._titleModel.setPosition(new gmaps.LatLng(v.lat,v.lng));
+		})
 		w.radius.subscribe(function(v) {
 			w._model.set("radius",v);
 		});
