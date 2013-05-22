@@ -3,6 +3,7 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		var self = this;
 
 		this.ufos = options.ufos;
+		this.raceKey = options.raceKey;
 		this.inModalWindow = ko.observable(false);
 		this.mode = ko.observable(config.ufosTable.mode);
 
@@ -56,6 +57,23 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		this.tableUfos.sort(function(a,b) {
 			d1 = (a && a.tableData && a.tableData.dist && a.tableData.dist() > 0) ? a.tableData.dist() : null;
 			d2 = (b && b.tableData && b.tableData.dist && b.tableData.dist() > 0) ? b.tableData.dist() : null;
+			s1 = (a && a.tableData && a.tableData.state) ? a.tableData.state() : null;
+			s2 = (b && b.tableData && b.tableData.state) ? b.tableData.state() : null;
+			c1 = (a && a.tableData && a.tableData.stateChangedAt) ? a.tableData.stateChangedAt() : null;
+			c2 = (b && b.tableData && b.tableData.stateChangedAt) ? b.tableData.stateChangedAt() : null;
+
+			if (s1 == "finished" && s2 == "finished") {
+				if (c1 && c2) return c1 == c2 ? 0 : (c1 < c2 ? -1 : 1);
+				if (c1) return 1;
+				if (c2) return -1;
+				return 0;
+			}
+			else if (s1 == "finished") return -1;
+			else if (s2 == "finished") return 1;
+
+			if (s1 == "landed" && s2 != "landed") return 1;
+			if (s2 == "landed" && s1 != "landed") return -1;
+
 			if (d1 > 0 && d2 > 0) {
 				d1 = Math.floor(d1*10);
 				d2 = Math.floor(d2*10);
@@ -67,13 +85,20 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		});
 	}
 
+	UfosTable.prototype.getTimeStr = function(h,m,s) {
+		return (h<10?"0":"") + h + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
+	}
+
+
 	UfosTable.prototype.createUfo = function(data) {
+		var self = this;
 		var w = {
 			id: data.id,
 			name: data.name,
 			country: data.country,
 			color: data.color,
-			status: data.status,
+			state: data.state,
+			stateChangedAt: data.stateChangedAt,
 			visible: data.visible,
 			trackVisible: data.trackVisible,
 			noData: data.noData,
@@ -81,6 +106,19 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		}
 		w.visibleCheckbox = new Checkbox({checked:w.visible,color:w.color});
 		w.trackVisibleCheckbox = new Checkbox({checked:w.trackVisible,color:w.color});
+		w.finishedTime = ko.computed(function() {
+			if (!w.tableData || !w.tableData.state || w.tableData.state()!="finished" || !w.tableData.stateChangedAt || !w.tableData.stateChangedAt()) return null;
+//			var d = new Date(w.tableData.stateChangedAt()*1000 - self.raceKey());
+//			var d = new Date(w.tableData.stateChangedAt()*1000);
+//			var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+//			return (h<10?"0":"") + h + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
+
+			var d = Math.abs(w.tableData.stateChangedAt() - Math.floor(self.raceKey()/1000));
+			return self.getTimeStr(Math.floor(d/3600),Math.floor(d%3600/60),d%60);
+		});
+		w.speed = ko.computed(function() {
+			return Math.floor(w.tableData.gSpd()*36)/10;
+		});
 		return w;
 	}
 

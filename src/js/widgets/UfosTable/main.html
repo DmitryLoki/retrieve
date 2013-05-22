@@ -46,10 +46,20 @@
 							<td colspan="4" class="airvis-table-nodata">---</td>
 						<!-- /ko -->
 						<!-- ko ifnot: noData -->
-							<td class="airvis-dist-to-goal" data-bind="text:tableData.dist()"></td>
-							<td class="airvis-alt" data-bind="text:tableData.alt()"></td>
-							<td class="airvis-gspd" data-bind="text:tableData.gSpd()"></td>
-							<td class="airvis-vspd" data-bind="text:tableData.vSpd(),visible:$parent.mode()=='full'"></td>
+							<!-- ko if: tableData.state() == "landed" -->
+								<td class="airvis-status">Landed</td>
+								<td colspan="3" class="airvis-dist-to-goal" data-bind="text:tableData.dist()"></td>
+							<!-- /ko -->
+							<!-- ko if: tableData.state() == "finished" -->
+								<td class="airvis-status">GOAL</td>
+								<td colspan="3" class="airvis-dist-to-goal" data-bind="text:finishedTime"></td>
+							<!-- /ko -->
+							<!-- ko if: (tableData.state() != "landed" && tableData.state() != "finished") -->
+								<td class="airvis-dist-to-goal" data-bind="text:tableData.dist()"></td>
+								<td class="airvis-alt" data-bind="text:tableData.alt()"></td>
+								<td class="airvis-gspd" data-bind="text:speed()"></td>
+								<td class="airvis-vspd" data-bind="text:tableData.vSpd(),visible:$parent.mode()=='full'"></td>
+							<!-- /ko -->
 						<!-- /ko -->
 					</tr>
 				</tbody>

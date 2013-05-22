@@ -67,6 +67,7 @@ define([
 		this.country = ko.observable(options.country);
 		this.color = ko.observable(options.color || config.ufo.color);
 		this.state = ko.observable(null);
+		this.stateChangedAt = ko.observable(null);
 		this.position = ko.observable({lat:null,lng:null,dt:null});
 		this.track = ko.observable({lat:null,lng:null,dt:null});
 		this.alt = ko.observable(null);
@@ -80,7 +81,9 @@ define([
 			dist: ko.observable(null),
 			gSpd: ko.observable(null),
 			vSpd: ko.observable(null),
-			alt: ko.observable(null)
+			alt: ko.observable(null),
+			state: ko.observable(null),
+			stateChangedAt: ko.observable(null)
 		}
 	}
 
@@ -89,6 +92,8 @@ define([
 		this.tableData.gSpd(this.gSpd());
 		this.tableData.vSpd(this.vSpd());
 		this.tableData.alt(this.alt());
+		this.tableData.state(this.state());
+		this.tableData.stateChangedAt(this.stateChangedAt());
 	}
 
 	Ufo.prototype.resetTrack = function() {
@@ -103,6 +108,7 @@ define([
 		this.height = ko.observable(this.options.height);
 		this.imgRootUrl = ko.observable(this.options.imgRootUrl);
 		this.mapWidget = ko.observable(this.options.mapWidget);
+		this.mapOptions = ko.observable(this.options.mapOptions);
 		this.mode = ko.observable(this.options.mode);
 		this.tracksVisualMode = ko.observable(this.options.tracksVisualMode);
 		this.cylindersVisualMode = ko.observable(this.options.cylindersVisualMode);
@@ -156,7 +162,8 @@ define([
 						shortWayVisualMode: self.shortWayVisualMode,
 						namesVisualMode: self.namesVisualMode,
 						currentKey: self.currentKey,
-						imgRootUrl: self.imgRootUrl
+						imgRootUrl: self.imgRootUrl,
+						mapOptions: self.mapOptions
 					});
 					self.mapType = "GoogleMap";
 				}
@@ -171,7 +178,8 @@ define([
 						shortWayVisualMode: self.shortWayVisualMode,
 						namesVisualMode: self.namesVisualMode,
 						currentKey: self.currentKey,
-						imgRootUrl: self.imgRootUrl
+						imgRootUrl: self.imgRootUrl,
+						mapOptions: self.mapOptions
 					});
 					self.mapType = "OwgMap";
 				}
@@ -183,7 +191,8 @@ define([
 		});
 
 		this.ufosTable = new UfosTable({
-			ufos: this.ufos
+			ufos: this.ufos,
+			raceKey: self.raceKey
 		});
 		this.ufosTableWindow = new Window(this.options.windows.ufosTable);
 
@@ -237,6 +246,8 @@ define([
 			this.options.mode = params.mode;
 		if (params.mapWidget)
 			this.options.mapWidget = params.mapWidget;
+		if (params.mapOptions)
+			this.options.mapOptions = params.mapOptions;
 		this.rebuild();
 		if (params.callback)
 			params.callback(this);
@@ -255,6 +266,7 @@ define([
 		self.imgRootUrl(self.options.imgRootUrl);
 		self.mode(self.options.mode);
 		self.mapWidget(self.options.mapWidget);
+		self.mapOptions(self.options.mapOptions);
 		self.isReady(!!self.options.raceId);
 		if (self.isReady()) {
 			self.loadRaceData(function(raceData) {
@@ -331,12 +343,14 @@ define([
 	TrackerPageDebug.prototype.playerInit = function() {
 		var self = this;
 		var renderFrame = function(callback) {
+//			console.log("dt=",self.currentKey());
 			self.dataSource.get({
 				type: "timeline",
 				dt: self.currentKey(),
 				timeMultiplier: self.playerSpeed(),
 				dtStart: self.startKey(),
 				callback: function(data) {
+//					console.log(data);
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.ufos().forEach(function(ufo) {
 						if (data && data[ufo.id()]) {
@@ -356,6 +370,8 @@ define([
 								ufo.track({lat:rw.track.lat,lng:rw.track.lng,dt:rw.track.dt});
 							if (rw.state)
 								ufo.state(rw.state);
+							if (rw.stateChangedAt)
+								ufo.stateChangedAt(rw.stateChangedAt);
 						}
 						else
 							ufo.noData(true);

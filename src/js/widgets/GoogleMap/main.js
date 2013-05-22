@@ -54,6 +54,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.imgRootUrl = options.imgRootUrl;
 		this.zoom = ko.observable(config.map.zoom);
 		this.isReady = ko.observable(false);
+		this.mapOptions = options.mapOptions;
 
 		this.mapWaypoints = [];
 		this.waypoints.subscribe(function(waypoints) {
@@ -107,6 +108,12 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			self.destroyShortWay();
 			self.createShortWay(w);
 		});
+
+		this.mapOptions.subscribe(function(options) {
+			if (!self.isReady()) return;
+			console.log("set map options",options);
+			self.map.setOptions(options);
+		})
 	}
 
 	GoogleMap.prototype.createWaypoint = function(data) {
@@ -360,6 +367,14 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 	}
 
 	GoogleMap.prototype.calculateAndSetDefaultPosition = function() {
+		if (!this.map || !this.shortWay()) return;
+		var bounds = new gmaps.LatLngBounds();
+		for (var i = 0, l = this.shortWay().length; i < l; i++) {
+			w = this.shortWay()[i];
+			bounds.extend(new gmaps.LatLng(w.lat,w.lng));
+		}
+		this.map.fitBounds(bounds);
+/*
 		if (!this.map || !this.mapWaypoints) return;
 		var bounds = new gmaps.LatLngBounds();
 		for (var i = 0; i < this.mapWaypoints.length; i++) {
@@ -367,6 +382,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			bounds.extend(new gmaps.LatLng(w.center().lat,w.center().lng));
 		}
 		this.map.fitBounds(bounds);
+*/
 	}
 
 	GoogleMap.prototype.domInit = function(elem,params) {
@@ -384,6 +400,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			self.zoom(self.map.getZoom());
 		});
 		this.isReady(true);
+		this.mapOptions.valueHasMutated();
 	}
 	
 	GoogleMap.prototype.domDestroy = function(elem,params) {

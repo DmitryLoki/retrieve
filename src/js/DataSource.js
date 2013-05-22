@@ -63,6 +63,7 @@ define(function() {
 					for (var pilot_id in dataBefore)
 						if (dataBefore.hasOwnProperty(pilot_id)) {
 							var d1 = dataBefore[pilot_id], d2 = dataAfter[pilot_id];
+//							console.log(d1,d2,frame.start[pilot_id]);
 							if (!d2 || d1.dt == d2.dt)
 								data[pilot_id] = {
 									dist: d1.dist,
@@ -80,6 +81,7 @@ define(function() {
 									},
 									alt: d1.alt,
 									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
+									stateChangedAt: d1.stateChangedAt ? d1.stateChangedAt : frame.start[pilot_id] ? frame.start[pilot_id].stateChangedAt : null,
 									dt: d1.dt
 								}
 							else {
@@ -100,6 +102,7 @@ define(function() {
 									},
 									alt: d1.alt,
 									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
+									stateChangedAt: d1.stateChangedAt ? d1.stateChangedAt : frame.start[pilot_id] ? frame.start[pilot_id].stateChangedAt : null,
 									dt: d1.dt
 								}
 							}

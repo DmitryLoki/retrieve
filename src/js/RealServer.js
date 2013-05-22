@@ -43,6 +43,18 @@
 								data.raceKey = rw.properties.open_time*mult;
 						}
 					}
+					// костыль: убираем названия у тех цилиндров, у которых есть другой цилиндр с тем же центром и бОльшим радиусом
+					for (var i = 0; i < data.waypoints.length; i++) {
+						for (var j = i+1; j < data.waypoints.length; j++) {
+							if (Math.abs(data.waypoints[i].center.lat-data.waypoints[j].center.lat) + Math.abs(data.waypoints[i].center.lng-data.waypoints[j].center.lng) < 0.0001) {
+								if (data.waypoints[i].radius < data.waypoints[j].radius)
+									data.waypoints[j].name = "";
+								else
+									data.waypoints[i].name = "";
+							}
+						}
+					}
+
 					if (query.callback)
 						query.callback(data);
 				},
@@ -60,7 +72,7 @@
 					var data = [];
 					for (var i = 0; i < result.length; i++) {
 						var rw = result[i];
-//						if (rw.contest_number!="404") continue;
+//						if (rw.contest_number!="52") continue;
 						data.push({
 							id: rw.contest_number,
 							name: rw.name,
@@ -88,7 +100,7 @@
 				success: function(result) {
 					var data = {start:{},timeline:{}};
 					$.each(result.start,function(pilot_id,rw) {
-//						if (pilot_id!="404") return;
+//						if (pilot_id!="52") return;
 						data.start[pilot_id] = {
 							dist: rw.dist,
 							gspd: rw.gspd,
@@ -99,6 +111,7 @@
 							},
 							alt: rw.alt,
 							state: rw.state,
+							stateChangedAt: rw.statechanged_at,
 							dt: query.first
 						}
 					});
@@ -106,7 +119,7 @@
 						dt *= 1000;
 						data.timeline[dt] = {};
 						$.each(rws,function(pilot_id,rw) {
-//							if (pilot_id != "404") return;
+//							if (pilot_id != "52") return;
 							data.timeline[dt][pilot_id] = {
 								dist: rw.dist,
 								gspd: rw.gspd,
@@ -119,9 +132,10 @@
 								state: rw.state,
 								dt: dt
 							}
+							if (rw.state)
+								data.timeline[dt][pilot_id].stateChangedAt = dt;
 						});
 					});
-					console.log(data);
 					if (query.callback)
 						query.callback(data);
 				},
