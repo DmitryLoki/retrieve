@@ -386,12 +386,12 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
 	GoogleMap.prototype.refreshShortWayArrows = function() {
 		var self = this;
-		if (!this.mapShortWay) return;
+		if (!this.mapShortWay || !this.map) return;
 		var style = [{icon:{path:gmaps.SymbolPath.FORWARD_OPEN_ARROW},offset:"50%"}];
 		for (var i = 0; i < this.mapShortWay._models.length; i++) {
 			var m = this.mapShortWay._models[i];
 			var path = m.getPath();
-			if (path && path.getAt(0) && path.getAt(1)) {
+			if (map && map.getProjection() && path && path.getAt(0) && path.getAt(1)) {
 				var p1 = self.map.getProjection().fromLatLngToPoint(m.getPath().getAt(0));
 				var p2 = self.map.getProjection().fromLatLngToPoint(m.getPath().getAt(1));
 				var dist = Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p1.y-p2.y,2))*Math.pow(2,this.zoom());
