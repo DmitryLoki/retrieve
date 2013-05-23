@@ -41,10 +41,10 @@ define(["jquery","utils","knockout","jquery.color"],function($,utils,ko) {
 			item.prevE = e;
 			item.isHovered = true;
 			var t = $(e.target).stop(true);
-			if (item.buttonOn())
+			if (!item.buttonOn())
 				t.animate({backgroundColor:"#ffffff",color:"#002a3a"},200);
 			else
-				t.animate({backgroundColor:"transparent",color:"#ffffff"},200);
+				t.animate({backgroundColor:"#ffffff",color:"#002a3a"},200);
 		}
 
 		this.mouseout = function(item,e) {
@@ -52,10 +52,10 @@ define(["jquery","utils","knockout","jquery.color"],function($,utils,ko) {
 			item.prevE = e;
 			item.isHovered = false;
 			var t = $(e.target).stop(true);
-			if (item.buttonOn())
+			if (!item.buttonOn())
 				t.animate({backgroundColor:"rgba(255,255,255,0.75)",color:"#002a3a"});
 			else
-				t.animate({backgroundColor:"transparent",color:"#c0c0c0"},200);
+				t.animate({backgroundColor:"transparent",color:"#ffffff"},200);
 		}
 	}
 

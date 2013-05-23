@@ -3,6 +3,7 @@
 document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;}
 .airvis-container { margin: 0; padding: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
 
+* { -webkit-font-smoothing: antialiased}
 
 /* clearfix */
 .airvis-clearfix {
@@ -27,7 +28,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-document-overwrite-cursor-s-resize { cursor: s-resize !important;}
 
 /* common window widget styles */
-.airvis-window { color: #333333; display: block; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; font-size: 14px; line-height: 20px; position: absolute; font-weight: normal; }
+.airvis-window { color: #333333; display: block;  font-size: 14px; line-height: 20px; position: absolute; font-weight: normal; }
 .airvis-window {
   transition: width 0.5s ease;
 }
@@ -273,12 +274,12 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-slideSq { border: 1px solid #000000; position: absolute;}
 
 /* TopBar */
-.airvis-topbar { position: absolute; top: 0; left: 0; right: 0; height: 40px; background-color: rgba(0, 47, 64, 0.93); font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;}
+.airvis-topbar { position: absolute; top: 0; left: 0; right: 0; height: 40px; background-color: rgba(0, 47, 64, 0.93); }
 .airvis-topbar-container { margin: 0 auto; width: 800px;}
 .airvis-topbar-logo { background: transparent url("../img/logo.png") 0 0 no-repeat; display: block; float: left; height: 24px; margin: 8px 0 0 0; width: 216px;}
 .airvis-topbar-items { display: block; float: left; margin: 0; padding: 0; margin-left: 70px;}
 .airvis-topbar-items li { display: block; float: left; list-style: none outside none; position: relative; }
-.airvis-topbar-items a { display: block; outline: 0 none; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px; color: #505050; background-color: transparent;
+.airvis-topbar-items a { display: block; outline: 0 none; margin-top: 8px; margin-left: 10px; padding: 0 11px; height: 24px;   text-decoration: none; font-size: 14px; font-weight: bold; line-height: 24px; color: #ffffff; background-color: transparent;
   -webkit-border-radius: 2px; 
   -moz-border-radius: 2px; 
   border-radius: 2px;
@@ -312,7 +313,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 .gmap {}
 .gmap > div > .gmnoprint:nth-child(3n+1),
-.gmap > div > .gmnoprint:last-child { top: 40px !important;}
+.gmap > div > .gmnoprint:last-child { top: 180px !important;}
 
 
 .airvis-scrollbar .overview { position: absolute; left: 0; top: 0; }
