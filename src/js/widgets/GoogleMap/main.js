@@ -111,7 +111,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
 		this.mapOptions.subscribe(function(options) {
 			if (!self.isReady()) return;
-			console.log("set map options",options);
 			self.map.setOptions(options);
 		})
 	}
@@ -167,6 +166,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w._titleModel.setMap(self.map);
 //		w._titleModel.setPosition(w._model.getBounds().getNorthEast());
 		w._titleModel.setPosition(new gmaps.LatLng(w.titlePosition().lat,w.titlePosition().lng));
+
+
 		w.visible.subscribe(function(v) {
 			w._model.setMap(v?self.map:null);
 			w._titleModel.setMap(v?self.map:null);
@@ -180,11 +181,10 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 		w.center.subscribe(function(v) {
 			w._model.setPosition(new gmaps.LatLng(v.lat,v.lng));
-//			w._titleModel.setPosition(w._model.getBounds().getNorthEast());
 		});
 		w.titlePosition.subscribe(function(v) {
 			w._titleModel.setPosition(new gmaps.LatLng(v.lat,v.lng));
-		})
+		});
 		w.radius.subscribe(function(v) {
 			w._model.set("radius",v);
 		});
@@ -196,8 +196,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			w._model.setMap(null);
 		if (w._titleModel)
 			w._titleModel.setMap(null);
-		delete w._model;
-		delete w._titleModel;
 	}
 
 	GoogleMap.prototype.createUfo = function(data) {
