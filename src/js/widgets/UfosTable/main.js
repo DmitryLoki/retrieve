@@ -1,4 +1,4 @@
-define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], function($,ko,Checkbox,config) {
+define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.tinyscrollbar"], function($,ko,Checkbox,config,countryCodes) {
 	var UfosTable = function(options) {
 		var self = this;
 
@@ -118,6 +118,9 @@ define(["jquery","knockout","widget!Checkbox","config","jquery.tinyscrollbar"], 
 		});
 		w.speed = ko.computed(function() {
 			return Math.floor(w.tableData.gSpd()*36)/10;
+		});
+		w.country3 = ko.computed(function() {
+			return w.country() && countryCodes[w.country()] ? countryCodes[w.country()] : w.country();
 		});
 		return w;
 	}

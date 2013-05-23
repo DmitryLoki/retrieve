@@ -65,8 +65,8 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-resize-bottom-right { bottom: -18px; cursor: se-resize; height: 20px; right: -18px; width: 20px;}
 
 /* css for markers on google map */
-.airvis-marker-title { font-size: 12px; }
-
+.airvis-marker-title { font-size: 12px; white-space: nowrap; }
+.airvis-waypoint-title { white-space: nowrap; font-weight: bold; margin-top: 3px; margin-left: 3px; }
 
 
 
@@ -105,7 +105,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-window table .airvis-alt { width: 39px;}
 .airvis-window table .airvis-gspd,
 .airvis-window table .airvis-vspd { width: 49px;}
-.airvis-window table .airvis-pilot-country { width: 69px;}
+.airvis-window table .airvis-pilot-country { text-align: left; padding-left: 10px; width: 69px;}
 
 .airvis-window table .pilot-name { vertical-align: top;}
 .airvis-window table .pilot-name .countryicon-sprite { margin-left: 10px;}
@@ -360,3 +360,4 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-scrollbar .disable{ display: none; }
 .airvis-scrollbar .thumb:hover { background-color:#ffffff;}
 .noSelect { user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; }
+
