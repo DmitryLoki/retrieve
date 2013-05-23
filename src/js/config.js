@@ -70,9 +70,9 @@ define({
 	namesVisualMode: "auto",
 	shortWay: {
 		wide: {
-			color: "#336699",
-			strokeOpacity: 0.5,
-			strokeWeight: 5
+			strokeColor: "#002244",
+			strokeOpacity: 0.6,
+			strokeWeight: 4
 		},
 		thin: {
 			color: "#336699",
@@ -80,6 +80,7 @@ define({
 			strokeWeight: 2
 		}
 	},
+	shortWayMinSegmentLengthToShowArrow: 100,
 	namesVisualModeAutoMinZoom: 12,
 	namesVisualAutoMinZoom: 12,
 	waypoint: {
