@@ -344,14 +344,12 @@ define([
 	TrackerPageDebug.prototype.playerInit = function() {
 		var self = this;
 		var renderFrame = function(callback) {
-//			console.log("dt=",self.currentKey());
 			self.dataSource.get({
 				type: "timeline",
 				dt: self.currentKey(),
 				timeMultiplier: self.playerSpeed(),
 				dtStart: self.startKey(),
 				callback: function(data) {
-//					console.log(data);
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.ufos().forEach(function(ufo) {
 						if (data && data[ufo.id()]) {

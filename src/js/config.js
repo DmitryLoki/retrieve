@@ -90,7 +90,7 @@ define({
 		fillOpacity: 0.2,
 	},
 	waypointsColors: {
-		to: {
+		ss: {
 			closed: "#ff0000",
 			opened: "#00ff00"
 		},
