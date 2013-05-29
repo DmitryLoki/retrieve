@@ -180,7 +180,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w.titleXYPosition = ko.computed(function() {
 			var prev = null, next = null, curr = null;
 			for (var i = 0, l = self.waypoints().length; i<l && self.waypoints()[i].id()!=w.id(); i++);
-			if (l == 0) return {x:null,y:null};
+			if (l == 0 || i == l) return {x:null,y:null};
 			curr = self.waypoints()[i].center();
 			if (i > 0) prev = self.waypoints()[i-1].center();
 			if (i+1 < l) next = self.waypoints()[i+1].center();
@@ -512,6 +512,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.map.fitBounds(bounds);
 
 		// Допиливание неточностей fitBounds, в большинстве случаев зум можно увеличить на 1 и все равно все помещается
+		if (!this.map.getProjection) return;
 		var boundsNE = this.map.getProjection().fromLatLngToPoint(bounds.getNorthEast());
 		var boundsSW = this.map.getProjection().fromLatLngToPoint(bounds.getSouthWest());
 		var boundsH = Math.abs(boundsNE.y-boundsSW.y);
