@@ -512,7 +512,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.map.fitBounds(bounds);
 
 		// Допиливание неточностей fitBounds, в большинстве случаев зум можно увеличить на 1 и все равно все помещается
-		if (!this.map.getProjection) return;
+		if (!this.map.getProjection || !this.map.getProjection()) return;
 		var boundsNE = this.map.getProjection().fromLatLngToPoint(bounds.getNorthEast());
 		var boundsSW = this.map.getProjection().fromLatLngToPoint(bounds.getSouthWest());
 		var boundsH = Math.abs(boundsNE.y-boundsSW.y);
