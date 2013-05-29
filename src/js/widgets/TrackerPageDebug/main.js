@@ -115,6 +115,7 @@ define([
 		this.modelsVisualMode = ko.observable(this.options.modelsVisualMode);
 		this.shortWayVisualMode = ko.observable(this.options.shortWayVisualMode);
 		this.namesVisualMode = ko.observable(this.options.namesVisualMode);
+		this.profVisualMode = ko.observable(this.options.profVisualMode);
 		this.startKey = ko.observable(0);
 		this.endKey = ko.observable(0);
 		this.currentKey = ko.observable(0);
@@ -162,9 +163,11 @@ define([
 						modelsVisualMode: self.modelsVisualMode,
 						shortWayVisualMode: self.shortWayVisualMode,
 						namesVisualMode: self.namesVisualMode,
+						profVisualMode: self.profVisualMode,
 						currentKey: self.currentKey,
 						imgRootUrl: self.imgRootUrl,
-						mapOptions: self.mapOptions
+						mapOptions: self.mapOptions,
+						mode: self.mode
 					});
 					self.mapType = "GoogleMap";
 				}
@@ -178,9 +181,11 @@ define([
 						modelsVisualMode: self.modelsVisualMode,
 						shortWayVisualMode: self.shortWayVisualMode,
 						namesVisualMode: self.namesVisualMode,
+						profVisualMode: self.profVisualMode,
 						currentKey: self.currentKey,
 						imgRootUrl: self.imgRootUrl,
-						mapOptions: self.mapOptions
+						mapOptions: self.mapOptions,
+						mode: self.mode
 					});
 					self.mapType = "OwgMap";
 				}
@@ -207,6 +212,7 @@ define([
 			modelsVisualMode: self.modelsVisualMode,
 			shortWayVisualMode: self.shortWayVisualMode,
 			namesVisualMode: self.namesVisualMode,
+			profVisualMode: self.profVisualMode,
 			playerState: self.playerState,
 			playerSpeed: self.playerSpeed,
 			isOnline: self.isOnline

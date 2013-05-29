@@ -66,7 +66,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 /* css for markers on google map */
 .airvis-marker-title { font-size: 12px; white-space: nowrap; }
-.airvis-waypoint-title { white-space: nowrap; font-weight: bold; margin-top: 3px; margin-left: 3px; }
+.airvis-waypoint-title { white-space: nowrap; font-weight: bold; padding: 3px; }
 
 
 
@@ -181,7 +181,7 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-player-timeWindow.airvis-active { background-color: #ced828;}
 .airvis-player-timeWindow.airvis-inactive { background-color: #fbd72c;}
 .airvis-player-timeWindow.airvis-local { background-color: #b0d3d8; padding-top: 15px;}
-.airvis-player-timeText { float: left; font-size: 14px; font-weight: bold; line-height: 20px; margin: 19px 40px 10px 10px; margin-left: 0; width: 70px;}
+.airvis-player-timeText { float: left; font-size: 14px; font-weight: bold; line-height: 20px; margin: 19px 10px 10px 10px; margin-left: 0; width: 70px;}
 .airvis-player-timeText.airvis-active { color: #ced828;}
 .airvis-player-timeText.airvis-inactive { color: #fbd72c;}
 .airvis-player-timeText.airvis-local { color: #b0d3d8;}
@@ -237,8 +237,8 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 
 /* Select */
-.airvis-player-selects  { float: left; margin-left: 25px; width: 305px; padding-top: 5px;}
-.airvis-selectContainer { float: left; position: relative; width: 140px; margin: 5px;}
+.airvis-player-selects  { float: left; width: 400px; padding-top: 5px;}
+.airvis-selectContainer { float: left; position: relative; width: 120px; margin: 5px;}
 .airvis-select { text-decoration: none;}
 .airvis-value { color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: rgba(255,255,255, 0.75); padding: 0; text-align: center; width: 50px; min-height: 20px;
 

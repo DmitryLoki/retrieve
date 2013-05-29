@@ -11,6 +11,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.modelsVisualMode = options.modelsVisualMode;
 		this.shortWayVisualMode = options.shortWayVisualMode;
 		this.namesVisualMode = options.namesVisualMode;
+		this.profVisualMode = options.profVisualMode;
 		this.playerState = options.playerState;
 		this.playerSpeed = options.playerSpeed;
 		this.isOnline = options.isOnline;
@@ -61,10 +62,11 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.modelsVisualSelect = new Select({data:this.modelsVisualMode,label:"Models",values:[{value:"large",title:"Large"},{value:"medium",title:"Medium"},{value:"small",title:"Small"}],expandDirection:"up"});
 		this.shortWayVisualSelect = new Select({data:this.shortWayVisualMode,label:"Shortest way",values:[{value:"wide",title:"Wide"},{value:"thin",title:"Thin"},{value:"off",title:"Off"}]});
 		this.namesVisualSelect = new Select({data:this.namesVisualMode,label:"Names",values:[{value:"on",title:"On"},{value:"auto",title:"Auto"},{value:"off",title:"Off"}]});
+		this.profVisualSelect = new Select({data:this.profVisualMode,label:"Mode",values:[{value:"user",title:"User"},{value:"prof",title:"Prof"}]});
 		
 		var fadeSelects = function(v) {
 			setTimeout(function() {
-			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
+			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect","profVisualSelect"];
 			for (var i = 0; i < selects.length; i++)
 				if (self[selects[i]] != v)
 					self[selects[i]].fade();
@@ -72,7 +74,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		}
 
 		var unfadeSelects = function() {
-			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect"];
+			var selects = ["tracksVisualSelect","cylindersVisualSelect","modelsVisualSelect","shortWayVisualSelect","namesVisualSelect","profVisualSelect"];
 			for (var i = 0; i < selects.length; i++)
 				self[selects[i]].unfade();
 		}
@@ -82,6 +84,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.modelsVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.shortWayVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.namesVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
+		this.profVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 	}
 
 	PlayerControl.prototype.switchState = function() {

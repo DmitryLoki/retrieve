@@ -16,18 +16,25 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			return;
 		var coords = proj.fromLatLngToDivPixel(this._coords);
 		if (this._div) {
-			this._div.style.left = coords.x + "px";
-			this._div.style.top = coords.y + "px";
+			if (this._params.xPosition == "right")
+				this._div.style.left = Math.floor(coords.x-this._div.offsetWidth)+"px";
+			else if (this._params.xPosition == "center")
+				this._div.style.left = Math.floor(coords.x-this._div.offsetWidth/2)+"px";				
+			else				
+				this._div.style.left = coords.x + "px";
+			if (this._params.yPosition == "bottom")
+				this._div.style.top = Math.floor(coords.y-this._div.offsetHeight)+"px";
+			else if (this._params.yPosition == "middle")
+				this._div.style.top = Math.floor(coords.y-this._div.offsetHeight/2)+"px";
+			else
+				this._div.style.top = coords.y + "px";
 		}
 	}
 	MapFloatElem.prototype.onAdd = function() {
 		var div = document.createElement("div");
 		div.style.position = "absolute";
-		div.style.left = "99999px";
-		div.style.top = "99999px";
 		div.innerHTML = this._params.template;
-		var panes = this.getPanes();
-		panes.floatPane.appendChild(div);
+		this.getPanes().floatPane.appendChild(div);
 		this._div = div;
 		ko.applyBindings(this._params.data, div);
 	}
@@ -38,6 +45,12 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 	MapFloatElem.prototype.setPosition = function(coords) {
 		return this.move(coords);
 	}
+	MapFloatElem.prototype.setXYPosition = function(r) {
+		this._params.xPosition = r.x;
+		this._params.yPosition = r.y;
+		this.draw();
+	}
+
 
 	var GoogleMap = function(options) {
 		var self = this;
@@ -50,11 +63,14 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.modelsVisualMode = options.modelsVisualMode;
 		this.shortWayVisualMode = options.shortWayVisualMode;
 		this.namesVisualMode = options.namesVisualMode;
+		this.profVisualMode = options.profVisualMode;
 		this.currentKey = options.currentKey;
 		this.imgRootUrl = options.imgRootUrl;
 		this.zoom = ko.observable(config.map.zoom);
 		this.isReady = ko.observable(false);
 		this.mapOptions = options.mapOptions;
+		this.mode = options.mode;
+		this.activateMapScroll = ko.observable(false);
 
 		this.mapWaypoints = [];
 		this.waypoints.subscribe(function(waypoints) {
@@ -116,7 +132,12 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.mapOptions.subscribe(function(options) {
 			if (!self.isReady()) return;
 			self.map.setOptions(options);
-		})
+		});
+
+		this.activateMapScroll.subscribe(function(b) {
+			if (!self.isReady()) return;
+			self.map.setOptions({scrollwheel:b});
+		});
 	}
 
 	GoogleMap.prototype.createWaypoint = function(data) {
@@ -129,7 +150,19 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			radius: data.radius,
 			openKey: data.openKey,
 		}
+		w.title = ko.computed(function() {
+			if (self.profVisualMode() == "prof") return w.name();
+			if (w.type() == "ordinal") {
+				var n = 0;
+				for (var i = 0, l = self.waypoints().length; i<l && self.waypoints()[i].id()!=w.id(); i++)
+					if (self.waypoints()[i].type() == "ordinal")
+						n++;
+				return n+1;
+			}
+			return config.waypointsNames[w.type()] ? config.waypointsNames[w.type()] : "";
+		});
 		w.state = ko.computed(function() {
+			if (self.mode() == "simple") return "opened";
 			return w.openKey() < self.currentKey() ? "opened" : "closed";
 		});
 		w.color = ko.computed(function() {
@@ -138,9 +171,51 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w.fillOpacity = ko.computed(function() {
 			return self.cylindersVisualMode() == "empty" ? 0 : config.waypoint.fillOpacity;
 		});
-		w.visible = ko.computed(function() {
+		w.modelVisible = ko.computed(function() {
 			return self.cylindersVisualMode() == "off" ? false : true;
 		});
+		w.titleVisible = ko.computed(function() {
+			return w.modelVisible() && self.zoom() >= config.waypointsVisualAutoMinZoom;
+		});
+		w.titleXYPosition = ko.computed(function() {
+			var prev = null, next = null, curr = null;
+			for (var i = 0, l = self.waypoints().length; i<l && self.waypoints()[i].id()!=w.id(); i++);
+			if (l == 0) return {x:null,y:null};
+			curr = self.waypoints()[i].center();
+			if (i > 0) prev = self.waypoints()[i-1].center();
+			if (i+1 < l) next = self.waypoints()[i+1].center();
+			if (prev == null && next == null) 
+				return {x:null,y:null};
+			if (prev == null)
+				return {x:curr.lng>next.lng ?"left":"right",y:curr.lat>next.lat?"bottom":"top"};
+			if (next == null)
+				return {x:curr.lng>prev.lng ?"left":"right",y:curr.lat>prev.lat?"bottom":"top"};
+
+			var betw = function(prev,curr,next) {
+				return (prev <= curr && curr <= next) || (prev >= curr && curr >= next);
+			}
+			var r = {x:null,y:null};
+			if (curr.lng<next.lng && curr.lng<prev.lng)
+				r.x = "right";
+			else if (betw(prev.lng,curr.lng,next.lng))
+				r.x = "center";
+			else
+				r.x = "left";
+			if (curr.lat>next.lat && curr.lat>prev.lat)
+				r.y = "bottom";
+			else if (betw(prev.lat,curr.lat,next.lat))
+				r.y = "middle";
+			else
+				r.y = "top";
+
+			if (r.x == "center" && r.y == "middle") {
+				r.x = "left";
+				r.y = (prev.lng-curr.lng)*(prev.lat-curr.lat) > 0 ? "top" : "bottom";
+			}
+
+			return r;
+		});
+
 		w.titlePosition = ko.computed(function() {
 			if (!self.shortWay())
 				return w.center();
@@ -163,16 +238,20 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w._titleModel = new MapFloatElem({
 			template: self.templates.waypointTitle,
 			data: {
-				title: w.name,
+				title: w.title,
 				color: w.color
-			}
+			},
+			xPosition: w.titleXYPosition().x,
+			yPosition: w.titleXYPosition().y
 		});
 		w._titleModel.setMap(self.map);
 		w._titleModel.setPosition(new gmaps.LatLng(w.titlePosition().lat,w.titlePosition().lng));
 
-		w.visibleSubscribe = w.visible.subscribe(function(v) {
+		w.modelVisibleSubscribe = w.modelVisible.subscribe(function(v) {
 			w._model.setMap(v?self.map:null);
-			w._titleModel.setMap(v?self.map:null);
+		});
+		w.titleVisibleSubscribe = w.titleVisible.subscribe(function(v) {
+			w._titleModel.setMap(v?self.map:null);	
 		});
 		w.colorSubscribe = w.color.subscribe(function(v) {
 			w._model.set("strokeColor",v);
@@ -190,6 +269,9 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w.radiusSubscribe = w.radius.subscribe(function(v) {
 			w._model.set("radius",v);
 		});
+		w.titleXYPosition.subscribe(function(r) {
+			w._titleModel.setXYPosition(r);
+		});
 		return w;
 	}
 
@@ -198,7 +280,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			w._model.setMap(null);
 		if (w._titleModel)
 			w._titleModel.setMap(null);
-		w.visibleSubscribe.dispose();
+		w.modelVisibleSubscribe.dispose();
+		w.titleVisibleSubscribe.dispose();
 		w.colorSubscribe.dispose();
 		w.fillOpacitySubscribe.dispose();
 		w.centerSubscribe.dispose();
@@ -419,50 +502,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		}
 	}
 
-/*
-	GoogleMap.prototype.createShortWay = function(data) {
-		var self = this;
-		if (!data) return;
-		var ar = [];
-		for (var i = 0; i < data.length; i++)
-			ar.push(new gmaps.LatLng(data[i].lat,data[i].lng));
-		var w = {};
-		w.style = ko.computed(function() {
-			var ar = config.shortWay[self.shortWayVisualMode()];
-			ar.icons = [{
-				icon: {
-					path: gmaps.SymbolPath.FORWARD_OPEN_ARROW
-				},
-				offset: "50%"
-			}];
-			console.log(ar,gmaps.SymbolPath);
-			return ar;
-		});
-		w.visible = ko.computed(function() {
-			return self.shortWayVisualMode() == "off" ? 0 : 1;
-		});
-		w._model = new gmaps.Polyline(w.style());
-		w._model.setMap(this.map);
-		w._model.setPath(ar);
-		w.style.subscribe(function(v) {
-			w._model.setOptions(v);
-		});
-		w.visible.subscribe(function(v) {
-			w._model.setMap(v?self.map:null);
-		});
-		this.mapShortWay = w;
-	}
-
-	GoogleMap.prototype.destroyShortWay = function() {
-		if (this.mapShortWay) {
-			if (this.mapShortWay._model)
-				this.mapShortWay._model.setMap(null);
-			delete this.mapShortWay;
-		}
-	}
-*/
-
-
 	GoogleMap.prototype.calculateAndSetDefaultPosition = function() {
 		if (!this.map || !this.shortWay()) return;
 		var bounds = new gmaps.LatLngBounds();
@@ -471,15 +510,19 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			bounds.extend(new gmaps.LatLng(w.lat,w.lng));
 		}
 		this.map.fitBounds(bounds);
-/*
-		if (!this.map || !this.mapWaypoints) return;
-		var bounds = new gmaps.LatLngBounds();
-		for (var i = 0; i < this.mapWaypoints.length; i++) {
-			w = this.mapWaypoints[i];
-			bounds.extend(new gmaps.LatLng(w.center().lat,w.center().lng));
-		}
-		this.map.fitBounds(bounds);
-*/
+
+		// Допиливание неточностей fitBounds, в большинстве случаев зум можно увеличить на 1 и все равно все помещается
+		var boundsNE = this.map.getProjection().fromLatLngToPoint(bounds.getNorthEast());
+		var boundsSW = this.map.getProjection().fromLatLngToPoint(bounds.getSouthWest());
+		var boundsH = Math.abs(boundsNE.y-boundsSW.y);
+		var boundsW = Math.abs(boundsNE.x-boundsSW.x);
+		var b = this.map.getBounds();
+		var bNE = this.map.getProjection().fromLatLngToPoint(b.getNorthEast());
+		var bSW = this.map.getProjection().fromLatLngToPoint(b.getSouthWest());
+		var bH = Math.abs(bNE.y-bSW.y);
+		var bW = Math.abs(bNE.x-bSW.x);
+		if (boundsH*2<bH && boundsW*2<bW)
+			this.map.setZoom(this.map.getZoom()+1);
 	}
 
 	GoogleMap.prototype.domInit = function(elem,params) {
@@ -495,6 +538,12 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 		gmaps.event.addListener(this.map,"zoom_changed",function() {
 			self.zoom(self.map.getZoom());
+		});
+		gmaps.event.addListener(this.map,"mousedown",function() {
+			self.activateMapScroll(true);
+		});
+		gmaps.event.addListener(this.map,"click",function() {
+			self.activateMapScroll(true);
 		});
 		this.isReady(true);
 		this.mapOptions.valueHasMutated();

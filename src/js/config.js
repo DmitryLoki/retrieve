@@ -63,11 +63,12 @@ define({
 			xPosition: "center"
 		}
 	},
-	tracksVisualMode: "full",
+	tracksVisualMode: "off",
 	cylindersVisualMode: "full",
 	modelsVisualMode: "medium",
 	shortWayVisualMode: "wide",
 	namesVisualMode: "auto",
+	profVisualMode: "user",
 	shortWay: {
 		wide: {
 			strokeColor: "#002244",
@@ -83,6 +84,7 @@ define({
 	shortWayMinSegmentLengthToShowArrow: 100,
 	namesVisualModeAutoMinZoom: 12,
 	namesVisualAutoMinZoom: 12,
+	waypointsVisualAutoMinZoom: 12,
 	waypoint: {
 		color: "#000000",
 		strokeOpacity: 0.8,
@@ -94,14 +96,19 @@ define({
 			closed: "#ff0000",
 			opened: "#00ff00"
 		},
-		waypoint: {
-			closed: "#909090",
-			opened: "#909090"
-		},
 		goal: {
-			closed: "#0000ff",
-			opened: "#0000ff"
+			closed: "#590076",
+			opened: "#590076"
+		},
+		es: {
+			closed: "#505050",
+			opened: "#505050"
 		}
+	},
+	waypointsNames: {
+		ss: "START",
+		es: "END OF SPEED SECTION",
+		goal: "GOAL"
 	},
 	map: {
 		zoom: 9,
