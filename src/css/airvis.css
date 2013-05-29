@@ -361,3 +361,21 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 .airvis-scrollbar .thumb:hover { background-color:#ffffff;}
 .noSelect { user-select: none; -o-user-select: none; -moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; }
 
+
+.setUserVisualMode, .setProfVisualMode {
+    background: url("../img/prof.png") no-repeat scroll 0 0 transparent;
+    height: 30px;
+    overflow: hidden;
+    position: absolute;
+    right: 35px;
+    text-indent: -9999px;
+    top: 129px;
+    width: 30px;
+}
+.setUserVisualMode:hover, .setProfVisualMode:hover {
+    opacity: 0.8;
+}
+.setProfVisualMode {
+    background-position: 0 -30px;
+    display: block;
+}

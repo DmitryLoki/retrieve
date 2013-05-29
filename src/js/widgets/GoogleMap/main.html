@@ -1,1 +1,5 @@
 <div class="gmap" style="width:100%;height:100%;"></div>
+<!-- ko if: (mode() == "simple" && zoom() >= config.waypointsVisualAutoMinZoom) -->
+	<a class="setProfVisualMode" href="#" data-bind="visible:profVisualMode()=='prof',click:setUserVisualMode">Profi Mode</a>
+	<a class="setUserVisualMode" href="#" data-bind="visible:profVisualMode()=='user',click:setProfVisualMode">User Mode</a>
+<!-- /ko -->

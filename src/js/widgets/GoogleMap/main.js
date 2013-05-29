@@ -54,7 +54,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
 	var GoogleMap = function(options) {
 		var self = this;
-
+		this.config = config;
 		this.ufos = options.ufos;
 		this.waypoints = options.waypoints;
 		this.shortWay = options.shortWay;
@@ -138,6 +138,16 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			if (!self.isReady()) return;
 			self.map.setOptions({scrollwheel:b});
 		});
+
+		this.setProfVisualMode = function() {
+			console.log("set prof");
+			self.profVisualMode("prof");
+		}
+		this.setUserVisualMode = function() {
+			console.log("set user");
+			self.profVisualMode("user");
+		}
+
 	}
 
 	GoogleMap.prototype.createWaypoint = function(data) {
