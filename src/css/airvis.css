@@ -155,28 +155,25 @@ document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helveti
 
 }
 .airvis-slider-container { padding: 5px; padding-top: 11px; overflow: hidden;}
-.airvis-slider-handle { width: 17px; height: 17px; background: #ffffff; border: 1px solid #000000; position: absolute; margin-left: -9px; top: -5px;
-
+.airvis-slider-handle { width: 18px; height: 18px; background: #ffffff; border: 1px solid #000000; position: absolute; margin-left: -9px; top: -5px;
   -webkit-border-radius: 9px;
   -moz-border-radius: 9px;
   border-radius: 9px;
-
+}
+.airvis-slider-handle-loading {
+  background: #ffffff url(../img/loading_16x16.gif) 1px 1px no-repeat;
 }
 .airvis-slider-range { background-color: #ececec; height: 8px; left: 0; position: absolute;
-
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
-
 }
 .airvis-player-controls-titles { background-color: rgba(0,0,0,.4);}
 .airvis-player-controls-titles strong { color: #606060; padding: 2px 5px;}
 .airvis-player-timeWindow { float: left; margin: 10px; width: 150px; text-align: center;
-
   -webkit-border-radius: 2px; 
   -moz-border-radius: 2px; 
   border-radius: 2px;
-
 }
 .airvis-player-timeWindow.airvis-active { background-color: #ced828;}
 .airvis-player-timeWindow.airvis-inactive { background-color: #fbd72c;}

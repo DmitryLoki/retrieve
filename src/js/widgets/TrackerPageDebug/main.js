@@ -124,6 +124,7 @@ define([
 		this.playerSpeed = ko.observable(this.options.playerSpeed);
 		this.isReady = ko.observable(false);
 		this.isOnline = ko.observable(false);
+		this.loading = ko.observable(false);
 
 		this.ufos = ko.observableArray();
 		this.waypoints = ko.observableArray();
@@ -215,7 +216,8 @@ define([
 			profVisualMode: self.profVisualMode,
 			playerState: self.playerState,
 			playerSpeed: self.playerSpeed,
-			isOnline: self.isOnline
+			isOnline: self.isOnline,
+			loading: self.loading
 		});
 		this.playerControlWindow = new Window(this.options.windows.playerControl);
 
@@ -296,9 +298,11 @@ define([
 
 	TrackerPageDebug.prototype.loadRaceData = function(callback) {
 		var self = this;
+		self.loading(true);
 		this.dataSource.get({
 			type: "race",
 			callback: function(data) {
+				self.loading(false);
 				self.startKey(data.startKey);
 				self.endKey(data.endKey);
 				self.currentKey(data.startKey);
@@ -326,7 +330,7 @@ define([
 
 	TrackerPageDebug.prototype.loadUfosData = function(callback) {
 		var self = this;
-		var loadedUfos = 0;
+		self.loading(true);
 		self.dataSource.get({
 			type: "ufos",
 			callback: function(ufos) {
@@ -338,6 +342,7 @@ define([
 					}
 				}
 				self.ufos(ufos2load);
+				self.loading(false);
 				if (callback && typeof callback == "function")
 					callback();
 			},
@@ -350,6 +355,7 @@ define([
 	TrackerPageDebug.prototype.playerInit = function() {
 		var self = this;
 		var renderFrame = function(callback) {
+			self.loading(true);
 			self.dataSource.get({
 				type: "timeline",
 				dt: self.currentKey(),
@@ -357,6 +363,7 @@ define([
 				dtStart: self.startKey(),
 				callback: function(data) {
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
+					self.loading(false);
 					self.ufos().forEach(function(ufo) {
 						if (data && data[ufo.id()]) {
 							rw = data[ufo.id()];

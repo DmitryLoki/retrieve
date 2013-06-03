@@ -7,6 +7,7 @@ define(["jquery","knockout"], function($,ko) {
 		this.val = options.val;
 		this.drag = options.drag;
 		this.dragging = options.dragging;
+		this.handleMode = options.handleMode;
 
 		this.val.subscribe(function(val) {
 			if (!self.dragging())

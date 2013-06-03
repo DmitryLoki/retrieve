@@ -130,7 +130,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 
 		this.mapOptions.subscribe(function(options) {
-			if (!self.isReady()) return;
+			if (!self.isReady() || !options) return;
 			self.map.setOptions(options);
 			self.activateMapScroll(options.scrollwheel);
 		});
@@ -185,7 +185,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 		w.titleVisible = ko.computed(function() {
 			var b = w.modelVisible() && self.zoom() >= config.waypointsVisualAutoMinZoom;
-			console.log("check titleVisible",b,self.zoom(),config.waypointsVisualAutoMinZoom);
 			return b;
 		});
 		w.titleXYPosition = ko.computed(function() {
@@ -554,7 +553,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			mapTypeId: gmaps.MapTypeId[config.map.type]
 		});
 		gmaps.event.addListener(this.map,"zoom_changed",function() {
-			console.log("zoom_changed");
 			self.zoom(self.map.getZoom());
 		});
 		gmaps.event.addListener(this.map,"mousedown",function() {

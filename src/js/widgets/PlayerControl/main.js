@@ -15,6 +15,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.playerState = options.playerState;
 		this.playerSpeed = options.playerSpeed;
 		this.isOnline = options.isOnline;
+		this.loading = options.loading;
 
 		this.dragKey = ko.observable(0);
 		this.dragging = ko.observable(false);
@@ -51,7 +52,10 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 			max: this.endKey,
 			val: this.currentKey,
 			drag: this.dragKey,
-			dragging: this.dragging
+			dragging: this.dragging,
+			handleMode: ko.computed(function() {
+				return self.loading() ? "airvis-slider-handle-loading" : "";
+			})
 		});
 		this.slider.on("change",function(val) {
 			self.emit("change",val);
