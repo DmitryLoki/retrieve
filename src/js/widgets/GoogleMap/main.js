@@ -132,6 +132,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.mapOptions.subscribe(function(options) {
 			if (!self.isReady()) return;
 			self.map.setOptions(options);
+			self.activateMapScroll(options.scrollwheel);
 		});
 
 		this.activateMapScroll.subscribe(function(b) {
@@ -140,11 +141,9 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 
 		this.setProfVisualMode = function() {
-			console.log("set prof");
 			self.profVisualMode("prof");
 		}
 		this.setUserVisualMode = function() {
-			console.log("set user");
 			self.profVisualMode("user");
 		}
 
