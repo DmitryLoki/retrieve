@@ -184,7 +184,9 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			return self.cylindersVisualMode() == "off" ? false : true;
 		});
 		w.titleVisible = ko.computed(function() {
-			return w.modelVisible() && self.zoom() >= config.waypointsVisualAutoMinZoom;
+			var b = w.modelVisible() && self.zoom() >= config.waypointsVisualAutoMinZoom;
+			console.log("check titleVisible",b,self.zoom(),config.waypointsVisualAutoMinZoom);
+			return b;
 		});
 		w.titleXYPosition = ko.computed(function() {
 			var prev = null, next = null, curr = null;
@@ -270,7 +272,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			w._model.set("fillOpacity",v);
 		});
 		w.centerSubscribe = w.center.subscribe(function(v) {
-			w._model.setPosition(new gmaps.LatLng(v.lat,v.lng));
+			w._model.setCenter(new gmaps.LatLng(v.lat,v.lng));
 		});
 		w.titlePositionSubscribe = w.titlePosition.subscribe(function(v) {
 			w._titleModel.setPosition(new gmaps.LatLng(v.lat,v.lng));
@@ -281,6 +283,11 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		w.titleXYPosition.subscribe(function(r) {
 			w._titleModel.setXYPosition(r);
 		});
+
+		w.center.valueHasMutated();
+		w.modelVisible.notifySubscribers();
+		w.titleVisible.notifySubscribers();
+
 		return w;
 	}
 
@@ -547,6 +554,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			mapTypeId: gmaps.MapTypeId[config.map.type]
 		});
 		gmaps.event.addListener(this.map,"zoom_changed",function() {
+			console.log("zoom_changed");
 			self.zoom(self.map.getZoom());
 		});
 		gmaps.event.addListener(this.map,"mousedown",function() {
