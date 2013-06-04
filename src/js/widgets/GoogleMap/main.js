@@ -284,8 +284,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 
 		w.center.valueHasMutated();
-		w.modelVisible.notifySubscribers();
-		w.titleVisible.notifySubscribers();
+		w.modelVisible.notifySubscribers(w.modelVisible());
+		w.titleVisible.notifySubscribers(w.titleVisible());
 
 		return w;
 	}
