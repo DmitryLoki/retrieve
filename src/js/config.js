@@ -44,7 +44,7 @@ define({
 			resizable: false,
 			absoluteCloseIcon: true,
 			title: "Player",
-			width: 940,
+			width: 780,
 			top: 160,
 			left: 90,
 			xPosition: "center",
@@ -57,7 +57,7 @@ define({
 			showHeader: false,
 			resizable: false,
 			absoluteCloseIcon: true,
-			width: 940,
+			width: 780,
 			height: 110,
 			top: 60,
 			xPosition: "center"

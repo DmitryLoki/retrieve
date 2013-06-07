@@ -104,9 +104,9 @@ define(["jquery","knockout"],function($,ko) {
 				w.emit("drag");
 			}
 			$("body").addClass("airvis-document-overwrite-cursor-move");
-			$(document).on("mousemove",mouseMove).one("mouseup mouseleave",function(e) {
+			$(document).on("mousemove touchmove",mouseMove).one("mouseup mouseleave touchend touchcancel",function(e) {
 				$("body").removeClass("airvis-document-overwrite-cursor-move");
-				$(document).off("mousemove",mouseMove);
+				$(document).off("mousemove touchmove",mouseMove);
 			});
 		}
 

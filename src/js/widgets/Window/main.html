@@ -1,5 +1,5 @@
 <div class="airvis-window" data-bind="visible:visible,style:cssPosition">
-	<div class="airvis-window-header airvis-clearfix" data-bind="visible:showHeader,event:{mousedown:dragStart}">
+	<div class="airvis-window-header airvis-clearfix" data-bind="visible:showHeader,event:{mousedown:dragStart,touchstart:dragStart}">
 		<div class="airvis-window-title" data-bind="text:title"></div>
 		<a class="airvis-window-close" href="#" data-bind="click:hide"></a>
 	</div>
