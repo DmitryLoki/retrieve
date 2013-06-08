@@ -35,7 +35,7 @@ define({
 			resizableY: true,
 			height: 300,
 			width: 370,
-			top: 380,
+			top: 180,
 			left: 90
 		},
 		playerControl: {
