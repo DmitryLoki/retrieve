@@ -1,8 +1,8 @@
 
 /* overall container */
 document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;}
-body { min-width: 100%; width: 100%;}
-.airvis-container { margin: 0; padding: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+body { min-width: 1000px; width: 100%;}
+.airvis-container { margin: 0; padding: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
 
 * { -webkit-font-smoothing: antialiased}
 
@@ -29,7 +29,7 @@ body { min-width: 100%; width: 100%;}
 .airvis-document-overwrite-cursor-s-resize { cursor: s-resize !important;}
 
 /* common window widget styles */
-.airvis-window { color: #333333; display: block;  font-size: 14px; line-height: 20px; position: absolute; font-weight: normal; }
+.airvis-window { color: #333333; display: block;  font-size: 14px; line-height: 20px; position: absolute; font-weight: normal; left: 0 !important;}
 .airvis-window {
   transition: width 0.5s ease;
 }
@@ -235,8 +235,8 @@ body { min-width: 100%; width: 100%;}
 
 
 /* Select */
-.airvis-player-selects  { float: left; width: 260px; padding-top: 5px;}
-.airvis-selectContainer { float: left; position: relative; width: 120px; margin: 5px;}
+.airvis-player-selects  { float: left; width: 270px; padding-top: 5px;}
+.airvis-selectContainer { float: left; position: relative; width: 125px; margin: 5px;}
 .airvis-select { text-decoration: none;}
 .airvis-value { color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: rgba(255,255,255, 0.75); padding: 0; text-align: center; width: 50px; min-height: 20px;
 
