@@ -53,9 +53,11 @@ define(['module'], function (module) {
         createXhr: function () {
             //Would love to dump the ActiveX crap in here. Need IE 6 to die first.
             var xhr, i, progId;
-            if (typeof XMLHttpRequest !== "undefined") {
-                return new XMLHttpRequest();
-            } else if (typeof ActiveXObject !== "undefined") {
+            if (typeof XDomainRequest !== "undefined") {
+                return new XDomainRequest();
+            } else if(typeof XMLHttpRequest !== "undefined") {
+              return new XMLHttpRequest();}
+            else if (typeof ActiveXObject !== "undefined") {
                 for (i = 0; i < 3; i++) {
                     progId = progIds[i];
                     try {
@@ -235,18 +237,18 @@ define(['module'], function (module) {
     } else if (text.createXhr()) {
         text.get = function (url, callback, errback) {
             var xhr = text.createXhr();
-            xhr.open('GET', url, true);
+            xhr.open('get', url);
 
             //Allow overrides specified in config
             if (masterConfig.onXhr) {
                 masterConfig.onXhr(xhr, url);
             }
 
-            xhr.onreadystatechange = function (evt) {
+            xhr.onload = function (evt) {
                 var status, err;
                 //Do not explicitly handle errors, those should be
                 //visible via console output in the browser.
-                if (xhr.readyState === 4) {
+                //if (xhr.readyState === 4) {
                     status = xhr.status;
                     if (status > 399 && status < 600) {
                         //An http 4xx or 5xx error. Signal an error.
@@ -256,9 +258,13 @@ define(['module'], function (module) {
                     } else {
                         callback(xhr.responseText);
                     }
-                }
+                //}
             };
             xhr.send(null);
+          /*jQuery.ajax({url:url,success: function(data){
+            xhr.readyState = 4;
+            callback(data);
+          },dataType:'html'})*/
         };
     } else if (typeof Packages !== 'undefined') {
         //Why Java, why is this so awkward?
@@ -302,3 +308,44 @@ define(['module'], function (module) {
 
     return text;
 });
+
+if ( window.XDomainRequest ) {
+  jQuery.ajaxTransport(function( s ) {
+    if ( s.crossDomain && s.async ) {
+      if ( s.timeout ) {
+        s.xdrTimeout = s.timeout;
+        delete s.timeout;
+      }
+      var xdr;
+      return {
+        send: function( _, complete ) {
+          function callback( status, statusText, responses, responseHeaders ) {
+            xdr.onload = xdr.onerror = xdr.ontimeout = jQuery.noop;
+            xdr = undefined;
+            complete( status, statusText, responses, responseHeaders );
+          }
+          xdr = new XDomainRequest();
+          xdr.onload = function() {
+            callback( 200, "OK", { text: xdr.responseText }, "Content-Type: " + xdr.contentType );
+          };
+          xdr.onerror = function() {
+            callback( 404, "Not Found" );
+          };
+          xdr.onprogress = jQuery.noop;
+          xdr.ontimeout = function() {
+            callback( 0, "timeout" );
+          };
+          xdr.timeout = s.xdrTimeout || Number.MAX_VALUE;
+          xdr.open( s.type, s.url );
+          xdr.send( ( s.hasContent && s.data ) || null );
+        },
+        abort: function() {
+          if ( xdr ) {
+            xdr.onerror = jQuery.noop;
+            xdr.abort();
+          }
+        }
+      };
+    }
+  });
+}
