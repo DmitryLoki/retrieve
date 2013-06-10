@@ -1,4 +1,4 @@
-define(['jquery', 'es5-shim'], function($){
+define(['jquery', 'es5-shim','console-fix'], function($){
 	function isWidget(obj){
 		return !!obj._widgetName;
 	}
