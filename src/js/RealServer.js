@@ -15,6 +15,7 @@
 						startKey: result.start_time*mult,
 						endKey: result.end_time*mult,
 						raceKey: result.start_time*mult,
+						timeoffset: result.timeoffset,
 						titles: {
 							mainTitle: result.contest_title,
 							placeTitle: result.place,
@@ -23,7 +24,7 @@
 						},
 						waypoints: []
 					}
-					var d = new Date();
+					var d = new Date(data.startKey);
 					data.titles.dateTitle = d.toDateString();
 					if (result.checkpoints && result.checkpoints.features) {
 						for (var i = 0; i < result.checkpoints.features.length; i++) {

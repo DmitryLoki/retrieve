@@ -120,6 +120,7 @@ define([
 		this.endKey = ko.observable(0);
 		this.currentKey = ko.observable(0);
 		this.raceKey = ko.observable(0);
+		this.timeoffset = ko.observable("");
 		this.playerState = ko.observable(this.options.playerState);
 		this.playerSpeed = ko.observable(this.options.playerSpeed);
 		this.isReady = ko.observable(false);
@@ -208,6 +209,7 @@ define([
 			endKey: self.endKey,
 			currentKey: self.currentKey,
 			raceKey: self.raceKey,
+			timeoffset: self.timeoffset,
 			tracksVisualMode: self.tracksVisualMode,
 			cylindersVisualMode: self.cylindersVisualMode,
 			modelsVisualMode: self.modelsVisualMode,
@@ -307,6 +309,7 @@ define([
 				self.endKey(data.endKey);
 				self.currentKey(data.startKey);
 				self.raceKey(data.raceKey||data.startKey);
+				self.timeoffset(data.timeoffset);
 				if (self.mainMenu && data.titles)
 					self.mainMenu.setTitles(data.titles);
 				var waypoints2load = [];

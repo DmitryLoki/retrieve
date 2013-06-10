@@ -16,6 +16,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.playerSpeed = options.playerSpeed;
 		this.isOnline = options.isOnline;
 		this.loading = options.loading;
+		this.timeoffset = options.timeoffset;
 
 		this.dragKey = ko.observable(0);
 		this.dragging = ko.observable(false);
@@ -29,7 +30,13 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		});
 
 		this.localTime = ko.computed(function() {
-			var d = new Date(self.displayKey());
+			var d = new Date();
+			var localOffset = d.getTimezoneOffset() * 60000;
+			var utc = self.displayKey() + localOffset;
+			var offset = self.timeoffset()*36000;
+			var d = new Date(utc + offset);
+			console.log("localTime",localOffset,offset);
+//			var d = new Date(self.displayKey());
 			return getTimeStr(d.getHours(),d.getMinutes(),d.getSeconds());
 		});
 
