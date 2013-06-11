@@ -13,7 +13,7 @@ require.config({
 		"jquery.color": "lib/jquery.color",
 		"async": "lib/async",
 		"text": "lib/require.text",
-    "console-fix": "wild-libs/console-fix"
+    "ie-fix": "wild-libs/ie-fix"
 	},
 	shim: {
     	"jquery": { exports: function(){ return jQuery.noConflict(true); } },
