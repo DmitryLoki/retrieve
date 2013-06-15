@@ -311,6 +311,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			name: data.name,
 			color: data.color,
 			state: data.state,
+			stateChangedAt: data.stateChangedAt,
 			position: data.position,
 			track: data.track,
 			visible: data.visible,
@@ -356,9 +357,11 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
 		u.icon = ko.computed(function() {
 			u.visible();
+//			if (u.state() == "landed" && u.stateChangedAt() > 0) return "finished_landed_" + self.modelsVisualMode();
+			return u.state() + "_" + self.modelsVisualMode();
 //			return u.state() + self.modelsVisualMode();
-			var icon = "fly" + self.modelsVisualMode();
-			return icon;
+//			var icon = "fly" + self.modelsVisualMode();
+//			return icon;
 		});
 
 		u._trackBegin = ko.computed(function() {
@@ -400,6 +403,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
 		u.iconSubscribe = u.icon.subscribe(function(v) {
 			var params = config.icons[v];
+			if (!v || !params) params = config.icons["default_" + self.modelsVisualMode()];
 			if (v && params)
 				u._model.setIcon(new gmaps.MarkerImage(self.imgRootUrl()+params.url, new gmaps.Size(params.width,params.height),new gmaps.Point(0,0),new gmaps.Point(params.x,params.y)));
 		});

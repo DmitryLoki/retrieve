@@ -55,12 +55,21 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 
 	UfosTable.prototype.sortTableRows = function() {
 		this.tableUfos.sort(function(a,b) {
-			d1 = (a && a.tableData && a.tableData.dist && a.tableData.dist() > 0) ? a.tableData.dist() : null;
-			d2 = (b && b.tableData && b.tableData.dist && b.tableData.dist() > 0) ? b.tableData.dist() : null;
-			s1 = (a && a.tableData && a.tableData.state) ? a.tableData.state() : null;
-			s2 = (b && b.tableData && b.tableData.state) ? b.tableData.state() : null;
-			c1 = (a && a.tableData && a.tableData.stateChangedAt) ? a.tableData.stateChangedAt() : null;
-			c2 = (b && b.tableData && b.tableData.stateChangedAt) ? b.tableData.stateChangedAt() : null;
+			var undef1 = !a || !a.tableData;
+			var undef2 = !b || !b.tableData;
+			if (undef1 || undef2) return undef1 && undef2 ? 0 : (undef1 ? 1 : -1);
+
+			var d1 = a.dist && a.dist() >= 0 ? a.dist() : null;
+			var d2 = b.dist && b.dist() >= 0 ? b.dist() : null;
+			var s1 = a.tableData.state ? a.tableData.state() : null;
+			var s2 = b.tableData.state ? b.tableData.state() : null;
+			var c1 = a.tableData.stateChangedAt ? a.tableData.stateChangedAt() : null;
+			var c2 = b.tableData.stateChangedAt ? b.tableData.stateChangedAt() : null;
+
+			if (s1 == null && s2 != null) return 1;
+			if (s1 != null && s2 == null) return -1;
+			if (s1 == "not started" && s2 != "not started") return 1;
+			if (s1 != "not started" && s2 == "not started") return -1;
 
 			if (s1 == "finished" && s2 == "finished") {
 				if (c1 && c2) return c1 == c2 ? 0 : (c1 < c2 ? -1 : 1);
@@ -71,21 +80,33 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 			else if (s1 == "finished") return -1;
 			else if (s2 == "finished") return 1;
 
-			if (s1 == null && s2 != null) return 1;
-			if (s1 != null && s2 == null) return -1;
-
 			if (s1 == "landed" && s2 != "landed") return 1;
 			if (s2 == "landed" && s1 != "landed") return -1;
 
-			if (d1 > 0 && d2 > 0) {
+			if (d1 >= 0 && d2 >= 0) {
 				d1 = Math.floor(d1*10);
 				d2 = Math.floor(d2*10);
 				return d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
 			}
-			if (d2 > 0) return 1;
-			if (d1 > 0) return -1;
+			if (d2 >= 0) return 1;
+			if (d1 >= 0) return -1;
 			return 0;
 		});
+
+
+/*
+		this.tableUfos().forEach(function(item) {
+			if (item.id() == 20)
+				console.log({
+					id: item.id(),
+					name: item.name(),
+					tableState: item.tableData ? item.tableData.state() : null,
+					state: item.state(),
+					dist: item.dist(),
+					dt: item.tableData ? item.tableData.stateChangedAt() : null
+				});
+		});
+*/
 	}
 
 	UfosTable.prototype.getTimeStr = function(h,m,s) {
@@ -102,6 +123,7 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 			color: data.color,
 			state: data.state,
 			stateChangedAt: data.stateChangedAt,
+			dist: data.dist,
 			visible: data.visible,
 			trackVisible: data.trackVisible,
 			noData: data.noData,
@@ -164,7 +186,7 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 				}
 				else {
 					self.mode("short");
-					self.modalWindow.width(370);
+					self.modalWindow.width(400);
 				}
 			}
 			this.inModalWindow(true);

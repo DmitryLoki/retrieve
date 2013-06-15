@@ -18,7 +18,7 @@
 						timeoffset: result.timeoffset,
 						titles: {
 							mainTitle: result.contest_title,
-							placeTitle: result.place,
+							placeTitle: result.country + ", " + result.place,
 							dateTitle: "",
 							taskTitle: result.race_title
 						},
@@ -73,7 +73,7 @@
 					var data = [];
 					for (var i = 0; i < result.length; i++) {
 						var rw = result[i];
-//						if (rw.contest_number!="52") continue;
+//						if (rw.contest_number!="20") continue;
 						data.push({
 							id: rw.contest_number,
 							name: rw.name,
@@ -100,9 +100,9 @@
 					start_positions: 1
 				},
 				success: function(result) {
-					var data = {start:{},timeline:{}};
+					var data = {start:{},timeline:{}}, tmp = {};
 					$.each(result.start,function(pilot_id,rw) {
-//						if (pilot_id!="52") return;
+//						if (pilot_id!="20") return;
 						data.start[pilot_id] = {
 							dist: rw.dist,
 							gspd: rw.gspd,
@@ -116,12 +116,13 @@
 							stateChangedAt: rw.statechanged_at,
 							dt: query.first
 						}
+						tmp[pilot_id] = {state:rw.state,stateChangedAt:rw.statechanged_at};
 					});
 					$.each(result.timeline,function(dt,rws) {
 						dt *= 1000;
 						data.timeline[dt] = {};
 						$.each(rws,function(pilot_id,rw) {
-//							if (pilot_id != "52") return;
+//							if (pilot_id != "20") return;
 							data.timeline[dt][pilot_id] = {
 								dist: rw.dist,
 								gspd: rw.gspd,
@@ -134,10 +135,17 @@
 								state: rw.state,
 								dt: dt
 							}
-							if (rw.state)
-								data.timeline[dt][pilot_id].stateChangedAt = dt;
+							if (rw.state) {
+								data.timeline[dt][pilot_id].stateChangedAt = Math.floor(dt/1000);
+								tmp[pilot_id] = {state:rw.state,stateChangedAt:Math.floor(dt/1000)};
+							}
+							else if (tmp[pilot_id]) {
+								data.timeline[dt][pilot_id].state = tmp[pilot_id].state;
+								data.timeline[dt][pilot_id].stateChangedAt = tmp[pilot_id].stateChangedAt;
+							}
 						});
 					});
+					console.log("real server data",data);
 					if (query.callback)
 						query.callback(data);
 				},

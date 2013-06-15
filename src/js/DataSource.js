@@ -80,8 +80,10 @@ define(function() {
 										dt: d1.dt
 									},
 									alt: d1.alt,
-									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
-									stateChangedAt: d1.stateChangedAt ? d1.stateChangedAt : frame.start[pilot_id] ? frame.start[pilot_id].stateChangedAt : null,
+//									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
+//									stateChangedAt: d1.stateChangedAt ? d1.stateChangedAt : frame.start[pilot_id] ? frame.start[pilot_id].stateChangedAt : null,
+									state: d1.state,
+									stateChangedAt: d1.stateChangedAt,
 									dt: d1.dt
 								}
 							else {
@@ -101,8 +103,10 @@ define(function() {
 										dt: d1.dt
 									},
 									alt: d1.alt,
-									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
-									stateChangedAt: d1.stateChangedAt ? d1.stateChangedAt : frame.start[pilot_id] ? frame.start[pilot_id].stateChangedAt : null,
+//									state: d1.state ? d1.state : frame.start[pilot_id] ? frame.start[pilot_id].state : null,
+//									stateChangedAt: d1.stateChangedAt ? d1.stateChangedAt : frame.start[pilot_id] ? frame.start[pilot_id].stateChangedAt : null,
+									state: d1.state,
+									stateChangedAt: d1.stateChangedAt,
 									dt: d1.dt
 								}
 							}

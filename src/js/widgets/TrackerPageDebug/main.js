@@ -383,8 +383,9 @@ define([
 								ufo.position({lat:rw.position.lat,lng:rw.position.lng,dt:rw.position.dt});
 							if (!ufo.track() || !ufo.track().dt || ufo.track().dt != rw.track.dt)
 								ufo.track({lat:rw.track.lat,lng:rw.track.lng,dt:rw.track.dt});
-							if (rw.state)
+							if (rw.state && rw.state != ufo.state()) {
 								ufo.state(rw.state);
+							}
 							if (rw.stateChangedAt)
 								ufo.stateChangedAt(rw.stateChangedAt);
 						}

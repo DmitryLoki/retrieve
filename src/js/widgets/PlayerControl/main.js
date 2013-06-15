@@ -35,7 +35,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 			var utc = self.displayKey() + localOffset;
 			var offset = self.timeoffset()*36000;
 			var d = new Date(utc + offset);
-			console.log("localTime",localOffset,offset);
+//			console.log("localTime",localOffset,offset,"currentKey",self.currentKey());
 //			var d = new Date(self.displayKey());
 			return getTimeStr(d.getHours(),d.getMinutes(),d.getSeconds());
 		});
