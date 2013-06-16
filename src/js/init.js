@@ -12,7 +12,8 @@ require.config({
 		"jquery.tinyscrollbar": "lib/jquery.tinyscrollbar",
 		"jquery.color": "lib/jquery.color",
 		"async": "lib/async",
-		"text": "lib/require.text"
+		"text": "lib/require.text",
+    "ie-fix": "wild-libs/ie-fix"
 	},
 	shim: {
     	"jquery": { exports: function(){ return jQuery.noConflict(true); } },
