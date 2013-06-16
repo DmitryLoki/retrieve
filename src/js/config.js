@@ -44,6 +44,7 @@ define({
 			resizableY: true,
 			height: 300,
 			width: 400,
+			wideWidth: 500,
 			top: 180,
 			left: 90
 		},

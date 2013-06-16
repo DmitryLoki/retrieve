@@ -178,7 +178,7 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 		if (this.modalWindow) {
 			this.switchMode = function() {
 				if (self.mode() == "short") {
-					self.modalWindow.width(570);
+					self.modalWindow.width(config.windows.ufosTable.wideWidth);
 					// В css при изменении ширины идет transition: width 0.1s, поэтому здесь - костыльный таймаут
 					setTimeout(function() {
 						self.mode("full");
@@ -186,7 +186,7 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 				}
 				else {
 					self.mode("short");
-					self.modalWindow.width(400);
+					self.modalWindow.width(config.windows.ufosTable.width);
 				}
 			}
 			this.inModalWindow(true);
