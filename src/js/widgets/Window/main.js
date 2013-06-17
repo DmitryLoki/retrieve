@@ -63,6 +63,11 @@ define(["jquery","knockout"],function($,ko) {
 				out.left = self.left() + (self.left()=="auto"?"":"px");
 			return out;
 		});
+
+		self.visible.subscribe(function(v) {
+			if (v)
+				self.setAbsoluteContentPosition();
+		});
 	}
 
 	Window.prototype.hide = function(self,e) {
@@ -102,11 +107,16 @@ define(["jquery","knockout"],function($,ko) {
 				var y = $(window).height() - this.height() - this.bottom();
 				this.top(y);
 			}
-
-			var content = obj.find(".airvis-window-content");
-			var position = content.position();
-			content.addClass("airvis-window-content-absolute").css({top:position.top+"px",left:position.left+"px"});
+			this.setAbsoluteContentPosition();
 		}
+	}
+
+	Window.prototype.setAbsoluteContentPosition = function() {
+		console.log("setAbsoluteContentPosition",this.container);
+		if (!this.container || !this.visible()) return;
+		var content = this.container.find(".airvis-window-content");
+		var position = content.position();
+		content.addClass("airvis-window-content-absolute").css({top:position.top+"px",left:position.left+"px"});		
 	}
 
 	Window.prototype.asObservable = function(v,defaultV) {

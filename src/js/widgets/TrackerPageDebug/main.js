@@ -13,6 +13,7 @@ define([
     //'widget!OwgMap',
     'widget!MainMenu',
     'widget!TopBar',
+    'widget!Facebook',
     'TestServer',
     'RealServer',
     'DataSource',
@@ -33,6 +34,7 @@ define([
    // OwgMap,
     MainMenu,
     TopBar,
+    Facebook,
     TestServer,
     RealServer,
     DataSource,
@@ -167,6 +169,7 @@ define([
 						namesVisualMode: self.namesVisualMode,
 						profVisualMode: self.profVisualMode,
 						currentKey: self.currentKey,
+						raceKey: self.raceKey,
 						imgRootUrl: self.imgRootUrl,
 						mapOptions: self.mapOptions,
 						mode: self.mode
@@ -185,6 +188,7 @@ define([
 						namesVisualMode: self.namesVisualMode,
 						profVisualMode: self.profVisualMode,
 						currentKey: self.currentKey,
+						raceKey: self.raceKey,
 						imgRootUrl: self.imgRootUrl,
 						mapOptions: self.mapOptions,
 						mode: self.mode
@@ -226,11 +230,14 @@ define([
 		this.mainMenu = new MainMenu();
 		this.mainMenuWindow = new Window(this.options.windows.mainMenu);
 
+		this.facebook = new Facebook();
+		this.facebookWindow = new Window(this.options.windows.facebook);
+
 		this.topBar = new TopBar();
-		this.topBar.items.push(this.mainMenuWindow,this.ufosTableWindow,this.playerControlWindow);
+		this.topBar.items.push(this.mainMenuWindow,this.ufosTableWindow,this.playerControlWindow,this.facebookWindow);
 
 		this.windowManager = new WindowManager();
-		this.windowManager.items.push(this.ufosTableWindow,this.playerControlWindow,this.mainMenuWindow);
+		this.windowManager.items.push(this.ufosTableWindow,this.playerControlWindow,this.mainMenuWindow,this.facebookWindow);
 
 //		this.server = new TestServer(this.options);
 //		this.server.generateData();

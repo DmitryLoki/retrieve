@@ -71,6 +71,16 @@ define({
 			height: 110,
 			top: 60,
 			xPosition: "center"
+		},
+		facebook: {
+			visible: false,
+			title: "Facebook",
+			resizable: false,
+			width: 400,
+			height: 580,
+			xPosition: "right",
+			top: 180,
+			right: 90
 		}
 	},
 	tracksVisualMode: "off",

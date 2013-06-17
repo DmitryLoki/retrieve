@@ -65,6 +65,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.namesVisualMode = options.namesVisualMode;
 		this.profVisualMode = options.profVisualMode;
 		this.currentKey = options.currentKey;
+		this.raceKey = options.raceKey;
 		this.imgRootUrl = options.imgRootUrl;
 		this.zoom = ko.observable(config.map.zoom);
 		this.isReady = ko.observable(false);
@@ -357,6 +358,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
 		u.icon = ko.computed(function() {
 			u.visible();
+//			if (self.raceKey() > self.currentKey())
+//				return "not started_" + self.modelsVisualMode();
 //			if (u.state() == "landed" && u.stateChangedAt() > 0) return "finished_landed_" + self.modelsVisualMode();
 			return u.state() + "_" + self.modelsVisualMode();
 //			return u.state() + self.modelsVisualMode();
