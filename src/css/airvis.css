@@ -274,7 +274,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 /* TopBar */
 .airvis-topbar { position: absolute; top: 0; left: 0; right: 0; height: 40px; background-color: rgba(0, 47, 64, 0.93); }
-.airvis-topbar-container { margin: 0 auto; width: 800px;}
+.airvis-topbar-container { margin: 0 auto; width: 940px;}
 .airvis-topbar-logo { background: transparent url("../img/logo.png") 0 0 no-repeat; display: block; float: left; height: 24px; margin: 8px 0 0 0; width: 216px;}
 .airvis-topbar-items { display: block; float: left; margin: 0; padding: 0; margin-left: 70px;}
 .airvis-topbar-items li { display: block; float: left; list-style: none outside none; position: relative; }
@@ -283,6 +283,8 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   -moz-border-radius: 2px; 
   border-radius: 2px;
 }
+.airvis-topbar-items-right { float: right; margin-left: 0; }
+
 
 /* TopBar menu */
 .airvis-topbar-items a.airvis-hover { position: absolute; top: 0; left: 0; color: #ffffff; }

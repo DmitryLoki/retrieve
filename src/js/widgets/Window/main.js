@@ -12,6 +12,7 @@ define(["jquery","knockout"],function($,ko) {
 			resizableX: false,
 			contentCss: "",
 			title: "",
+			menuTitlePosition: "left",
 			nodes: [],
 			width: 300,
 			height: "auto",
@@ -35,6 +36,7 @@ define(["jquery","knockout"],function($,ko) {
 		self.resizableX = this.asObservable(options.resizableX,defaults.resizableX);
 		self.contentCss = this.asObservable(options.contentCss,defaults.contentCss);
 		self.title = this.asObservable(options.title,defaults.title);
+		self.menuTitlePosition = this.asObservable(options.menuTitlePosition,defaults.menuTitlePosition);
 		self.width = this.asObservable(options.width,defaults.width);
 		self.height = this.asObservable(options.height,defaults.height);
 		self.top = this.asObservable(options.top,defaults.top);
@@ -112,7 +114,6 @@ define(["jquery","knockout"],function($,ko) {
 	}
 
 	Window.prototype.setAbsoluteContentPosition = function() {
-		console.log("setAbsoluteContentPosition",this.container);
 		if (!this.container || !this.visible()) return;
 		var content = this.container.find(".airvis-window-content");
 		var position = content.position();

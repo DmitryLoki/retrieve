@@ -75,9 +75,10 @@ define({
 		facebook: {
 			visible: false,
 			title: "Facebook",
+			menuTitlePosition: "right",
 			resizable: false,
-			width: 400,
-			height: 580,
+			width: 292,
+			height: 298,
 			xPosition: "right",
 			top: 180,
 			right: 90
