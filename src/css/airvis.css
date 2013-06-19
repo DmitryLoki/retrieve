@@ -2,7 +2,7 @@
 /* overall container */
 document,body { height: 100%; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;}
 body { min-width: 1000px; width: 100%; min-height: 100%}
-.airvis-container { margin: 0; padding: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0; min-width: 1000px; /*position: relative; width: 100%; height: 100%;*/}
+.airvis-container { margin: 0; padding: 0; position: absolute; top: 0; left: 0; right: 0; bottom: 0; /*position: relative; width: 100%; height: 100%;*/}
 
 * { -webkit-font-smoothing: antialiased}
 
@@ -180,10 +180,10 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-player-timeWindow.airvis-active { background-color: #ced828;}
 .airvis-player-timeWindow.airvis-inactive { background-color: #fbd72c;}
 .airvis-player-timeWindow.airvis-local { background-color: #b0d3d8; padding-top: 15px;}
-.airvis-player-timeText { float: left; font-size: 14px; font-weight: bold; line-height: 20px; margin: 19px 0 10px 10px; margin-left: 0; width: 70px;}
+.airvis-player-timeText { float: left; font-size: 14px; font-weight: bold; line-height: 20px; margin: 19px 0 10px 10px; margin-left: 0; width: 70px; }
 .airvis-player-timeText.airvis-active { color: #ced828;}
 .airvis-player-timeText.airvis-inactive { color: #fbd72c;}
-.airvis-player-timeText.airvis-local { color: #b0d3d8;}
+.airvis-player-timeText.airvis-local { color: #b0d3d8; width: 50px; }
 .airvis-player-time { color: #ffffff; font-size: 30px; font-weight: bold; line-height: 30px; margin: 1px 0 4px;}
 
 
@@ -236,7 +236,12 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 
 /* Select */
-.airvis-player-selects  { float: right; width: 270px; padding-top: 5px; padding-right: 55px;}
+.airvis-player-selects-container {
+  margin-top: 5px;
+  margin-left: 420px;
+  margin-right: 20px;
+}
+.airvis-player-selects  { width: 270px; margin: 0 auto; }
 .airvis-selectContainer { float: left; position: relative; width: 125px; margin: 5px;}
 .airvis-select { text-decoration: none;}
 .airvis-value { color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: rgba(255,255,255, 0.75); padding: 0; text-align: center; width: 50px; min-height: 20px;
@@ -274,7 +279,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 /* TopBar */
 .airvis-topbar { position: absolute; top: 0; left: 0; right: 0; height: 40px; background-color: rgba(0, 47, 64, 0.93); }
-.airvis-topbar-container { margin: 0 auto; width: 940px;}
+.airvis-topbar-container { margin: 0 auto; max-width: 940px;}
 .airvis-topbar-logo { background: transparent url("../img/logo.png") 0 0 no-repeat; display: block; float: left; height: 24px; margin: 8px 0 0 0; width: 216px;}
 .airvis-topbar-items { display: block; float: left; margin: 0; padding: 0; margin-left: 70px;}
 .airvis-topbar-items li { display: block; float: left; list-style: none outside none; position: relative; }
@@ -283,7 +288,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   -moz-border-radius: 2px; 
   border-radius: 2px;
 }
-.airvis-topbar-items-right { float: right; margin-left: 0; }
+.airvis-topbar-items-right { float: right; margin-left: 0; margin-right: 5px; }
 
 
 /* TopBar menu */
@@ -299,7 +304,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 /* Title */
 .airvis-title { padding: 18px 18px 22px; color: #ffffff; font-size: 18px; position: relative; line-height: 20px;}
-.airvis-title h1 { font-size: 36px; line-height: 36px; margin: 0; padding: 0 0 4px; font-weight: bold;}
+.airvis-title h1 { font-size: 36px; line-height: 36px; margin: 0; padding: 0 0 4px; font-weight: bold; white-space:nowrap; overflow: hidden; }
 .airvis-title .airvis-title-place { float: left; margin: 10px 30px 0 0; background: url(../img/title_pics.png) no-repeat 0 2px; padding: 0 0 0 24px; font-weight: bold;}
 .airvis-title .airvis-title-date { float: left; margin: 10px 30px 0 0; background: url(../img/title_pics.png) no-repeat 0 -97px; padding: 0 0 0 27px;}
 .airvis-title .airvis-title-task { float: left; margin: 10px 30px 0 0; background: url(../img/title_pics.png) no-repeat 0 -198px; padding: 0 0 0 24px;}

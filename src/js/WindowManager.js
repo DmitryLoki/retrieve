@@ -47,15 +47,17 @@ define(["jquery","knockout"],function($,ko) {
 
 		var dragStart = function(w,e) {
 			var startE = e;
-			var startPosition = {top:w.top(),left:w.left()};
+			var startPosition = {top:w.top(),left:w.left(),width:w.width(),height:w.height()};
 //			e.target.setCapture();
 			var segments = getSegments(w);
 			var points = getPoints(w);
 			var mouseMove = function(e) {
 				var top = startPosition.top + e.pageY - startE.pageY;
 				var left = startPosition.left + e.pageX - startE.pageX;
-				var width = w.width();
-				var height = w.height();
+//				var width = w.width();
+//				var height = w.height();
+				var width = startPosition.width;
+				var height = startPosition.height;
 				var pois = [
 					[left-self.xSpace,top-self.ySpace],
 					[left+width+self.xSpace,top-self.ySpace],

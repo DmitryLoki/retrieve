@@ -20,8 +20,8 @@ define(["jquery","knockout"],function($,ko) {
 			left: 0,
 			right: 0,
 			bottom: 0,
-			minWidth: 100,
-			minHeight: 50,
+			minWidth: 0,
+			minHeight: 0,
 			xPosition: "left",
 			yPosition: "top"
 		}
@@ -92,6 +92,14 @@ define(["jquery","knockout"],function($,ko) {
 			var obj = $(div);
 			this.width(obj.width());
 			this.height(obj.height());
+
+			var windowWidth = $(window).width();
+			if (this.width() >= windowWidth && this.minWidth() > 0) {
+				if (windowWidth > this.minWidth() + 10)
+					this.width(windowWidth - 10);
+				else
+					this.width(this.minWidth());
+			}
 
 			if (this.xPosition() == "center") {
 				var x = Math.floor(($(window).width()-this.width())/2);
