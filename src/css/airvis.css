@@ -239,9 +239,9 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-player-selects-container {
   margin-top: 5px;
   margin-left: 420px;
-  margin-right: 20px;
+  margin-right: 35px;
 }
-.airvis-player-selects  { width: 270px; margin: 0 auto; }
+.airvis-player-selects  { width: 270px; float: right; }
 .airvis-selectContainer { float: left; position: relative; width: 125px; margin: 5px;}
 .airvis-select { text-decoration: none;}
 .airvis-value { color: #002a3a; display: block; float: right; font-size: 12px; font-weight: bold; background-color: rgba(255,255,255, 0.75); padding: 0; text-align: center; width: 50px; min-height: 20px;
