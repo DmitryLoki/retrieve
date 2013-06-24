@@ -45,13 +45,29 @@ define(["jquery","knockout"],function($,ko) {
 	 		return null;
 		}
 
+		var getEventCoords = function(e,eventType) {
+			if (eventType == "touch") {
+				if (e.originalEvent) e = e.originalEvent;
+				if (e.touches && e.touches.length > 0)
+					return {pageX:e.touches[0].clientX,pageY:e.touches[0].clientY};
+				if (e.changedTouches && e.changedTouches.length > 0)
+					return {pageX:e.changedTouches[0].clientX,pageY:e.changedTouches[0].clientY};
+				if (e.targetTouches && e.targetTouches.length > 0)
+					return {pageX:e.targetTouches[0].clientX,pageY:e.targetTouches[0].clientY};
+			}
+			else
+				return {pageX:e.pageX,pageY:e.pageY};
+		}
+
 		var dragStart = function(w,e) {
-			var startE = e;
+			var eventType = e.type.match(/^touch/) ? "touch" : "mouse";
+			var startE = getEventCoords(e,eventType);
 			var startPosition = {top:w.top(),left:w.left(),width:w.width(),height:w.height()};
-//			e.target.setCapture();
 			var segments = getSegments(w);
 			var points = getPoints(w);
 			var mouseMove = function(e) {
+				e = getEventCoords(e,eventType);
+//				alert("e.type="+e.type+", startE.pageX="+startE.pageX+", startE.pageY="+startE.pageY+", e.pageX="+e.pageX+", e.pageY="+e.pageY);
 				var top = startPosition.top + e.pageY - startE.pageY;
 				var left = startPosition.left + e.pageX - startE.pageX;
 //				var width = w.width();

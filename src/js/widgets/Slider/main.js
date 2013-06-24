@@ -35,21 +35,39 @@ define(["jquery","knockout"], function($,ko) {
 	Slider.prototype.dragStart = function(self,e) {
 		e.stopPropagation();
 		e.preventDefault();
+		var eventType = e.type.match(/^touch/) ? "touch" : "mouse";
+
 		var w = this.container.width();
 		if (!w || !(w>0)) return;
 		var l = this.container.offset().left;
 		if (!l || !(l>=0)) return;
 		self.dragging(true);
+
+		var getEventCoords = function(e,eventType) {
+			if (eventType == "touch") {
+				if (e.originalEvent) e = e.originalEvent;
+				if (e.touches && e.touches.length > 0)
+					return {pageX:e.touches[0].clientX,pageY:e.touches[0].clientY};
+				if (e.changedTouches && e.changedTouches.length > 0)
+					return {pageX:e.changedTouches[0].clientX,pageY:e.changedTouches[0].clientY};
+				if (e.targetTouches && e.targetTouches.length > 0)
+					return {pageX:e.targetTouches[0].clientX,pageY:e.targetTouches[0].clientY};
+			}
+			else
+				return {pageX:e.pageX,pageY:e.pageY};
+		}
+
 		var mouseMove = function(e) {
+			e = getEventCoords(e,eventType);
 			var p = (e.pageX-l)/w;
 			if (p > 1) p = 1;
 			if (p < 0) p = 0;
 			self.drag(self.min()+(self.max()-self.min())*p);
 		}
 		$("body").addClass("airvis-document-overwrite-cursor-pointer");
-		$(document).on("mousemove",mouseMove).one("mouseup mouseleave",function(e) {
+		$(document).on("mousemove touchmove",mouseMove).one("mouseup mouseleave touchend touchcancel",function(e) {
 			$("body").removeClass("airvis-document-overwrite-cursor-pointer");
-			$(document).off("mousemove",mouseMove);
+			$(document).off("mousemove touchmove",mouseMove);
 			self.emit("change",self.drag());
 			self.dragging(false);
 		});
