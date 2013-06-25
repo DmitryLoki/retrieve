@@ -25,7 +25,9 @@
 						waypoints: []
 					}
 					var d = new Date(data.startKey);
-					data.titles.dateTitle = d.toDateString();
+//					data.titles.dateTitle = d.toDateString();
+					var m_ar = "Jan Fab Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(/ /);
+					data.titles.dateTitle = d.getDate() + " " + m_ar[d.getMonth()] + ", " + d.getFullYear();
 					if (result.checkpoints && result.checkpoints.features) {
 						for (var i = 0; i < result.checkpoints.features.length; i++) {
 							rw = result.checkpoints.features[i];
