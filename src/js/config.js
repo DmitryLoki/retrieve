@@ -29,6 +29,11 @@ define({
 		trackStrokeWeight: 1,
 		flat: true
 	},
+	ufosNames: {
+		font: "13px sans",
+		textBaseline: "bottom",
+		textAlign: "left"
+	},
 	ufosTable: {
 		mode: "short",
 		allVisibleCheckboxColor: "blue"

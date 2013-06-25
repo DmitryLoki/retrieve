@@ -6,6 +6,7 @@ define([
     'EventEmitter',
     'WindowManager',
     'widget!GoogleMap',
+    'widget!GoogleMapCanvas',
     'widget!PlayerControl',
     'widget!UfosTable',
     'widget!Checkbox',
@@ -27,6 +28,7 @@ define([
 	EventEmitter,
 	WindowManager,
 	GoogleMap,
+	GoogleMapCanvas,
 	PlayerControl,
 	UfosTable,
     Checkbox,
@@ -161,8 +163,7 @@ define([
 			if (self.isReady()) {
 				if (self.map)
 					self.map.destroy();
-				if (self.mapWidget() == "2d") {
-					self.map = new GoogleMap({
+				var mapOptions = {
 						ufos: self.ufos,
 						waypoints: self.waypoints,
 						shortWay: self.shortWay,
@@ -177,26 +178,17 @@ define([
 						imgRootUrl: self.imgRootUrl,
 						mapOptions: self.mapOptions,
 						mode: self.mode
-					});
+				};
+				if (self.mapWidget() == "2d") {
+					self.map = new GoogleMap(mapOptions);
 					self.mapType = "GoogleMap";
 				}
+				else if (self.mapWidget() == "2d-canvas") {
+					self.map = new GoogleMapCanvas(mapOptions);
+					self.mapType = "GoogleMapCanvas";
+				}
 				else if (self.mapWidget() == "3d") {
-					self.map = new OwgMap({
-						ufos: self.ufos,
-						waypoints: self.waypoints,
-						shortWay: self.shortWay,
-						tracksVisualMode: self.tracksVisualMode,
-						cylindersVisualMode: self.cylindersVisualMode,
-						modelsVisualMode: self.modelsVisualMode,
-						shortWayVisualMode: self.shortWayVisualMode,
-						namesVisualMode: self.namesVisualMode,
-						profVisualMode: self.profVisualMode,
-						currentKey: self.currentKey,
-						raceKey: self.raceKey,
-						imgRootUrl: self.imgRootUrl,
-						mapOptions: self.mapOptions,
-						mode: self.mode
-					});
+					self.map = new OwgMap(mapOptions);
 					self.mapType = "OwgMap";
 				}
 			}
@@ -403,6 +395,7 @@ define([
 						else
 							ufo.noData(true);
 					});
+					self.map.update();
 					if (callback)
 						callback(data);
 				}
