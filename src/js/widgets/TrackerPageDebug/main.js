@@ -1,6 +1,7 @@
 define([
     'utils',
     'walk',
+    'jquery',
     'knockout',
     'knockout.mapping',
     'EventEmitter',
@@ -25,6 +26,7 @@ define([
 ], function(
 	utils,
 	walk,
+	$,
 	ko,
 	komap,
 	EventEmitter,
@@ -129,6 +131,7 @@ define([
 
 	var TrackerPageDebug = function() { 
 		var self = this;
+		this.$ = $;
 		this.options = config;
 		this.width = ko.observable(this.options.width);
 		this.height = ko.observable(this.options.height);
