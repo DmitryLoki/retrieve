@@ -9,9 +9,11 @@ define([
     'widget!GoogleMapCanvas',
     'widget!PlayerControl',
     'widget!UfosTable',
+    'widget!RetrieveTable',
+    'widget!RetrieveRawForm',
+    'widget!RetrieveChat',
     'widget!Checkbox',
     'widget!Window',
-    //'widget!OwgMap',
     'widget!MainMenu',
     'widget!TopBar',
     'widget!Facebook',
@@ -31,9 +33,11 @@ define([
 	GoogleMapCanvas,
 	PlayerControl,
 	UfosTable,
+	RetrieveTable,
+	RetrieveRawForm,
+	RetrieveChat,
     Checkbox,
     Window,
-   // OwgMap,
     MainMenu,
     TopBar,
     Facebook,
@@ -73,6 +77,7 @@ define([
 		this.id = ko.observable(options.id);
 		this.name = ko.observable(options.name);
 		this.country = ko.observable(options.country);
+		this.personId = ko.observable(options.personId);
 		this.color = ko.observable(options.color || config.ufo.color);
 		this.state = ko.observable(null);
 		this.stateChangedAt = ko.observable(null);
@@ -107,6 +112,19 @@ define([
 	Ufo.prototype.resetTrack = function() {
 		// dt=null - специальное значение. Карта его отслеживает и убивает у себя трек при dt=null
 		this.track({lat:null,lng:null,dt:null});
+	}
+
+	var Sms = function(options) {
+		this.id = options.id;
+		this.from = options.from;
+		this.to = options.to;
+		this.sender = options.sender;
+		this.timestamp = options.timestamp;
+		this.body = options.body;
+		this.target = options.from == "me" ? options.to : options.from;
+		this.readed = ko.observable(false);
+		var d = new Date(this.timestamp);
+		this.time = (d.getHours()<10?"0":"") + d.getHours() + ":" + (d.getMinutes()<10?"0":"") + d.getMinutes();
 	}
 
 	var TrackerPageDebug = function() { 
@@ -198,49 +216,94 @@ define([
 			}
 		});
 
-		this.ufosTable = new UfosTable({
-			ufos: this.ufos,
-			raceKey: self.raceKey
-		});
-		this.ufosTableWindow = new Window(this.options.windows.ufosTable);
-
-		this.playerControl = new PlayerControl({
-			startKey: self.startKey,
-			endKey: self.endKey,
-			currentKey: self.currentKey,
-			raceKey: self.raceKey,
-			timeoffset: self.timeoffset,
-			tracksVisualMode: self.tracksVisualMode,
-			cylindersVisualMode: self.cylindersVisualMode,
-			modelsVisualMode: self.modelsVisualMode,
-			shortWayVisualMode: self.shortWayVisualMode,
-			namesVisualMode: self.namesVisualMode,
-			profVisualMode: self.profVisualMode,
-			playerState: self.playerState,
-			playerSpeed: self.playerSpeed,
-			isOnline: self.isOnline,
-			loading: self.loading
-		});
-		this.playerControlWindow = new Window(this.options.windows.playerControl);
-
-		this.mainMenu = new MainMenu();
-		this.mainMenuWindow = new Window(this.options.windows.mainMenu);
-
-		this.facebook = new Facebook();
-		this.facebookWindow = new Window(this.options.windows.facebook);
-
-		this.topBar = new TopBar();
-		this.topBar.items.push(this.mainMenuWindow,this.ufosTableWindow,this.playerControlWindow,this.facebookWindow);
-
-		this.windowManager = new WindowManager();
-		this.windowManager.items.push(this.ufosTableWindow,this.playerControlWindow,this.mainMenuWindow,this.facebookWindow);
-
 //		this.server = new TestServer(this.options);
 //		this.server.generateData();
 		this.server = new RealServer(this.options);
 		this.dataSource = new DataSource({
 			server: this.server
 		});
+	}
+
+	TrackerPageDebug.prototype.createWindows = function() {
+		var self = this;
+		if (this.mode() == "full") {
+			this.ufosTable = new UfosTable({
+				ufos: this.ufos,
+				raceKey: this.raceKey
+			});
+			this.ufosTableWindow = new Window(this.options.windows.ufosTable);
+
+			this.playerControl = new PlayerControl({
+				startKey: this.startKey,
+				endKey: this.endKey,
+				currentKey: this.currentKey,
+				raceKey: this.raceKey,
+				timeoffset: this.timeoffset,
+				tracksVisualMode: this.tracksVisualMode,
+				cylindersVisualMode: this.cylindersVisualMode,
+				modelsVisualMode: this.modelsVisualMode,
+				shortWayVisualMode: this.shortWayVisualMode,
+				namesVisualMode: this.namesVisualMode,
+				profVisualMode: this.profVisualMode,
+				playerState: this.playerState,
+				playerSpeed: this.playerSpeed,
+				isOnline: this.isOnline,
+				loading: this.loading
+			});
+			this.playerControlWindow = new Window(this.options.windows.playerControl);
+
+			this.mainMenu = new MainMenu();
+			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
+
+			this.facebook = new Facebook();
+			this.facebookWindow = new Window(this.options.windows.facebook);
+
+			this.topBar = new TopBar();
+			this.topBar.items.push(this.mainMenuWindow,this.ufosTableWindow,this.playerControlWindow,this.facebookWindow);
+
+			this.windowManager = new WindowManager();
+			this.windowManager.items.push(this.ufosTableWindow,this.playerControlWindow,this.mainMenuWindow,this.facebookWindow);
+		}
+		else if (this.mode() == "retrieve") {
+			this.retrieveStatus = ko.observable("");
+			this.retrieveState = ko.observable(config.retrieveState);
+			this.retrieveSelectedUfo = ko.observable(null);
+			this.smsData = ko.observableArray([]);
+			this.retrieveTable = new RetrieveTable({
+				ufos: this.ufos,
+				status: this.retrieveStatus,
+				state: this.retrieveState,
+				selectedUfo: this.retrieveSelectedUfo,
+				smsData: this.smsData
+			});
+			this.retrieveTableWindow = new Window(this.options.windows.retrieveTable);
+
+			this.retrieveChat = new RetrieveChat({
+				ufo: this.retrieveSelectedUfo,
+				smsData: this.smsData,
+				server: this.server
+			});
+			this.retrieveChatWindow = new Window(this.options.windows.retrieveChat);
+
+			this.retrieveSelectedUfo.subscribe(function(ufo) {
+				if (ufo) self.retrieveChatWindow.show();
+			});
+			this.retrieveChat.on("newMessage",function() {
+				self.retrieveRun();
+			});
+
+			this.retrieveRawForm = new RetrieveRawForm({server:this.server});
+			this.retrieveRawFormWindow = new Window(this.options.windows.retrieveRawForm);
+
+			this.mainMenu = new MainMenu();
+			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
+
+			this.topBar = new TopBar();
+			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow);
+
+			this.windowManager = new WindowManager();
+			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow);
+		}
 	}
 
 	TrackerPageDebug.prototype.domInit = function(elem,params) {
@@ -278,15 +341,27 @@ define([
 		self.width(self.options.width);
 		self.height(self.options.height);
 		self.imgRootUrl(self.options.imgRootUrl);
-		self.mode(self.options.mode);
 		self.mapWidget(self.options.mapWidget);
 		self.mapOptions(self.options.mapOptions);
+
+		// Сначала проставляем mode из настроек виджета
+		self.mode(self.options.mode);
+		// Для данного mode создаем все окна и виджеты
+		self.createWindows();
+		// Теперь проставляем isReady, и созданные виджеты вставляются в DOM 
 		self.isReady(!!self.options.raceId);
+
 		if (self.isReady()) {
 			self.loadRaceData(function(raceData) {
 				if (self.mode() == "full") {
 					self.loadUfosData(function() {
 						self.playerInit();
+						self.emit("loaded",raceData);
+					});
+				}
+				else if (self.mode() == "retrieve") {
+					self.loadUfosData(function() {
+						self.retrieveInit();
 						self.emit("loaded",raceData);
 					});
 				}
@@ -457,6 +532,57 @@ define([
 		});
 
 		run(runTableData);
+	}
+
+	TrackerPageDebug.prototype.retrieveRun = function() {
+		var self = this;
+		this.retrieveStatus("Loading...");
+		clearTimeout(this.retrieveCounter);
+		this.dataSource.get({
+			type: "sms",
+			lastSmsTimestamp: self.retrieveLastSmsTimestamp,
+			callback: function(data) {
+				var rev1 = {};
+				self.smsData().forEach(function(rw) {
+					rev1[rw.id] = 1;
+				});
+				var sms2push = [];
+				data.forEach(function(rw) {
+					if (!rev1[rw.id]) {
+						sms2push.push(new Sms(rw));
+						rev1[rw.id] = 1;
+					}
+					self.retrieveLastSmsTimestamp = Math.max(self.retrieveLastSmsTimestamp,rw.timestamp);
+				});
+				if (sms2push.length > 0)
+					ko.utils.arrayPushAll(self.smsData,sms2push);
+				self.retrieveStatus(sms2push.length > 0 ? sms2push.length + " message" + (sms2push.length>1?"s":"") + " received":"No new messages");
+				if (self.retrieveState() == "play") {
+					var counter = 10;
+					var runCounter = function() {
+						self.retrieveCounter = setTimeout(function() {
+							counter--;
+							if (self.retrieveState() != "play") return;
+							self.retrieveStatus("Waiting for " + counter + " seconds");
+							if (counter > 0) runCounter();
+							else self.retrieveRun();
+						},1000);
+					}
+					runCounter();
+				}
+			}
+		});
+	}
+
+	TrackerPageDebug.prototype.retrieveInit = function() {
+		var self = this;
+		this.retrieveLastSmsTimestamp = 0;
+		this.retrieveCounter = null;
+		this.retrieveState.subscribe(function(state) {
+			if (state == "play") self.retrieveRun();
+			else clearTimeout(self.retrieveCounter);
+		});
+		this.retrieveState.notifySubscribers(this.retrieveState());
 	}
 
 	TrackerPageDebug.prototype.templates = ["main"];

@@ -1,0 +1,24 @@
+<div class="airvis-tbl">
+	<div class="airvis-scrollbar">
+		<div class="scrollbar" style="margin-top:2px;"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+		<div class="airvis-sms-body viewport">
+			<div class="airvis-chatlist overview">
+				<!-- ko if: ufo -->
+					<!-- ko if: chatData().length == 0 -->
+						<div class="airvis-alert">No messages</div>
+					<!-- /ko -->
+					<!-- ko foreach: chatData -->
+						<div class="airvis-chat-message" data-bind="css:{'airvis-chat-inbox':to=='me','airvis-chat-outbox':from=='me'}">
+							<div class="airvis-date" data-bind="text:time"></div>
+							<div class="airvis-body" data-bind="text:body"></div>
+						</div>
+					<!-- /ko -->
+				<!-- /ko -->
+			</div>
+		</div>
+		<div class="airvis-chat-form">
+				<textarea data-bind="value:form.text"></textarea>
+				<button data-bind="click:form.send">Send</button>
+		</div>
+	</div>
+</div>

@@ -3,7 +3,7 @@
 		<div class="airvis-window-title" data-bind="text:title"></div>
 		<a class="airvis-window-close" href="#" data-bind="click:hide"></a>
 	</div>
-	<div class="airvis-window-content" data-bind="css:css,domNodes:nodes,event:{mousedown:dragStart,touchstart:dragStart},css:{'resizeble':(resizable()||resizableY())}"></div>
+	<div class="airvis-window-content" data-bind="css:css,domNodes:nodes,css:{'resizeble':(resizable()||resizableY())}"></div>
 	<div class="airvis-window-resize airvis-resize-right" data-bind="visible:(resizable()||resizableX()),event:{mousedown:resizeStart.bind($data,'right')}"></div>
 	<div class="airvis-window-resize airvis-resize-bottom" data-bind="visible:(resizable()||resizableY()),event:{mousedown:resizeStart.bind($data,'bottom')}"></div>
 	<div class="airvis-window-resize airvis-resize-bottom-right" data-bind="visible:resizable,event:{mousedown:resizeStart.bind($data,'bottom-right')}"></div>

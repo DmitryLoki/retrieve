@@ -37,26 +37,17 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-window-header { background-color: rgba(0,47,64,.93); padding: 0 11px; height: 40px;}
 .airvis-window-title { color: #ffffff; display: block; float: left; font-size: 18px; font-weight: bold; line-height: 40px; padding: 0; text-rendering: optimizelegibility;}
 
-/*
-.airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat; margin-top: 8px; margin-right: -2px;}
-.airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px -24px no-repeat;}
-.airvis-window-close:hover,
-.airvis-window-close-absolute:hover { background-position: -48px 0; }
-
-.airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) no-repeat;}
-.airvis-collapse { background-position: -24px -24px}
-.airvis-collapse:hover { background-position: -24px 0}
-.airvis-expand { background-position: 0 -24px}
-.airvis-expand:hover { background-position: 0 0}
-*/
 .airvis-window-close { float: right; outline: 0 none; display: block; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; margin-top: 8px; margin-right: -2px; opacity: 0.3; transition: opacity 0.2s; -webkit-transition: opacity 0.2s; }
 .airvis-window-close-absolute { position: absolute; outline: 0 none; display: block; top: 8px; right: 8px; width: 24px; height: 24px; background: url(../img/widget_control.png) -48px 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; -webkit-transition: opacity 0.2s; }
 .airvis-window-close:hover,
 .airvis-window-close-absolute:hover { opacity: 1; }
 
 .airvis-window-ec-absolute { position: absolute; outline: 0 none; display: block; top: -32px; right: 38px; width: 24px; height: 24px; background: url(../img/widget_control.png) 0 0 no-repeat; opacity: 0.3; transition: opacity 0.2s; -webkit-transition: opacity 0.2s; }
+.airvis-window-ec-absolute-status { position: absolute; display: block; top: -30px; right: 70px; color: #ffffff; }
 .airvis-window-ec-absolute:hover { opacity: 1; }
 .airvis-collapse { background-position: -24px 0; }
+.airvis-play { background: #ffffff url(../img/player_but.png) 0 -24px no-repeat; border-radius: 2px; }
+.airvis-pause { background: #ffffff url(../img/player_but.png) 0 0 no-repeat; border-radius: 2px; }
 
 .airvis-window-content { background-color: rgba(0,47,64,.75); position: relative; overflow: auto;}
 .airvis-window-content-absolute { bottom: 0; left: 0; position: absolute; right: 0; top: 0px; overflow: visible;}
@@ -87,7 +78,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-window table { margin: 0; width: 100%; font-size: 12px; color: #ffffff; border-collapse: separate; }
 .airvis-window table tbody tr:nth-child(2n+2) { background-color: rgba(0,47,64,.35);}
 .airvis-window table tbody td { line-height: 20px; padding: 0; text-align: center; vertical-align: top;}
-.airvis-window .airvis-scrollbar table tbody tr:first-child td { padding-top: 8px;}
+/*.airvis-window .airvis-scrollbar table tbody tr:first-child td { padding-top: 8px;}*/
 .airvis-window table tbody td + td { border-left: 1px solid rgba(0,47,64,.15)}
 
 
@@ -102,6 +93,8 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-window table .airvis-pilot-name { text-align: left;}
 .airvis-window table .airvis-pilot-name .countryicon-sprite { margin-left: 10px; }
 .airvis-window table .airvis-pilot-country .countryicon-sprite { margin-right: 5px; }
+.airvis-window table .airvis-pilot-person-id { width: 180px;}
+.airvis-window table .airvis-pilot-sms { width: 40px;}
 
 .airvis-window table .airvis-dist-to-goal { width: 59px;}
 .airvis-window table .airvis-alt { width: 39px;}
@@ -396,4 +389,111 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvisVisualMode_full {
   top: 60px;
   right: 150px;
+}
+
+
+.airvis-sms-table tr {
+  cursor: pointer;
+}
+.airvis-window table.airvis-sms-table tbody tr.airvis-selected {
+  background-color: rgba(255,255,255,0.5);
+}
+.airvis-sms-form {
+  margin-top: 10px;
+}
+.airvis-sms-form label {
+  display: block;
+  width: 100px;
+  float: left;
+  color: #ffffff;
+  text-align: right;
+}
+.airvis-sms-form .airvis-control-value {
+  margin-left: 120px;
+}
+.airvis-sms-form input,.airvis-sms-form textarea {
+  width: 230px;
+}
+.airvis-sms-status {
+  text-align: center;
+  color: #ffffff;
+  margin-top: 60px;
+}
+.airvis-sms-status button {
+  display: block;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.sms-box {
+  display: inline;
+  background-color: #88b7d5;
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 10px;
+  margin-top: 3px;
+  padding: 2px 5px;
+}
+
+.airvis-chat-message {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 4px;
+}
+.airvis-chat-message .airvis-date {
+  color: #555555;
+}
+
+.airvis-chat-inbox { position: relative; background: #88b7d5; border: 2px solid #c2e1f5; margin-right: 40px; } 
+.airvis-chat-inbox:after, .airvis-chat-inbox:before { right: 100%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; } 
+.airvis-chat-inbox:after { border-color: rgba(136, 183, 213, 0); border-right-color: #88b7d5; border-width: 4px; top: 50%; margin-top: -4px; } 
+.airvis-chat-inbox:before { border-color: rgba(194, 225, 245, 0); border-right-color: #c2e1f5; border-width: 7px; top: 50%; margin-top: -7px; }
+
+.airvis-chat-outbox { position: relative; background: #53c278; border: 2px solid #c2e1f5; margin-left: 40px; } 
+.airvis-chat-outbox:after, .airvis-chat-outbox:before { left: 100%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; } 
+.airvis-chat-outbox:after { border-color: rgba(83, 194, 120, 0); border-left-color: #53c278; border-width: 4px; top: 50%; margin-top: -4px; } 
+.airvis-chat-outbox:before { border-color: rgba(194, 225, 245, 0); border-left-color: #c2e1f5; border-width: 7px; top: 50%; margin-top: -7px; }
+
+.airvis-alert {
+  background-color: #D9EDF7;
+  border: 1px solid #BCE8F1;
+  color: #3A87AD;
+  border-radius: 4px 4px 4px 4px;
+  margin: 10px 0;
+  padding: 8px 35px 8px 14px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.airvis-scrollbar .airvis-chatlist {
+  left: 10px;
+  right: 10px;
+}
+
+.airvis-sms-body {
+  position: absolute;
+  top: 0;
+  bottom: 70px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.airvis-chat-form {
+  position: absolute;
+  bottom: 5px;
+  height: 60px;
+  left: 10px;
+  right: 10px;
+}
+.airvis-chat-form textarea {
+  display: block;
+  float: left;
+  width: 300px;
+  height: 53px;
+}
+.airvis-chat-form button {
+  display: block;
+  float: right;
+  width: 60px;
+  height: 60px;
 }

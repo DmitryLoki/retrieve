@@ -38,6 +38,8 @@ define({
 		mode: "short",
 		allVisibleCheckboxColor: "blue"
 	},
+	retrieveState: "pause",
+	retrieveInterval: 10000,
 	playerState: "pause",
 	playerSpeed: 1,
 	renderTableDataInterval: 5000,
@@ -52,6 +54,36 @@ define({
 			wideWidth: 500,
 			top: 180,
 			left: 90
+		},
+		retrieveTable: {
+			visible: true,
+			title: "Pilots",
+			resizable: false,
+			resizableY: true,
+			height: 500,
+			width: 500,
+			top: 180,
+			left: 90
+		},
+		retrieveChat: {
+			visible: false,
+			title: "Chat",
+			resizable: false,
+			resizableY: true,
+			height: 600,
+			width: 400,
+			top: 180,
+			left: 600
+		},
+		retrieveRawForm: {
+			visible: false,
+			title: "SMS sender",
+			resizable: false,
+			height: 220,
+			width: 400,
+			top: 180,
+			right: 50,
+			xPosition: "right"
 		},
 		playerControl: {
 			visible: true,

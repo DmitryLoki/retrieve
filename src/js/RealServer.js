@@ -68,6 +68,13 @@
 			});
 		}
 		else if (query.type == "ufos") {
+			var getRandomColor = function() {
+				var letters = "0123456789ABCDEF".split("");
+			    var color = "#";
+    			for (var i = 0; i < 6; i++ )
+			        color += letters[Math.round(Math.random() * 15)];
+    			return color;
+			}
 			$.ajax({
 				url: "http://api.airtribune.com/" + this.options.apiVersion + "/contest/" + this.options.contestId + "/race/" + this.options.raceId + "/paragliders",
 				dataType: "json",
@@ -78,8 +85,10 @@
 //						if (rw.contest_number!="20") continue;
 						data.push({
 							id: rw.contest_number,
+							personId: rw.person_id,
 							name: rw.name,
-							country: rw.country
+							country: rw.country,
+							color: getRandomColor()
 						});
 					}
 					if (query.callback)
@@ -157,6 +166,47 @@
 				}
 			});
 		}
+		else if (query.type == "sms") {
+			var data = {};
+			if (query.lastSmsTimestamp) data.from_time = query.lastSmsTimestamp + 1; // здесь прибавляем 1 чтобы было не включительно (чтобы последняя смс не приходила снова и снова)
+			$.ajax({
+//				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
+				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (query.callback)
+						query.callback(result);
+				}
+			});
+		}
+	}
+
+	RealServer.prototype.post = function(query) {
+		console.log("post",query);
+		if (query.type == "sms") {
+			var ajax = $.ajax({
+//				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
+				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
+				type: "POST",
+				dataType: "json",
+				data: {
+					from: query.data.from,
+					to: query.data.to,
+					sender: query.data.sender,
+					body: query.data.body
+				},
+				success: function(result) {
+					if (query.callback)
+						query.callback({success:1});
+				},
+				error: function(result) {
+					if (query.callback)
+						query.callback({error:1});
+				}
+			});
+		}
+		return ajax;
 	}
 
 	return RealServer;

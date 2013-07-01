@@ -67,13 +67,17 @@ define(["jquery","knockout"],function($,ko) {
 		});
 
 		self.visible.subscribe(function(v) {
-			if (v)
-				self.setAbsoluteContentPosition();
+			if (v) self.setAbsoluteContentPosition();
+			self.emit(v?"open":"close");
 		});
 	}
 
 	Window.prototype.hide = function(self,e) {
 		this.slideUp(e);
+	}
+
+	Window.prototype.show = function(self,e) {
+		this.slideDown(e);
 	}
 
 	Window.prototype.domInit = function(element,params,parentElement) {
@@ -156,7 +160,7 @@ define(["jquery","knockout"],function($,ko) {
 
 	Window.prototype.slideUp = function() {
 		var self = this;
-		self.buttonOn(false);
+		this.buttonOn(false);
 		this.container.fadeOut("fast",function() {
 			self.visible(false);
 		});
@@ -184,7 +188,7 @@ define(["jquery","knockout"],function($,ko) {
 
 	Window.prototype.slideDown = function() {
 		var self = this;
-		self.buttonOn(true);
+		this.buttonOn(true);
 		this.container.fadeIn("fast",function() {
 			self.visible(true);
 		});

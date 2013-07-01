@@ -21,7 +21,23 @@
 		<!-- ko widget: {data: facebookWindow, type: 'Window'} -->
 			<!-- ko widget: { data: facebook, type: 'Facebook', modalWindow: facebookWindow } --><!-- /ko -->
 		<!-- /ko -->
-
 	<!-- /ko -->
+
+	<!-- ko if: mode() == "retrieve" -->
+		<!-- ko widget: {data: topBar, type: 'TopBar'} --><!-- /ko -->
+		<!-- ko widget: { data: mainMenuWindow, type: 'Window', contentCss: 'airvis-transparent'} -->
+			<!-- ko widget: {data: mainMenu, type: 'MainMenu'} --><!-- /ko -->
+		<!-- /ko -->
+		<!-- ko widget: {data: retrieveTableWindow, type: 'Window'} -->
+			<!-- ko widget: { data: retrieveTable, type: 'RetrieveTable', modalWindow: retrieveTableWindow } --><!-- /ko -->
+		<!-- /ko -->
+		<!-- ko widget: {data: retrieveRawFormWindow, type: 'Window'} -->
+			<!-- ko widget: { data: retrieveRawForm, type: 'RetrieveRawForm', modalWindow: retrieveRawFormWindow } --><!-- /ko -->
+		<!-- /ko -->
+		<!-- ko widget: {data: retrieveChatWindow, type: 'Window'} -->
+			<!-- ko widget: { data: retrieveChat, type: 'RetrieveChat', modalWindow: retrieveChatWindow } --><!-- /ko -->
+		<!-- /ko -->
+	<!-- /ko -->	
+
 </div>
 <!-- /ko -->

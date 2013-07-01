@@ -9,30 +9,24 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 
 		this.tableUfos = ko.observableArray([]);
 		this.ufos.subscribe(function(ufos) {
-			if (self.tableUfos().length == 0) {
-				var ufos2add = [];
-				for (var i = 0; i < ufos.length; i++)
-					ufos2add.push(self.createUfo(ufos[i]));
-				self.tableUfos(ufos2add);
-			}
-			else {
-				var rev1 = {}, rev2 = {};
-				for (var i = 0, l = ufos.length; i < l; i++)
-					rev1[ufos[i].id()] = i;
-				for (var i = 0, l = self.tableUfos().length; i < l; i++)
-					rev2[self.tableUfos()[i].id()] = i;
-				for (var i = 0, l = ufos.length; i < l; i++) {
-					if (rev2[ufos[i].id()] == null) {
-						self.tableUfos.push(self.createUfo(ufos[i]));
-						rev2[ufos[i].id()] = self.tableUfos().length - 1;
-					}
+			var rev1 = {}, rev2 = {}, values2push = [];
+			for (var i = 0, l = ufos.length; i < l; i++)
+				rev1[ufos[i].id()] = i;
+			for (var i = 0, l = self.tableUfos().length; i < l; i++)
+				rev2[self.tableUfos()[i].id()] = i;
+			for (var i = 0, l = ufos.length; i < l; i++) {
+				if (rev2[ufos[i].id()] == null) {
+					values2push.push(self.createUfo(ufos[i]));
+					rev2[ufos[i].id()] = self.tableUfos.length - 1;
 				}
-				for (var i = 0, l = self.tableUfos().length; i < l; i++) {
-					if (rev1[self.tableUfos()[i].id()] == null) {
-						self.detroyUfo(self.tableUfos()[i]);
-						self.tableUfos.splice(i,1);
-						i--;
-					}
+			}
+			if (values2push.length > 0)
+				ko.utils.arrayPushAll(self.tableUfos,values2push);
+			for (var i = 0, l = self.tableUfos().length; i < l; i++) {
+				if (rev1[self.tableUfos()[i].id()] == null) {
+					self.destroyUfo(self.tableUfos()[i]);
+					self.tableUfos.splice(i,1);
+					i--;
 				}
 			}
 			self.sortTableRows();
