@@ -163,7 +163,7 @@ define([
 
 		// Йоу! Клевый код!
 		this._serverKey = ko.observable(0);
-		this._serverKeyUpdatedAt = 0;
+		this._serverKeyUpdatedAt = (new Date).getTime();
 		this.serverKey = ko.computed({
 			read: function() {
 				var d = (new Date).getTime();

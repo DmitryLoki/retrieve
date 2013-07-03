@@ -110,7 +110,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.playerState("play");
 		this.playerSpeed(1);
 	}
-
+	
 	PlayerControl.prototype.switchState = function() {
 		this.playerState(this.playerState()=="play"?"pause":"play");
 		return this;
