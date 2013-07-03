@@ -112,6 +112,7 @@
 					start_positions: 1
 				},
 				success: function(result,textStatus,request) {
+					if (!result.start) result.start = {};
 					var data = {start:{},timeline:{}}, tmp = {};
 					data.serverKey = (new Date(request.getResponseHeader("Date"))).getTime();
 					$.each(result.start,function(pilot_id,rw) {

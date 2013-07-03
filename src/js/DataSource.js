@@ -53,8 +53,7 @@ define(function() {
 					for (var pilot_id in frame.start)
 						if (frame.start.hasOwnProperty(pilot_id)) {
 							// Мегахак - потом убрать и починить!
-							if (!dataBefore[pilot_id] && dataAfter[pilot_id]) dataBefore[pilot_id] = dataAfter[pilot_id];
-
+							//if (!dataBefore[pilot_id] && dataAfter[pilot_id]) dataBefore[pilot_id] = dataAfter[pilot_id];
 							if (!dataBefore[pilot_id]) dataBefore[pilot_id] = frame.start[pilot_id];
 							if (!dataAfter[pilot_id]) dataAfter[pilot_id] = dataBefore[pilot_id];
 						}
