@@ -559,7 +559,10 @@ define([
 			}
 		});
 
-		run(runTableData);
+		if (self.isOnline())
+			self.playerControl.setLiveMode();
+		else
+			run(runTableData);
 	}
 
 	TrackerPageDebug.prototype.retrieveRun = function() {
