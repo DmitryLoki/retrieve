@@ -83,7 +83,7 @@
 					var data = [];
 					for (var i = 0; i < result.length; i++) {
 						var rw = result[i];
-//						if (rw.contest_number!="20") continue;
+//						if (rw.contest_number!="80") continue;
 						data.push({
 							id: rw.contest_number,
 							personId: rw.person_id,
@@ -115,7 +115,7 @@
 					var data = {start:{},timeline:{}}, tmp = {};
 					data.serverKey = (new Date(request.getResponseHeader("Date"))).getTime();
 					$.each(result.start,function(pilot_id,rw) {
-//						if (pilot_id!="20") return;
+//						if (pilot_id!="80") return;
 						data.start[pilot_id] = {
 							dist: rw.dist,
 							gspd: rw.gspd,
@@ -135,7 +135,7 @@
 						dt *= 1000;
 						data.timeline[dt] = {};
 						$.each(rws,function(pilot_id,rw) {
-//							if (pilot_id != "20") return;
+//							if (pilot_id != "80") return;
 							data.timeline[dt][pilot_id] = {
 								dist: rw.dist,
 								gspd: rw.gspd,
@@ -158,7 +158,6 @@
 							}
 						});
 					});
-					console.log("real server data",data);
 					if (query.callback)
 						query.callback(data);
 				},
