@@ -147,7 +147,6 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
-
 }
 .airvis-slider-container { padding: 5px; padding-top: 11px; overflow: hidden;}
 .airvis-slider-handle { width: 18px; height: 18px; background: #ffffff; border: 1px solid #000000; position: absolute; margin-left: -9px; top: -5px;
@@ -163,6 +162,12 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   -moz-border-radius: 3px; 
   border-radius: 3px;
 }
+.airvis-target-range { background-color: rgba(133,166,199,0.7); height: 8px; left: 0; position: absolute;
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px;
+}
+
 .airvis-player-controls-titles { background-color: rgba(0,0,0,.4);}
 .airvis-player-controls-titles strong { color: #606060; padding: 2px 5px;}
 .airvis-player-timeWindow { float: left; margin: 10px; width: 150px; text-align: center;
@@ -185,7 +190,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 .airvis-player-controls-wrapper { background: rgba(0, 47, 64, 0.5); height: 40px; position: relative;}
 .airvis-player-controls-wrapper .airvis-player-controls { float: left;}
-.airvis-player-controls a { display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden; vertical-align: top;
+.airvis-player-controls a { text-decoration: none; display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden; vertical-align: top;
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
@@ -207,6 +212,12 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 /*.airvis-player-controls a.play_pause:hover { background-color: rgba(255,255,255,0.75); }*/
 .airvis-player-controls a.play_pause:hover { background-color: #ffffff }
 .airvis-player-controls a.play_pause.player-button-play { background-position: 0 0; }
+
+.airvis-player-controls-wrapper .airvis-online-container {
+  float: right;
+  padding: 8px 10px 0 0;
+}
+
 
 
 

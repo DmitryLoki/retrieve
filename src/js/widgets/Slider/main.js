@@ -8,6 +8,7 @@ define(["jquery","knockout"], function($,ko) {
 		this.drag = options.drag;
 		this.dragging = options.dragging;
 		this.handleMode = options.handleMode;
+		this.range = options.range;
 
 		this.val.subscribe(function(val) {
 			if (!self.dragging())
@@ -17,6 +18,14 @@ define(["jquery","knockout"], function($,ko) {
 		this.valPercent = ko.computed(function() {
 				var delta = self.max() - self.min();
 				return delta > 0 ? Math.floor(100*(self.val()-self.min())/delta) : self.min();
+		});
+
+		this.rangePercent = ko.computed(function() {
+			var delta = self.max() - self.min();
+			var percent = delta > 0 ? Math.floor(100*(self.range()-self.min())/delta) : self.min();
+			if (percent > 0) percent = 100;
+			if (percent < 0) percent = 0;
+			return percent;
 		});
 
 		this.dragPercent = ko.computed(function() {
@@ -62,7 +71,11 @@ define(["jquery","knockout"], function($,ko) {
 			var p = (e.pageX-l)/w;
 			if (p > 1) p = 1;
 			if (p < 0) p = 0;
-			self.drag(self.min()+(self.max()-self.min())*p);
+//			self.drag(self.min()+(self.max()-self.min())*p);
+			var drag = self.min()+(self.max()-self.min())*p;
+			if (drag > self.range())
+				drag = self.range();
+			self.drag(drag);
 		}
 		$("body").addClass("airvis-document-overwrite-cursor-pointer");
 		$(document).on("mousemove touchmove",mouseMove).one("mouseup mouseleave touchend touchcancel",function(e) {

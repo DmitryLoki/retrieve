@@ -1,7 +1,7 @@
 <div>
 	<div class="airvis-clearfix">
 		<div class="airvis-player-timeWindow" data-bind="css:raceTimeCss">
-			<div class="airvis-player-time-status" data-bind="text:isOnline()?'Live':'&nbsp;'"></div>
+			<div class="airvis-player-time-status" data-bind="text:isCurrentlyOnline()?'Live':'Replay'"></div>
 			<div class="airvis-player-time" data-bind="text:raceTime"></div>
 		</div>
 		<div class="airvis-player-timeText" data-bind="css:raceTimeCss,text:raceTimeText"></div>
@@ -19,12 +19,17 @@
 		</div>
 	</div>
 	<div class="airvis-player-controls-wrapper">
-		<div class="airvis-player-controls">
+		<div class="airvis-player-controls" data-bind="visible:!isCurrentlyOnline()">
 			<a class="play_pause" data-bind="click:switchState,css:{'player-button-play':playerState()=='play','player-button-pause':playerState()=='pause'}"></a>
 			<a data-bind="click: changeSpeed.bind($data,1), css: { 'player-button-on': playerSpeed() == 1, 'player-button-off': playerSpeed() != 1 }"><span>x1</span></a>
 			<a data-bind="click: changeSpeed.bind($data,2), css: { 'player-button-on': playerSpeed() == 2, 'player-button-off': playerSpeed() != 2 }"><span>x2</span></a>
 			<a data-bind="click: changeSpeed.bind($data,10), css: { 'player-button-on': playerSpeed() == 10, 'player-button-off': playerSpeed() != 10 }"><span>x10</span></a>
 		</div>
-		<div class="airvis-slider-container" data-bind="widget:{data:slider,type:'Slider'}"></div>
+		<!-- ko if: isOnline -->
+			<div class="airvis-player-controls airvis-online-container">
+				<a class="airvis-online" href="#" data-bind="click:setLiveMode,css: { 'player-button-on': isCurrentlyOnline(), 'player-button-off': !isCurrentlyOnline() }"><span>LIVE</span></a>
+			</div>
+		<!-- /ko -->
+		<div class="airvis-slider-container" data-bind="css:{'airvis-slider-container-online':isOnline},widget:{data:slider,type:'Slider'}"></div>
 	</div>
 </div>

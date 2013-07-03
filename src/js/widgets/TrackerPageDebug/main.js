@@ -154,11 +154,26 @@ define([
 		this.playerSpeed = ko.observable(this.options.playerSpeed);
 		this.isReady = ko.observable(false);
 		this.isOnline = ko.observable(false);
+		this.isCurrentlyOnline = ko.observable(false);
 		this.loading = ko.observable(false);
 
 		this.ufos = ko.observableArray();
 		this.waypoints = ko.observableArray();
 		this.shortWay = ko.observable(null);
+
+		// Йоу! Клевый код!
+		this._serverKey = ko.observable(0);
+		this._serverKeyUpdatedAt = 0;
+		this.serverKey = ko.computed({
+			read: function() {
+				var d = (new Date).getTime();
+				return self._serverKey() + d - self._serverKeyUpdatedAt - config.serverDelay;
+			},
+			write: function(value) {
+				self._serverKey(value);
+				self._serverKeyUpdatedAt = (new Date).getTime();
+			}
+		});
 
 		this.shortWayInitializer = ko.computed(function() {
 			if (self.isReady() && self.waypoints && self.waypoints().length > 0) {
@@ -241,6 +256,7 @@ define([
 				endKey: this.endKey,
 				currentKey: this.currentKey,
 				raceKey: this.raceKey,
+				serverKey: this.serverKey,
 				timeoffset: this.timeoffset,
 				tracksVisualMode: this.tracksVisualMode,
 				cylindersVisualMode: this.cylindersVisualMode,
@@ -251,6 +267,7 @@ define([
 				playerState: this.playerState,
 				playerSpeed: this.playerSpeed,
 				isOnline: this.isOnline,
+				isCurrentlyOnline: this.isCurrentlyOnline,
 				loading: this.loading
 			});
 			this.playerControlWindow = new Window(this.options.windows.playerControl);
@@ -328,6 +345,8 @@ define([
 			this.options.mapWidget = params.mapWidget;
 		if (params.mapOptions)
 			this.options.mapOptions = params.mapOptions;
+		if (params.isOnline)
+			this.options.isOnline = params.isOnline;
 		this.rebuild();
 		if (params.callback)
 			params.callback(this);
@@ -346,6 +365,7 @@ define([
 		self.imgRootUrl(self.options.imgRootUrl);
 		self.mapWidget(self.options.mapWidget);
 		self.mapOptions(self.options.mapOptions);
+		self.isOnline(self.options.isOnline);
 
 		// Сначала проставляем mode из настроек виджета
 		self.mode(self.options.mode);
@@ -390,6 +410,7 @@ define([
 				self.endKey(data.endKey);
 				self.currentKey(data.startKey);
 				self.raceKey(data.raceKey||data.startKey);
+				self.serverKey(data.serverKey);
 				self.timeoffset(data.timeoffset);
 				if (self.mainMenu && data.titles)
 					self.mainMenu.setTitles(data.titles);
@@ -524,6 +545,10 @@ define([
 
 		self.playerControl.on("change",function(v) {
 			self.currentKey(v);
+			if (Math.abs(v-self.serverKey()) < 60000)
+				self.isCurrentlyOnline(true);
+			else
+				self.isCurrentlyOnline(false);
 			resetUfosTracks();
 			run(runTableData);
 		});

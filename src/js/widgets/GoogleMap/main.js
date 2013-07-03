@@ -564,10 +564,10 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		gmaps.event.addListener(this.map,"zoom_changed",function() {
 			self.zoom(self.map.getZoom());
 		});
-		gmaps.event.addListener(this.map,"mousedown",function() {
+		gmaps.event.addListenerOnce(this.map,"mousedown",function() {
 			self.activateMapScroll(true);
 		});
-		gmaps.event.addListener(this.map,"click",function() {
+		gmaps.event.addListenerOnce(this.map,"click",function() {
 			self.activateMapScroll(true);
 		});
 		this.isReady(true);

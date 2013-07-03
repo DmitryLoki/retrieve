@@ -328,8 +328,19 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			con.strokeColor = "#000000";
 			con.fillStyle = "#000000";
 			var coords = new gmaps.LatLng(u.position().lat,u.position().lng);
-			var coordsPx = cov._map.getProjection().fromLatLngToPoint(coords);
-			var coordsRelPx = cov.absToRel(coordsPx);
+//			var coordsPx = cov._map.getProjection().fromLatLngToPoint(coords);
+
+
+			var proj = cov._map.getProjection();
+			var coordsPx = proj.fromLatLngToPoint(coords);
+			var coordsRelPx = {x:coordsPx.x*(1 << self.zoom()),y:coordsPx.y*(1 << self.zoom())};
+
+
+			console.log("this",this,"self",self,"coords",coords,"proj",proj,"coordsPx",coordsPx,"coordsRelPx",coordsRelPx,"zoom",self.zoom());
+
+//			var coordsPx = cov._map.getProjection().fromLatLngToDivPixel(coords);
+//			var coordsRelPx = cov.absToRel(coordsPx);
+//			var coordsRelPx = coordsPx;
 			con.fillText(u.name(),coordsRelPx.x,coordsRelPx.y);
 			con.beginPath();
 			con.moveTo(coordsRelPx.x,coordsRelPx.y);
@@ -570,19 +581,20 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			this.map.setZoom(this.map.getZoom()+1);
 	}
 
-	GoogleMap.prototype.updateCanvas = function() {
+	GoogleMap.prototype.updateCanvas = function(force) {
 		var self = this;
-		if (this._updatingCanvas) {
+		if (!force && this._updatingCanvas) {
 			this._updateCanvasRequired = true;
 			return;
 		}
 		this._updatingCanvas = true;
 		this._updateCanvasRequired = false;
+		clearTimeout(this._updatingCanvasTimeout);
 		this.canvasOverlay.clear();
 		this.mapUfos.forEach(function(ufo) {
 			ufo.render(self.canvasOverlay);
 		});
-		setTimeout(function() {
+		this._updatingCanvasTimeout = setTimeout(function() {
 			self._updatingCanvas = false;
 			if (self._updateCanvasRequired)
 				self.updateCanvas();
@@ -604,23 +616,27 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			center: new gmaps.LatLng(config.map.center.lat,config.map.center.lng),
 			mapTypeId: gmaps.MapTypeId[config.map.type]
 		});
-		gmaps.event.addListener(this.map,"zoom_changed",function() {
-			self.zoom(self.map.getZoom());
-		});
-		gmaps.event.addListener(this.map,"mousedown",function() {
-			self.activateMapScroll(true);
-		});
-		gmaps.event.addListener(this.map,"click",function() {
-			self.activateMapScroll(true);
-		});
+//		gmaps.event.addListener(this.map,"mousedown",function() {
+//			self.activateMapScroll(true);
+//		});
+//		gmaps.event.addListener(this.map,"click",function() {
+//			self.activateMapScroll(true);
+//		});
 
 		this.canvasOverlay = new CanvasOverlay({
-			map: this.map,
-			onMove: function() {
-				self.updateCanvas();
-			}
+			map: this.map
 		});
 		this.canvasOverlay.setTextProperties(config.ufosNames);
+
+		gmaps.event.addListener(this.map,"center_changed",function() {
+			// событие center_changed возникает когда меняется размер карты (так же поступает bounds_changed, но он с глючной задержкой)
+			self.canvasOverlay.relayout();
+			self.updateCanvas(true);
+		});
+		gmaps.event.addListener(this.map,"zoom_changed",function() {
+			self.zoom(self.map.getZoom());
+			self.updateCanvas(true);
+		});
 
 		this.isReady(true);
 		this.mapOptions.valueHasMutated();

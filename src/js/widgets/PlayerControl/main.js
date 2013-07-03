@@ -6,6 +6,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.endKey =  options.endKey;
 		this.currentKey = options.currentKey;
 		this.raceKey = options.raceKey;
+		this.serverKey = options.serverKey;
 		this.tracksVisualMode = options.tracksVisualMode;
 		this.cylindersVisualMode = options.cylindersVisualMode;
 		this.modelsVisualMode = options.modelsVisualMode;
@@ -17,6 +18,8 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.isOnline = options.isOnline;
 		this.loading = options.loading;
 		this.timeoffset = options.timeoffset;
+		this.isOnline = options.isOnline;
+		this.isCurrentlyOnline = options.isCurrentlyOnline;
 
 		this.dragKey = ko.observable(0);
 		this.dragging = ko.observable(false);
@@ -60,6 +63,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 			val: this.currentKey,
 			drag: this.dragKey,
 			dragging: this.dragging,
+			range: this.serverKey,
 			handleMode: ko.computed(function() {
 				return self.loading() ? "airvis-slider-handle-loading" : "";
 			})
@@ -96,6 +100,15 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.shortWayVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.namesVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
 		this.profVisualSelect.on("expand",fadeSelects).on("collapse",unfadeSelects);
+	}
+
+	PlayerControl.prototype.setLiveMode = function() {
+		if (!this.isOnline() || this.isCurrentlyOnline()) return;
+		this.isCurrentlyOnline(true);
+		console.log(this);
+		this.currentKey(this.serverKey());
+		this.playerState("play");
+		this.playerSpeed(1);
 	}
 
 	PlayerControl.prototype.switchState = function() {

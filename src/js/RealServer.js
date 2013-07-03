@@ -10,7 +10,7 @@
 			$.ajax({
 				url: "http://api.airtribune.com/" + this.options.apiVersion + "/contest/" + this.options.contestId + "/race/" + this.options.raceId,
 				dataType: "json",
-				success: function(result) {
+				success: function(result,textStatus,request) {
 					var data = {
 						startKey: result.start_time*mult,
 						endKey: result.end_time*mult,
@@ -22,7 +22,8 @@
 							dateTitle: "",
 							taskTitle: result.race_title
 						},
-						waypoints: []
+						waypoints: [],
+						serverKey: (new Date(request.getResponseHeader("Date"))).getTime()
 					}
 					var d = new Date(data.startKey);
 //					data.titles.dateTitle = d.toDateString();
@@ -110,8 +111,9 @@
 					to_time: Math.floor(query.last/1000),
 					start_positions: 1
 				},
-				success: function(result) {
+				success: function(result,textStatus,request) {
 					var data = {start:{},timeline:{}}, tmp = {};
+					data.serverKey = (new Date(request.getResponseHeader("Date"))).getTime();
 					$.each(result.start,function(pilot_id,rw) {
 //						if (pilot_id!="20") return;
 						data.start[pilot_id] = {
