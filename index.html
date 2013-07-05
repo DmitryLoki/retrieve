@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/s.css" />
+		<script type="text/javascript" src="/jquery.js"></script>
+		<script type="text/javascript" src="/knockout.js"></script>
+		<script type="text/javascript" src="/latlon.js"></script>
+	
+		<script type="text/javascript">
+		$(function() { 
+
+			var options = {
+				apiVersion: "<!-- apiVersion -->",
+				contestId: "<!-- contestId -->",
+				raceId: "<!-- raceId -->"
+			}
+
+			var table = {
+				timeout: ko.observable(0),
+				data: ko.observableArray([]),
+				sort: ko.observable("contest_number"),
+				setSort: function(sort) {
+					if (sort == this.sort()) this.sort(sort + "_desc");
+					else this.sort(sort);
+					updateData();
+				}
+			}
+			ko.applyBindings(table);
+
+			var pilots = [];
+			var trackers = {};
+			var hq = null;
+
+			$.ajax({
+				url: "http://api.airtribune.com/" + options.apiVersion + "/contest/" + options.contestId + "/race/" + options.raceId + "/paragliders",
+				dataType: "json",
+				success: function(result) {
+					pilots = result;
+					runTick();
+				}
+			});
+
+			$.ajax({
+				url: "http://api.airtribune.com/" + options.apiVersion + "/contest/" + options.contestId + "/",
+				dataType: "json",
+				success: function(result) {
+					hq = new LatLon(result.coords[0],result.coords[1]);
+				}
+			});
+
+			var runTick = function() {
+				table.timeout(table.timeout()-1);
+				if (table.timeout() <= 0) {
+					$.ajax({
+						url: "http://api.airtribune.com/" + options.apiVersion + "/tracker",
+						dataType: "json",
+						success: function(result) {
+							trackers = {};
+							for (var i = 0; i < result.length; i++)
+								trackers[result[i].id] = result[i];
+							updateData();
+							table.timeout(10);
+							setTimeout(runTick,1000);
+						}
+					});
+				}
+				else {
+					setTimeout(runTick,1000);
+				}
+			}
+
+			var updateData = function() {
+				var ar = [];
+				for (var i = 0; i < pilots.length; i++) {
+					var rw = $.extend({last_update:"",tracker_name:pilots[i].tracker,alt:"",coords:"",dist:0},pilots[i]);
+					var rwTr = trackers[rw.tracker];
+					if (rwTr) {
+						rw.tracker_name = rwTr.name;
+						if (rwTr.last_point) {
+							rw.last_update = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]);
+							rw.alt = rwTr.last_point[2];
+							rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ")";
+							rw.dist = hq ? hq.distanceTo(new LatLon(rwTr.last_point[0],rwTr.last_point[1])) : 0;
+							rw.dist = Math.floor(rw.dist*100)/100;
+							if (isNaN(rw.dist)) rw.dist = 0;
+						}
+					}
+					ar.push(rw);
+				}
+				var desc = table.sort().match(/\_desc$/) ? -1 : 1;
+				var sort = table.sort().replace(/\_desc$/,"");
+				ar.sort(function(rw1,rw2) {
+					if (rw1[sort] == rw2[sort]) return 0;
+					if (sort == "contest_number" || sort == "last_update" || sort == "alt" || sort == "dist") {
+						r1 = Math.floor(rw1[sort]*100);
+						r2 = Math.floor(rw2[sort]*100);
+						if (isNaN(r1)) r1 = 0;
+						if (isNaN(r2)) r2 = 0;
+//						if (sort == "dist") console.log(r1,r2);
+						if (r1 == r2) return 0;
+						return r1 < r2 ? -1*desc : desc;
+					}
+					if (sort == "name") {
+						var n1 = rw1.name.replace(/^\S+\.\s+/,"");
+						var n2 = rw2.name.replace(/^\S+\.\s+/,"");
+						return n1 < n2 ? -1*desc : desc;
+					}
+					return rw1[sort] < rw2[sort] ? -1*desc : desc;
+				});
+				table.data(ar);
+			}
+		});
+		</script>
+	
+	</head>
+
+	<body>
+	<p class="timeout">reload data after <span data-bind="text: timeout"></span> sec</p>
+		<table>
+			<thead>
+				<tr>
+					<th><a href="#" data-bind="click:setSort.bind($data,'contest_number'),css:{'asc':sort()=='contest_number','desc':sort()=='contest_number_desc'}">Pilot #</a></th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'name'),css:{'asc':sort()=='name','desc':sort()=='name_desc'}">Name</a></th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'last_update'),css:{'asc':sort()=='last_update','desc':sort()=='last_update_desc'}">Last Update (sec ago)</a></th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'tracker_name'),css:{'asc':sort()=='tracker_name','desc':sort()=='tracker_name_desc'}">Tracker #</a></th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'alt'),css:{'asc':sort()=='alt','desc':sort()=='alt_desc'}">Alt</a></th>
+					<th>Coordinates</th>
+					<th>Spd</th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'dist'),css:{'asc':sort()=='dist','desc':sort()=='dist_desc'}">Dist from HQ km</th>
+				</tr>
+			</thead>
+			<tbody data-bind="foreach: data">
+				<tr>
+					<td class="num" data-bind="text:contest_number"></td>
+					<td data-bind="text:name"></td>
+					<td class="num" data-bind="text:last_update"></td>
+					<td data-bind="text:tracker_name"></td>
+					<td class="num" data-bind="text:alt"></td>
+					<td data-bind="text:coords"></td>
+					<td class="num">gspd</td>
+					<td class="num" data-bind="text:dist"></td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

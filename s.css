@@ -1,0 +1,28 @@
+table { 
+	width: 100%;
+}
+
+th, td { 
+	border: 1px dotted silver; 
+	padding: 2px 5px;
+}
+
+.timeout { 
+	font-size: 10px; 
+}
+
+th a {
+	display: block;
+}
+
+.desc {
+	background: url(/img/desc.png) top right no-repeat;
+}
+
+.asc {
+	background: url(/img/asc.png) top right no-repeat;
+}
+
+.num { 
+	text-align: right; 
+}
