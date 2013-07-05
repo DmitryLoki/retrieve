@@ -72,7 +72,7 @@
 			var updateData = function() {
 				var ar = [];
 				for (var i = 0; i < pilots.length; i++) {
-					var rw = $.extend({last_update:"",tracker_name:pilots[i].tracker,alt:"",coords:"",dist:0},pilots[i]);
+					var rw = $.extend({last_update:"",tracker_name:pilots[i].tracker,alt:"",coords:"",dist:0,gspd:0},pilots[i]);
 					var rwTr = trackers[rw.tracker];
 					if (rwTr) {
 						rw.tracker_name = rwTr.name;
@@ -80,6 +80,9 @@
 							rw.last_update = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]);
 							rw.alt = rwTr.last_point[2];
 							rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ")";
+							rw.gspd = rwTr.last_point[5] || 0;
+							rw.gspd = Math.floor(rw.gspd*100)/100;
+							if (isNaN(rw.gspd)) rw.gspd = 0;
 							rw.dist = hq ? hq.distanceTo(new LatLon(rwTr.last_point[0],rwTr.last_point[1])) : 0;
 							rw.dist = Math.floor(rw.dist*100)/100;
 							if (isNaN(rw.dist)) rw.dist = 0;
@@ -91,7 +94,7 @@
 				var sort = table.sort().replace(/\_desc$/,"");
 				ar.sort(function(rw1,rw2) {
 					if (rw1[sort] == rw2[sort]) return 0;
-					if (sort == "contest_number" || sort == "last_update" || sort == "alt" || sort == "dist") {
+					if (sort == "contest_number" || sort == "last_update" || sort == "alt" || sort == "dist" || sort == "gspd") {
 						r1 = Math.floor(rw1[sort]*100);
 						r2 = Math.floor(rw2[sort]*100);
 						if (isNaN(r1)) r1 = 0;
@@ -125,7 +128,7 @@
 					<th><a href="#" data-bind="click:setSort.bind($data,'tracker_name'),css:{'asc':sort()=='tracker_name','desc':sort()=='tracker_name_desc'}">Tracker #</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'alt'),css:{'asc':sort()=='alt','desc':sort()=='alt_desc'}">Alt</a></th>
 					<th>Coordinates</th>
-					<th>Spd</th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'gspd'),css:{'asc':sort()=='gspd','desc':sort()=='gspd_desc'}">Spd</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'dist'),css:{'asc':sort()=='dist','desc':sort()=='dist_desc'}">Dist from HQ km</a></th>
 				</tr>
 			</thead>
@@ -137,7 +140,7 @@
 					<td data-bind="text:tracker_name"></td>
 					<td class="num" data-bind="text:alt"></td>
 					<td data-bind="text:coords"></td>
-					<td class="num">gspd</td>
+					<td class="num" data-bind="text:gspd"></td>
 					<td class="num" data-bind="text:dist"></td>
 				</tr>
 			</tbody>
