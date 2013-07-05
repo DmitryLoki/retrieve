@@ -18,7 +18,6 @@ define([
     'widget!MainMenu',
     'widget!TopBar',
     'widget!Facebook',
-    'TestServer',
     'RealServer',
     'DataSource',
     'ShortWay',
@@ -43,7 +42,6 @@ define([
     MainMenu,
     TopBar,
     Facebook,
-    TestServer,
     RealServer,
     DataSource,
     ShortWay,
@@ -62,7 +60,7 @@ define([
 //			  window.setTimeout(callback, 1000 / 60);
 //			};
 		return function(callback,element) {
-			  window.setTimeout(callback,100);
+			  window.setTimeout(callback,50);
 			};
     })();
 
@@ -234,8 +232,6 @@ define([
 			}
 		});
 
-//		this.server = new TestServer(this.options);
-//		this.server.generateData();
 		this.server = new RealServer(this.options);
 		this.dataSource = new DataSource({
 			server: this.server
@@ -509,6 +505,8 @@ define([
 					requestAnimFrame(function() {
 						var t = (new Date).getTime();
 						var key = self.currentKey()+(t-dt)*self.playerSpeed();
+						if (key < self.startKey()) 
+							key = self.startKey();
 						if (key > self.endKey()) {
 							key = self.endKey();
 							self.playerState("pause");

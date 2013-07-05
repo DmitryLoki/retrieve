@@ -64,6 +64,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 			drag: this.dragKey,
 			dragging: this.dragging,
 			range: this.serverKey,
+			isOnline: this.isOnline,
 			handleMode: ko.computed(function() {
 				return self.loading() ? "airvis-slider-handle-loading" : "";
 			})

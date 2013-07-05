@@ -21,6 +21,28 @@ define({
 		"finished_landed_small": {url: "ufo_finished_landed_small.png", width: 16, height: 17, x: 8, y: 8},
 		"finished_landed_large": {url: "ufo_finished_landed_large.png", width: 64, height: 70, x: 32, y: 70}
 	},
+	canvas: {
+		ufosColors: {
+			"default": "#FC0D1B",
+			"landed": "#20BBFC",
+			"finished": "#FC20E8"
+		},
+		ufosSizes: {
+			"default": 30,
+			"large": 50,
+			"small": 20		
+		},
+		ufosProperties: {
+			font: "13px sans",
+			textBaseline: "bottom",
+			textAlign: "left",
+			textBaseline: "top",
+			strokeStyle: "#000000",
+			shadowStyle: "rgba(0,0,0,.2)",
+			fillStyle: "#000000",
+			lineWidth: 1
+		}
+	},
 	ufo: {
 		color: "#000000",
 		visible: true,
@@ -28,11 +50,6 @@ define({
 		trackStrokeOpacity: 1,
 		trackStrokeWeight: 1,
 		flat: true
-	},
-	ufosNames: {
-		font: "13px sans",
-		textBaseline: "bottom",
-		textAlign: "left"
 	},
 	ufosTable: {
 		mode: "short",
