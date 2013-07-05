@@ -9,6 +9,7 @@ define(["jquery","knockout"], function($,ko) {
 		this.dragging = options.dragging;
 		this.handleMode = options.handleMode;
 		this.range = options.range;
+		this.isOnline = options.isOnline;
 
 		this.val.subscribe(function(val) {
 			if (!self.dragging())
