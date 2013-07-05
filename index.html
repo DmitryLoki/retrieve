@@ -122,6 +122,7 @@
 		<table>
 			<thead>
 				<tr>
+					<th>#</th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'contest_number'),css:{'asc':sort()=='contest_number','desc':sort()=='contest_number_desc'}">Pilot #</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'name'),css:{'asc':sort()=='name','desc':sort()=='name_desc'}">Name</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'last_update'),css:{'asc':sort()=='last_update','desc':sort()=='last_update_desc'}">Last Update (sec ago)</a></th>
@@ -134,6 +135,7 @@
 			</thead>
 			<tbody data-bind="foreach: data">
 				<tr>
+					<td class="num" data-bind="text:$index()+1"></td>
 					<td class="num" data-bind="text:contest_number"></td>
 					<td data-bind="text:name"></td>
 					<td class="num" data-bind="text:last_update"></td>
