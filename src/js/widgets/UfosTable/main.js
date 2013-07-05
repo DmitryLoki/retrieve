@@ -62,8 +62,8 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 
 			if (s1 == null && s2 != null) return 1;
 			if (s1 != null && s2 == null) return -1;
-			if (s1 == "not started" && s2 != "not started") return 1;
-			if (s1 != "not started" && s2 == "not started") return -1;
+//			if (s1 == "not started" && s2 != "not started") return 1;
+//			if (s1 != "not started" && s2 == "not started") return -1;
 
 			if (s1 == "finished" && s2 == "finished") {
 				if (c1 && c2) return c1 == c2 ? 0 : (c1 < c2 ? -1 : 1);

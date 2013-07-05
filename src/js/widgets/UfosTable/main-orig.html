@@ -7,6 +7,9 @@
 			<tbody>
 				<tr>
 					<td class="airvis-checkbox"><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
+					<td class="airvis-checkbox" data-bind="visible:mode()=='full'">
+						Full track
+					</td>
 					<td class="airvis-pilot-number">#</td>
 					<td class="airvis-pilot-name">Pilot</td>
 					<td class="airvis-pilot-country" data-bind="visible:mode()=='full'">Country</td>
@@ -26,6 +29,9 @@
 					<tr>
 						<td class="airvis-checkbox">
 			                <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
+						</td>
+						<td class="airvis-checkbox" data-bind="visible:$parent.mode()=='full'">
+			                <!-- ko widget: { data: trackVisibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
 						</td>
 						<td class="airvis-pilot-number" data-bind="text: $index()+1"></td>
 						<td class="airvis-pilot-name">
