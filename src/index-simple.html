@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/airvis.css">
+    <title></title>
+
+<!-- 
+  <script type="text/javascript">
+    var require = { baseUrl: "http://airvis03.ragneta.com/js" };
+  </script>
+-->
+
+    <script data-main="js/init" src="js/lib/require.js"></script>
+
+    <script type="text/javascript">
+
+      window.airvisPageLoadedCallback = function(self) {
+        self.on("domInit",function() {
+          $("a.test1").click(function() {
+            self.setOption("contestId","cnts-130520-3159653810");
+            self.setOption("raceId","5e102624-c409-4b5d-8aa5-c78381abae3e");
+            self.setOption("apiVersion","v0.1");
+            self.rebuild();
+          });
+          $("a.test2").click(function() {
+            self.setOption("contestId","cnts-130522-3500945464");
+            self.setOption("raceId","r-b0590284-a67a-476c-8055-b986e50c2836");
+            self.setOption("apiVersion","v0.1.2");
+            self.rebuild();
+          });
+
+          $("a.test3").click(function() {
+            self.setOption("contestId","cnts-130522-3500945464");
+            self.setOption("raceId","r-1e8e16c6-5f0c-441b-86dc-66d81aaadab3");
+            self.setOption("apiVersion","v0.1.2");
+            self.rebuild();
+          });
+
+          $("a.test4").click(function() {
+            self.setOption("contestId","cnts-130522-3500945464");
+            self.setOption("raceId","r-37c58c05-e669-49be-9ca7-f67d3b2186c5");
+            self.setOption("apiVersion","v0.1.2");
+            self.rebuild();
+          });
+        });
+        self.on("loadingError",function() {
+          console.log("LOADING ERROR");
+        });
+        self.on("loaded",function() {
+          console.log("LOADING SUCCESS");
+        });
+
+        var getTimeStr = function(h,m,s) {
+          h = Math.abs(h);
+          m = Math.abs(m);
+          s = Math.abs(s);
+          return (h<10?"0":"") + h + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
+        }
+
+        var setTime = function() {
+          var d = Math.floor((self.raceKey()-new Date().getTime())/1000);
+          document.getElementById("time").innerHTML = (d<0?"-":"") + getTimeStr(Math.floor(d/3600),Math.floor(d%3600/60),d%60);
+          setTimeout(setTime,1000);
+        }
+        setTime();
+      }
+
+    </script>
+
+  </head>
+  <body>
+    <div role="main" class="airvis-container">
+      <!-- ko widget: { data: page, imgRootUrl: "/img/", contestId: "cnts-130525-2928126425", raceId: "r-533ff015-0bb1-42af-bfa3-ffa23c4469ac", width: "100%", height: "380px", callback: window.airvisPageLoadedCallback, mode: "simple", apiVersion: "v0.2", mapOptions: {panControl:false,streetViewControl:false,scrollwheel:false,zoomControl:true,mapTypeControl:false,zoomControlOptions:{style:google.maps.ZoomControlStyle.LARGE}}} --><!-- /ko -->
+      <br><br>
+      <a href="#" class="test1">Test1</a>
+      <a href="#" class="test2">Test2</a>
+      <a href="#" class="test3">Day 2</a>
+      <a href="#" class="test4">Day 1</a>
+      <div id="time"></div>
+    </div>
+  </body>
+</html>

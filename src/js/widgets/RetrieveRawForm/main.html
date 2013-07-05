@@ -1,0 +1,16 @@
+<div>
+	<div class="airvis-sms-form" data-bind="visible:status()=='form'">
+		<label for="sms-from">From:</label>
+		<div class="airvis-control-value"><input id="sms-from" type="text" data-bind="value:form.from"></div>
+		<label for="sms-to">To:</label>
+		<div class="airvis-control-value"><input id="sms-to" type="text" data-bind="value:form.to"></div>
+		<label for="sms-sender">Sender:</label>
+		<div class="airvis-control-value"><input id="sms-sender" type="text" data-bind="value:form.sender"></div>
+		<label for="sms-body">Body:</label>
+		<div class="airvis-control-value"><textarea id="sms-body" data-bind="value:form.body"></textarea></div>
+		<div class="airvis-control-value"><button data-bind="click:send">Send SMS</button></div>
+	</div>
+	<div class="airvis-sms-status" data-bind="visible:status()=='sending'">Sending SMS...<br><button data-bind="click:cancel">Cancel</button></div>
+	<div class="airvis-sms-status" data-bind="visible:status()=='success'">SMS sent<br><button data-bind="click:onemore">Send another SMS</button></div>
+	<div class="airvis-sms-status" data-bind="visible:status()=='error'">SMS wasn't send<br><button data-bind="click:onemore">Send another SMS</button></div>
+</div>

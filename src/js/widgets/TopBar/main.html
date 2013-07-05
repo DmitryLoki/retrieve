@@ -1,0 +1,19 @@
+<div class="airvis-topbar">
+	<div class="airvis-topbar-container">
+		<a class="airvis-topbar-logo" href="/"></a>
+		<ul class="airvis-topbar-items" data-bind="foreach:{data:items,afterRender:registerSwitch,beforeRemove:unregisterSwitch}">
+			<!-- ko if: menuTitlePosition() != "right" -->
+				<li>
+					<a href="#" data-bind="click:$parent.switchVisibility,event:{mouseover:$parent.mouseover,mouseout:$parent.mouseout},text:title"></a>
+				</li>
+			<!-- /ko -->
+		</ul>
+		<ul class="airvis-topbar-items airvis-topbar-items-right" data-bind="foreach:{data:items,afterRender:registerSwitch,beforeRemove:unregisterSwitch}">
+			<!-- ko if: menuTitlePosition() == "right" -->
+				<li>
+					<a href="#" data-bind="click:$parent.switchVisibility,event:{mouseover:$parent.mouseover,mouseout:$parent.mouseout},text:title"></a>
+				</li>
+			<!-- /ko -->
+		</ul>
+	</div>
+</div>

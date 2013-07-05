@@ -1,6 +1,7 @@
-define(['widget!TrackerPage'], function(TrackerPage){
+define(['widget!TrackerPageDebug'], function(TrackerPageDebug){
 	var App = function(){
-		this.page = new TrackerPage;
+		this.page = new TrackerPageDebug;
+		window.airvisPage = this.page;
 	};
 
 	return App;

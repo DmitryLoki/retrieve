@@ -9,6 +9,11 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(
 	    	if(val.type && val.type != widget._widgetName)
 	    		throw new TypeError('Widget type is not equal to declaration! (' + val.type + ' != ' + widget._widgetName + ')');
 
+	    	if (!widget.savedNodes)
+		    	widget.savedNodes = ko.utils.cloneNodes(ko.virtualElements.childNodes(elem),true);
+		    if (!widget.nodesBindingContext)
+			    widget.nodesBindingContext = bindingContext;
+
 	    	elem._widget = widget;
 	    	ko.renderTemplate('main', bindingContext.extend({
 	    		$data: widget,
@@ -40,6 +45,20 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(
 		ko.virtualElements.allowedBindings.widget = true;
 	}
 
+	function koDomNodesBindingInit() {
+		ko.bindingHandlers.domNodes = {
+			init: function() {
+				return { controlsDescendantBindings: true };
+			},
+			update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+				var nodes = ko.utils.unwrapObservable(valueAccessor());
+				ko.virtualElements.setDomNodeChildren(element, ko.utils.cloneNodes(nodes));
+				ko.applyBindingsToDescendants(viewModel.nodesBindingContext,element);
+			}
+		}
+		ko.virtualElements.allowedBindings.domNodes = true;
+	}
+
 	function koTemplateEngineInit(){
 		var WidgetTemplate = function(template){
 			this.name = template;
@@ -65,6 +84,7 @@ define(['utils', 'filters', 'knockout', 'knockout.mapping', 'jquery'], function(
 
 	function appInit(widget, doc){
 		koWidgetBindingInit();
+		koDomNodesBindingInit();
 		koTemplateEngineInit();
 		ko.applyBindings(widget, doc.documentElement);
 		if(widget.domInit)
