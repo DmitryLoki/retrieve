@@ -2,6 +2,7 @@ define(["google.maps"],function(gmaps) {
 
 	var CanvasOverlay = function(options) {
 		this._map = options.map;
+		this._container = options.container;
 		this._mapDiv = this._map.getDiv();
 		this.setMap(this._map);
 	}
@@ -33,7 +34,7 @@ define(["google.maps"],function(gmaps) {
 		this._canvas.style.pointerEvents = "none";
 		this._context = this._canvas.getContext("2d");
 		this._proj = this._map.getProjection();
-		this._map.controls[gmaps.ControlPosition.TOP_CENTER].push(this._canvas);
+		this._map.controls[this._container].push(this._canvas);
 		this.relayout();
 	}
 

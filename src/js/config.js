@@ -22,25 +22,70 @@ define({
 		"finished_landed_large": {url: "ufo_finished_landed_large.png", width: 64, height: 70, x: 32, y: 70}
 	},
 	canvas: {
-		ufosColors: {
-			"default": "#FC0D1B",
-			"landed": "#20BBFC",
-			"finished": "#FC20E8"
+		ufos: {
+			basic: {
+				font: "13px sans",
+				textAlign: "left",
+				textBaseline: "top",
+				strokeStyle: "#000000",
+				fillStyle: "#000000",
+				lineWidth: 1
+			},
+			colors: {
+				default: "#fc0d1b",
+				landed: "#20bbfc",
+				finished: "#fc20e8"
+			},
+			titles: {
+				strokeStyle: "#ffffff",
+				lineWidth: 5,
+				fillStyle: "#000000"
+			},
+			sizes: {
+				default: 30,
+				large: 50,
+				small: 20
+			},
+			shadow: {
+				fillStyle: "rgba(0,0,0,0.2)"
+			}
 		},
-		ufosSizes: {
-			"default": 30,
-			"large": 50,
-			"small": 20		
+		waypoints: {
+			basic: {
+				font: "15px sans",
+				textAlign: "left",
+				textBaseline: "top",
+				fillStyle: "#000000",
+				lineWidth: 3,
+				strokeStyle: "#4B504A"				
+			},
+			colors: {
+				ss: {
+					closed: "rgba(255,0,0,0.5)",
+					opened: "rgba(70,220,70,0.5)"
+				},
+				goal: {
+					closed: "rgba(120,40,120,0.6)",
+					opened: "rgba(120,40,120,0.6)"
+				},
+	//			es: {
+	//				closed: "#505050",
+	//				opened: "#505050"
+	//			},
+				default: {
+					closed: "rgba(140,140,140,0.6)",
+					opened: "rgba(140,140,140,0.6)",
+				}
+			}
 		},
-		ufosProperties: {
-			font: "13px sans",
-			textBaseline: "bottom",
-			textAlign: "left",
-			textBaseline: "top",
-			strokeStyle: "#000000",
-			shadowStyle: "rgba(0,0,0,.2)",
-			fillStyle: "#000000",
-			lineWidth: 1
+		shortWay: {
+			basic: {
+				lineWidth: 5,
+				strokeStyle: "rgba(0,34,68,0.6)",
+				fillStyle: "rgba(0,34,68,0.6)",
+				font: "13px sans"
+			},
+			arrowSize: 10
 		}
 	},
 	ufo: {
