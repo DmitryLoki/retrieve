@@ -104,7 +104,7 @@
 		else if (query.type == "timeline") {
 			$.ajax({
 //				url: "http://api.airtribune.com/" + this.options.apiVersion + "/race/" + this.options.raceId + "/tracks",
-				url: "http://api.airtribune.com/" + this.options.apiVersion + "/track/group/" + this.options.raceId,
+				url: "http://api.airtribune.com/" + this.options.apiVersion + "/track/group/" + this.options.raceId + (query.isOnline?"_online":""),
 				dataType: "json",
 				data: {
 					from_time: Math.floor(query.first/1000),

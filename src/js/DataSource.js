@@ -213,6 +213,7 @@ define(function() {
 						type: "timeline",
 						first: first,
 						last: last,
+						isOnline: query.isOnline,
 						callback: function(data) {
 							self.cache[inSize][inOffset].status = "ready";
 							self.cache[inSize][inOffset].data = data;

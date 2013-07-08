@@ -186,7 +186,10 @@ define([
 						id: w.id()
 					});
 				}
-				self.shortWay(shortWayCalculator.calculate(data));
+				var shortWay = shortWayCalculator.calculate(data);
+				for (var i = 0; i < shortWay.length; i++)
+					self.waypoints()[i].shortWay = shortWay[i];
+				self.shortWay(shortWay);
 			}
 			else {
 				self.shortWay(null);
@@ -462,6 +465,7 @@ define([
 				dt: self.currentKey(),
 				timeMultiplier: self.playerSpeed(),
 				dtStart: self.startKey(),
+				isOnline: self.isOnline(),
 				callback: function(data) {
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.loading(false);
@@ -476,8 +480,8 @@ define([
 							if (!ufo.position() || 
 								!ufo.position().lat || 
 								!ufo.position().lng ||
-								Math.abs(rw.position.lat-ufo.position().lat) > 0.0000001 ||
-								Math.abs(rw.position.lng-ufo.position().lng) > 0.0000001) {
+								Math.abs(rw.position.lat-ufo.position().lat) > 0.00002 ||
+								Math.abs(rw.position.lng-ufo.position().lng) > 0.00002) {
 								ufo.position({lat:rw.position.lat,lng:rw.position.lng,dt:rw.position.dt});
 							}
 							if (!ufo.track() || !ufo.track().dt || ufo.track().dt != rw.track.dt)
