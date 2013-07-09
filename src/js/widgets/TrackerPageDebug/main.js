@@ -378,6 +378,8 @@ define([
 		self.mapOptions(self.options.mapOptions);
 		self.isOnline(self.options.isOnline);
 
+		if (self.isOnline()) self.server.setOption("isOnline",true);
+
 		// Сначала проставляем mode из настроек виджета
 		self.mode(self.options.mode);
 		// Для данного mode создаем все окна и виджеты
@@ -477,6 +479,7 @@ define([
 				dt: self.currentKey(),
 				timeMultiplier: self.playerSpeed(),
 				dtStart: self.startKey(),
+				isOnline: self.isOnline(),
 				callback: function(data) {
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.loading(false);
