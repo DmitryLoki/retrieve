@@ -77,7 +77,7 @@
     			return color;
 			}
 			$.ajax({
-				url: "http://api.airtribune.com/" + this.options.apiVersion + "/contest/" + this.options.contestId + "/race/" + this.options.raceId + "/paragliders",
+				url: "http://apidev.airtribune.com/v0.1.4/race/" + this.options.raceId + "/paragliders",
 				dataType: "json",
 				success: function(result) {
 					var data = [];
