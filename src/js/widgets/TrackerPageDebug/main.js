@@ -18,6 +18,7 @@ define([
     'widget!MainMenu',
     'widget!TopBar',
     'widget!Facebook',
+    'widget!RetrieveDistanceMeasurer',
     'TestServer',
     'RealServer',
     'DataSource',
@@ -43,6 +44,7 @@ define([
     MainMenu,
     TopBar,
     Facebook,
+    RetrieveDistanceMeasurer,
     TestServer,
     RealServer,
     DataSource,
@@ -312,6 +314,15 @@ define([
 				self.retrieveRun();
 			});
 
+      this.retrieveDistanceMeasurer = new RetrieveDistanceMeasurer({map:this.map});
+      this.retrieveDistanceMeasurerWindow = new Window(this.options.windows.retrieveDistanceMeasurer);
+      this.retrieveDistanceMeasurerWindow.on('showed', function(){
+        self.retrieveDistanceMeasurer.enable(self.map.map);
+      });
+      this.retrieveDistanceMeasurerWindow.on('hided', function(){
+        self.retrieveDistanceMeasurer.disable();
+      });
+
 			this.retrieveRawForm = new RetrieveRawForm({server:this.server});
 			this.retrieveRawFormWindow = new Window(this.options.windows.retrieveRawForm);
 
@@ -319,10 +330,10 @@ define([
 			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
 
 			this.topBar = new TopBar();
-			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow);
+			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveDistanceMeasurerWindow);
 
 			this.windowManager = new WindowManager();
-			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow);
+			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow,this.retrieveDistanceMeasurerWindow);
 		}
 	}
 
