@@ -184,7 +184,18 @@ define({
 			xPosition: "right",
 			top: 180,
 			right: 90
-		}
+		},
+    retrieveDistanceMeasurer: {
+      visible: false,
+      title: "Distance",
+      menuTitlePosition: "right",
+      resizable: false,
+      width: 180,
+      height: 100,
+      xPosition: "right",
+      top: 410,
+      right: 90
+    }
 	},
 	tracksVisualMode: "off",
 	cylindersVisualMode: "full",

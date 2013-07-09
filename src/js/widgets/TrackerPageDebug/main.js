@@ -18,6 +18,8 @@ define([
     'widget!MainMenu',
     'widget!TopBar',
     'widget!Facebook',
+    'widget!RetrieveDistanceMeasurer',
+    'TestServer',
     'RealServer',
     'DataSource',
     'ShortWay',
@@ -42,6 +44,8 @@ define([
     MainMenu,
     TopBar,
     Facebook,
+    RetrieveDistanceMeasurer,
+    TestServer,
     RealServer,
     DataSource,
     ShortWay,
@@ -60,7 +64,7 @@ define([
 //			  window.setTimeout(callback, 1000 / 60);
 //			};
 		return function(callback,element) {
-			  window.setTimeout(callback,50);
+			  window.setTimeout(callback,100);
 			};
     })();
 
@@ -186,10 +190,7 @@ define([
 						id: w.id()
 					});
 				}
-				var shortWay = shortWayCalculator.calculate(data);
-				for (var i = 0; i < shortWay.length; i++)
-					self.waypoints()[i].shortWay = shortWay[i];
-				self.shortWay(shortWay);
+				self.shortWay(shortWayCalculator.calculate(data));
 			}
 			else {
 				self.shortWay(null);
@@ -235,6 +236,8 @@ define([
 			}
 		});
 
+//		this.server = new TestServer(this.options);
+//		this.server.generateData();
 		this.server = new RealServer(this.options);
 		this.dataSource = new DataSource({
 			server: this.server
@@ -311,6 +314,15 @@ define([
 				self.retrieveRun();
 			});
 
+      this.retrieveDistanceMeasurer = new RetrieveDistanceMeasurer({map:this.map});
+      this.retrieveDistanceMeasurerWindow = new Window(this.options.windows.retrieveDistanceMeasurer);
+      this.retrieveDistanceMeasurerWindow.on('showed', function(){
+        self.retrieveDistanceMeasurer.enable(self.map.map);
+      });
+      this.retrieveDistanceMeasurerWindow.on('hided', function(){
+        self.retrieveDistanceMeasurer.disable();
+      });
+
 			this.retrieveRawForm = new RetrieveRawForm({server:this.server});
 			this.retrieveRawFormWindow = new Window(this.options.windows.retrieveRawForm);
 
@@ -318,10 +330,10 @@ define([
 			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
 
 			this.topBar = new TopBar();
-			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow);
+			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveDistanceMeasurerWindow);
 
 			this.windowManager = new WindowManager();
-			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow);
+			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow,this.retrieveDistanceMeasurerWindow);
 		}
 	}
 
@@ -465,7 +477,6 @@ define([
 				dt: self.currentKey(),
 				timeMultiplier: self.playerSpeed(),
 				dtStart: self.startKey(),
-				isOnline: self.isOnline(),
 				callback: function(data) {
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.loading(false);
@@ -480,8 +491,8 @@ define([
 							if (!ufo.position() || 
 								!ufo.position().lat || 
 								!ufo.position().lng ||
-								Math.abs(rw.position.lat-ufo.position().lat) > 0.00002 ||
-								Math.abs(rw.position.lng-ufo.position().lng) > 0.00002) {
+								Math.abs(rw.position.lat-ufo.position().lat) > 0.0000001 ||
+								Math.abs(rw.position.lng-ufo.position().lng) > 0.0000001) {
 								ufo.position({lat:rw.position.lat,lng:rw.position.lng,dt:rw.position.dt});
 							}
 							if (!ufo.track() || !ufo.track().dt || ufo.track().dt != rw.track.dt)
@@ -509,8 +520,6 @@ define([
 					requestAnimFrame(function() {
 						var t = (new Date).getTime();
 						var key = self.currentKey()+(t-dt)*self.playerSpeed();
-						if (key < self.startKey()) 
-							key = self.startKey();
 						if (key > self.endKey()) {
 							key = self.endKey();
 							self.playerState("pause");

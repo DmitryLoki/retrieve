@@ -163,6 +163,7 @@ define(["jquery","knockout"],function($,ko) {
 		this.buttonOn(false);
 		this.container.fadeOut("fast",function() {
 			self.visible(false);
+      self.emit('hided');
 		});
 /*
 		this.visible(false);
@@ -191,6 +192,7 @@ define(["jquery","knockout"],function($,ko) {
 		this.buttonOn(true);
 		this.container.fadeIn("fast",function() {
 			self.visible(true);
+      self.emit('showed');
 		});
 /*		
 		if (this.switchNode) {
