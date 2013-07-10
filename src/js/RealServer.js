@@ -176,8 +176,8 @@
 			var data = {};
 			if (query.lastSmsTimestamp) data.from_time = query.lastSmsTimestamp + 1; // здесь прибавляем 1 чтобы было не включительно (чтобы последняя смс не приходила снова и снова)
 			$.ajax({
-//				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
-				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
+				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
+//				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
 				dataType: "json",
 				data: data,
 				success: function(result) {
@@ -192,8 +192,8 @@
 		console.log("post",query);
 		if (query.type == "sms") {
 			var ajax = $.ajax({
-//				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
-				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
+				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
+//				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
 				type: "POST",
 				dataType: "json",
 				data: {
