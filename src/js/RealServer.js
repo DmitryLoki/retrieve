@@ -4,6 +4,10 @@
 		this.options = options;
 	}
 
+	RealServer.prototype.setOption = function(i,v) {
+		this.options[i] = v;
+	}
+
 	RealServer.prototype.get = function(query) {
 		var mult = 1000;
 		if (query.type == "race") {
@@ -104,7 +108,7 @@
 		else if (query.type == "timeline") {
 			$.ajax({
 //				url: "http://api.airtribune.com/" + this.options.apiVersion + "/race/" + this.options.raceId + "/tracks",
-				url: "http://api.airtribune.com/" + this.options.apiVersion + "/track/group/" + this.options.raceId,
+				url: "http://api.airtribune.com/" + this.options.apiVersion + "/track/group/" + this.options.raceId + (query.isOnline||this.options.isOnline?"_online":""),
 				dataType: "json",
 				data: {
 					from_time: Math.floor(query.first/1000),

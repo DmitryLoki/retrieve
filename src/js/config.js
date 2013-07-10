@@ -21,6 +21,73 @@ define({
 		"finished_landed_small": {url: "ufo_finished_landed_small.png", width: 16, height: 17, x: 8, y: 8},
 		"finished_landed_large": {url: "ufo_finished_landed_large.png", width: 64, height: 70, x: 32, y: 70}
 	},
+	canvas: {
+		ufos: {
+			basic: {
+				font: "13px sans",
+				textAlign: "left",
+				textBaseline: "top",
+				strokeStyle: "#000000",
+				fillStyle: "#000000",
+				lineWidth: 1
+			},
+			colors: {
+				default: "#fc0d1b",
+				landed: "#20bbfc",
+				finished: "#fc20e8"
+			},
+			titles: {
+				strokeStyle: "#ffffff",
+				lineWidth: 5,
+				fillStyle: "#000000"
+			},
+			sizes: {
+				default: 30,
+				large: 50,
+				small: 20
+			},
+			shadow: {
+				fillStyle: "rgba(0,0,0,0.2)"
+			}
+		},
+		waypoints: {
+			basic: {
+				font: "15px sans",
+				textAlign: "left",
+				textBaseline: "top",
+				fillStyle: "#000000",
+				lineWidth: 3,
+				strokeStyle: "#4B504A"				
+			},
+			colors: {
+				ss: {
+					closed: "rgba(255,0,0,0.5)",
+					opened: "rgba(70,220,70,0.5)"
+				},
+				goal: {
+					closed: "rgba(120,40,120,0.6)",
+					opened: "rgba(120,40,120,0.6)"
+				},
+	//			es: {
+	//				closed: "#505050",
+	//				opened: "#505050"
+	//			},
+				default: {
+					closed: "rgba(140,140,140,0.6)",
+					opened: "rgba(140,140,140,0.6)",
+				}
+			}
+		},
+		shortWay: {
+			basic: {
+				lineWidth: 5,
+				strokeStyle: "rgba(0,34,68,0.6)",
+				fillStyle: "rgba(0,34,68,0.6)",
+				font: "13px sans"
+			},
+			arrowSize: 10
+		}
+	},
 	ufo: {
 		color: "#000000",
 		visible: true,
@@ -28,11 +95,6 @@ define({
 		trackStrokeOpacity: 1,
 		trackStrokeWeight: 1,
 		flat: true
-	},
-	ufosNames: {
-		font: "13px sans",
-		textBaseline: "bottom",
-		textAlign: "left"
 	},
 	ufosTable: {
 		mode: "short",
@@ -122,7 +184,18 @@ define({
 			xPosition: "right",
 			top: 180,
 			right: 90
-		}
+		},
+    retrieveDistanceMeasurer: {
+      visible: false,
+      title: "Distance",
+      menuTitlePosition: "right",
+      resizable: false,
+      width: 180,
+      height: 100,
+      xPosition: "right",
+      top: 410,
+      right: 90
+    }
 	},
 	tracksVisualMode: "off",
 	cylindersVisualMode: "full",

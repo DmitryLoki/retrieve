@@ -24,6 +24,16 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.dragKey = ko.observable(0);
 		this.dragging = ko.observable(false);
 
+		if (this.isOnline) {
+			this.hideOnlineNotification = ko.observable(false);
+			this.showOnlineNotification = ko.computed(function() {
+				return (self.isOnline() && !self.isCurrentlyOnline() && !self.hideOnlineNotification());
+			});
+			this.turnOffOnlineNotification = function() {
+				self.hideOnlineNotification(true);
+			}
+		}
+
 		var getTimeStr = function(h,m,s) {
 			return (h<10?"0":"") + h + ":" + (m<10?"0":"") + m + ":" + (s<10?"0":"") + s;
 		}
@@ -64,6 +74,7 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 			drag: this.dragKey,
 			dragging: this.dragging,
 			range: this.serverKey,
+			isOnline: this.isOnline,
 			handleMode: ko.computed(function() {
 				return self.loading() ? "airvis-slider-handle-loading" : "";
 			})

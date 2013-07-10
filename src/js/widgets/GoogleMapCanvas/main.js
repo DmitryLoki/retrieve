@@ -1,57 +1,5 @@
 define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverlay","config"],function($,ko,utils,EventEmitter,gmaps,CanvasOverlay,config) {
 
-	var MapFloatElem = function(params) {
-		this._params = params;
-	}
-	MapFloatElem.prototype = new gmaps.OverlayView;
-	MapFloatElem.prototype.onRemove = function() {
-		ko.cleanNode(this._div);
-		this._div.parentNode.removeChild(this._div);
-	}
-	MapFloatElem.prototype.draw = function() {
-		if(!this._coords)
-			return;
-		var proj = this.getProjection();
-		if(!proj)
-			return;
-		var coords = proj.fromLatLngToDivPixel(this._coords);
-		if (this._div) {
-			if (this._params.xPosition == "right")
-				this._div.style.left = Math.floor(coords.x-this._div.offsetWidth)+"px";
-			else if (this._params.xPosition == "center")
-				this._div.style.left = Math.floor(coords.x-this._div.offsetWidth/2)+"px";				
-			else				
-				this._div.style.left = coords.x + "px";
-			if (this._params.yPosition == "bottom")
-				this._div.style.top = Math.floor(coords.y-this._div.offsetHeight)+"px";
-			else if (this._params.yPosition == "middle")
-				this._div.style.top = Math.floor(coords.y-this._div.offsetHeight/2)+"px";
-			else
-				this._div.style.top = coords.y + "px";
-		}
-	}
-	MapFloatElem.prototype.onAdd = function() {
-		var div = document.createElement("div");
-		div.style.position = "absolute";
-		div.innerHTML = this._params.template;
-		this.getPanes().floatPane.appendChild(div);
-		this._div = div;
-		ko.applyBindings(this._params.data, div);
-	}
-	MapFloatElem.prototype.move = function(coords) {
-		this._coords = coords;
-		this.draw();
-	}
-	MapFloatElem.prototype.setPosition = function(coords) {
-		return this.move(coords);
-	}
-	MapFloatElem.prototype.setXYPosition = function(r) {
-		this._params.xPosition = r.x;
-		this._params.yPosition = r.y;
-		this.draw();
-	}
-
-
 	var GoogleMap = function(options) {
 		var self = this;
 		this.config = config;
@@ -123,12 +71,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 		this.mapShortWay = null;
 		this.shortWay.subscribe(function(w) {
 			if (!self.isReady()) return;
-			self.destroyShortWay();
-			self.createShortWay(w);
-		});
-
-		this.zoom.subscribe(function() {
-			self.refreshShortWayArrows();
+			self.destroyShortWay(self.mapShortWay);
+			self.mapShortWay = self.createShortWay(w);
 		});
 
 		this.mapOptions.subscribe(function(options) {
@@ -159,6 +103,44 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			center: data.center,
 			radius: data.radius,
 			openKey: data.openKey,
+			shortWay: data.shortWay
+		}
+
+		w.spherePoint = ko.computed(function() {
+			if (!w.center() || !w.radius()) return null;
+			var rp = gmaps.geometry.spherical.computeOffset(new gmaps.LatLng(w.center().lat,w.center().lng),w.radius(),90);
+			return self.map.getProjection().fromLatLngToPoint(rp);
+		});
+
+		w.state = ko.computed(function() {
+			if (self.mode() == "simple") return "opened";
+			return w.openKey() < self.currentKey() ? "opened" : "closed";
+		});
+
+		w.state.subscribe(function() {
+			self.update("static");
+		});
+
+		w.render = function(co) {
+			if (self.cylindersVisualMode() == "off") return;
+
+			var coords = self.prepareCoords(w.center().lat,w.center().lng);
+			var p = co.abs2rel(coords,self.zoom());
+			var sp = co.abs2rel(w.spherePoint(),self.zoom());
+			var r = Math.sqrt(Math.pow(p.x-sp.x,2)+Math.pow(p.y-sp.y,2));
+
+			if (co.inViewport(p,r)) {
+				var context = co.getContext();
+				var color = config.canvas.waypoints.colors[w.type()] ? config.canvas.waypoints.colors[w.type()][w.state()] : config.canvas.waypoints.colors["default"][w.state()];
+				co.setProperties($.extend({},config.canvas.waypoints.basic,{fillStyle:color}));
+				context.beginPath();
+				context.arc(p.x,p.y,r,0,2*Math.PI);
+				context.stroke();
+				if (self.cylindersVisualMode() == "full")
+					context.fill();
+			}
+
+
 		}
 /*
 		w.title = ko.computed(function() {
@@ -181,9 +163,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 		});
 		w.fillOpacity = ko.computed(function() {
 			return self.cylindersVisualMode() == "empty" ? 0 : config.waypoint.fillOpacity;
-		});
-		w.modelVisible = ko.computed(function() {
-			return self.cylindersVisualMode() == "off" ? false : true;
 		});
 		w.titleVisible = ko.computed(function() {
 			var b = w.modelVisible() && self.zoom() >= config.waypointsVisualAutoMinZoom;
@@ -306,6 +285,10 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 		w.radiusSubscribe.dispose();
 	}
 
+	GoogleMap.prototype.prepareCoords = function(lat,lng) {
+		return this.map.getProjection().fromLatLngToPoint(new gmaps.LatLng(lat,lng));
+	}
+
 	GoogleMap.prototype.createUfo = function(data) {
 		var self = this;
 		var u = {
@@ -322,182 +305,121 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			trackData: []
 		}
 
-		u.render = function(cov) {
-			if (u.noData()) return;
-			var con = cov._context;
-			con.strokeColor = "#000000";
-			con.fillStyle = "#000000";
-			var coords = new gmaps.LatLng(u.position().lat,u.position().lng);
-//			var coordsPx = cov._map.getProjection().fromLatLngToPoint(coords);
+		u.render = function(co) {
+			if (u.noData() || !u.visible()) return;
 
+			var p = co.abs2rel(u.coords(),self.zoom());
 
-			var proj = cov._map.getProjection();
-			var coordsPx = proj.fromLatLngToPoint(coords);
-			var coordsRelPx = {x:coordsPx.x*(1 << self.zoom()),y:coordsPx.y*(1 << self.zoom())};
+			var iconSize = config.canvas.ufos.sizes[self.modelsVisualMode()] || config.canvas.ufos.sizes["default"];
+			var iconColor = config.canvas.ufos.colors[u.state()] || config.canvas.ufos.colors["default"];
 
-
-			console.log("this",this,"self",self,"coords",coords,"proj",proj,"coordsPx",coordsPx,"coordsRelPx",coordsRelPx,"zoom",self.zoom());
-
-//			var coordsPx = cov._map.getProjection().fromLatLngToDivPixel(coords);
-//			var coordsRelPx = cov.absToRel(coordsPx);
-//			var coordsRelPx = coordsPx;
-			con.fillText(u.name(),coordsRelPx.x,coordsRelPx.y);
-			con.beginPath();
-			con.moveTo(coordsRelPx.x,coordsRelPx.y);
-			con.lineTo(coordsRelPx.x-6,coordsRelPx.y-13);
-			con.lineTo(coordsRelPx.x+6,coordsRelPx.y-13);
-			con.lineTo(coordsRelPx.x,coordsRelPx.y);
-			con.fill();
+			if (co.inViewport(p,iconSize)) {
+				var context = co.getContext();
+				// Тень от иконки
+				co.setProperties($.extend({},config.canvas.ufos.basic,config.canvas.ufos.shadow));
+				context.beginPath();
+				context.moveTo(p.x-iconSize/4,p.y);
+				context.lineTo(p.x,p.y-iconSize/10);
+				context.lineTo(p.x+iconSize/4,p.y);
+				context.lineTo(p.x,p.y+iconSize/10);
+				context.lineTo(p.x-iconSize/4,p.y);
+				context.fill();
+				// Трек
+				if (self.tracksVisualMode() != "off" && u.trackData.length > 1) {
+					co.setProperties($.extend({},config.canvas.ufos.basic,{strokeStyle:u.color()}));
+					context.beginPath();
+					for (var i = 0; i < u.trackData.length; i++) {
+						if (u.trackData[i].dt == null) continue;
+						var pp = co.abs2rel(u.trackData[i],self.zoom());
+						if (i > 0) context.lineTo(pp.x,pp.y);
+						else context.moveTo(pp.x,pp.y);
+					}
+					context.lineTo(p.x,p.y);
+					context.stroke();
+				}
+				// Имя пилота
+				if (self.namesVisualMode() == "on" || (self.namesVisualMode() == "auto" && self.zoom() >= config.namesVisualModeAutoMinZoom)) {
+					co.setProperties($.extend({},config.canvas.ufos.basic,config.canvas.ufos.titles));
+					context.strokeText(u.name(),p.x,p.y);
+					context.fillText(u.name(),p.x,p.y);
+				}
+				// Иконка
+				co.setProperties($.extend({},config.canvas.ufos.basic,{fillStyle:iconColor}));
+				context.beginPath();
+				context.moveTo(p.x,p.y);
+				context.arc(p.x,p.y,iconSize,Math.PI*4/3,Math.PI*5/3);
+				context.lineTo(p.x,p.y);
+				context.fill();
+				context.stroke();
+			}
 		}
-/*
-		u._model = new gmaps.Marker({
-			flat: config.ufo.flat,
-			map: self.map
-		});
-		u._titleModel = new MapFloatElem({
-			template: self.templates.markerTitle,
-			data: {
-				title: u.name,
-				color: u.color
-			}
-		});
-		u._trackModel = new gmaps.Polyline({
-			strokeColor: u.color(),
-			strokeOpacity: config.ufo.trackStrokeOpacity,
-			strokeWeight: config.ufo.trackStrokeWeight,
-			map: self.map
-		});
-		u._trackBeginModel = new gmaps.Polyline({
-			strokeColor: u.color(),
-			strokeOpacity: config.ufo.trackStrokeOpacity,
-			strokeWeight: config.ufo.trackStrokeWeight,
-			map: self.map
-		});
 
-		u.modelVisible = ko.computed(function() {
-			return u.visible() && !u.noData();
-		});
-
-		u.titleVisible = ko.computed(function() {
-			return u.visible() && !u.noData() && (self.namesVisualMode() == "on" || (self.namesVisualMode() == "auto" && self.zoom() >= config.namesVisualModeAutoMinZoom));
-		});
-
-		u.trackModelVisible = ko.computed(function() {
-			return u.visible() && !u.trackVisible() && (self.tracksVisualMode() == "full" || self.tracksVisualMode() == "10min");
-		});
-
-		u.icon = ko.computed(function() {
-			u.visible();
-//			if (self.raceKey() > self.currentKey())
-//				return "not started_" + self.modelsVisualMode();
-//			if (u.state() == "landed" && u.stateChangedAt() > 0) return "finished_landed_" + self.modelsVisualMode();
-			return u.state() + "_" + self.modelsVisualMode();
-//			return u.state() + self.modelsVisualMode();
-//			var icon = "fly" + self.modelsVisualMode();
-//			return icon;
-		});
-
-		u._trackBegin = ko.computed(function() {
-			if (u.trackModelVisible() && u.track() && u.track().dt && u.position() && u.position().lat && u.position().lng && (self.tracksVisualMode() == "full" || self.tracksVisualMode() == "10min")) {
-				var path = [
-					new gmaps.LatLng(u.track().lat,u.track().lng),
-					new gmaps.LatLng(u.position().lat,u.position().lng)
-				];
-				u._trackBeginModel.setPath(path);
-			}
-		});
-
-		u.colorSubscribe = u.color.subscribe(function(v) {
-			u._trackModel.set("strokeColor",v);
-			u._trackBeginModel.set("strokeColor",v);
-		});
-
-		u.modelVisibleSubscribe = u.modelVisible.subscribe(function(v) {
-			u._model.setMap(v?self.map:null);
-		});
-
-		u.titleVisibleSubscribe = u.titleVisible.subscribe(function(v) {
-			u._titleModel.setMap(v?self.map:null);
-		});
-
-		u.trackModelVisibleSubscribe = u.trackModelVisible.subscribe(function(v) {
-			u._trackModel.setMap(v?self.map:null);
-			u._trackBeginModel.setMap(v?self.map:null);
-			if (u.position() && u.position().lat && u.position().lng) {
-				u._trackModel.setPath([new gmaps.LatLng(u.position().lat,u.position().lng)]);
-				u.trackData = [u.position()];
-			}
-			else {
-				u._trackModel.setPath([]);
-				u.trackData = [];
-			}
-			var p = u._trackBeginModel.setPath([]);
-		});
-
-		u.iconSubscribe = u.icon.subscribe(function(v) {
-			var params = config.icons[v];
-			if (!v || !params) params = config.icons["default_" + self.modelsVisualMode()];
-			if (v && params)
-				u._model.setIcon(new gmaps.MarkerImage(self.imgRootUrl()+params.url, new gmaps.Size(params.width,params.height),new gmaps.Point(0,0),new gmaps.Point(params.x,params.y)));
-		});
-
-		u.positionSubscribe = u.position.subscribe(function(v) {
-			if (v && v.lat && v.lng) {
-				var ll = new gmaps.LatLng(v.lat,v.lng);
-				u._model.setPosition(ll);
-				u._titleModel.setPosition(ll);
-			}
+		u.coords = ko.computed(function() {
+			if (u.noData() || !u.visible() || !u.position()) return null;
+			return self.prepareCoords(u.position().lat,u.position().lng);
 		});
 
 		u.trackSubscribe = u.track.subscribe(function(v) {
-			if (u.trackModelVisible() && (self.tracksVisualMode() == "full" || self.tracksVisualMode() == "10min")) {
-				var path = u._trackModel.getPath();
-				if (v.dt == null) {
-					path.clear();
-					u.trackData = [];
-				}
-				else {
-					path.push(new gmaps.LatLng(v.lat,v.lng));
-					u.trackData.push(v);
-				}
-				if (self.tracksVisualMode() == "10min") {
-					while (u.trackData[0] && (v.dt > u.trackData[0].dt + 60000)) {
-						path.removeAt(0);
-						u.trackData.splice(0,1);
-					}
-				}
+			if (!u.visible() || self.tracksVisualMode() == "off") return;
+			// если приходит специальное значение v.dt=null, обнуляем трек
+			if (v.dt == "null") {
+				u.trackData = [];
+				return;
+			}
+			// подготавливаем координаты и добавляем новую точку в trackData
+			var coords = self.prepareCoords(v.lat,v.lng);
+			v.x = coords.x;
+			v.y = coords.y;
+			u.trackData.push(v);
+			// если 10 минут ограничение трека, убираем из начала трека старые точки
+			if (self.tracksVisualMode() == "10min") {
+				while (u.trackData[0] && (self.currentKey() > u.trackData[0].dt + 60000))
+					u.trackData.splice(0,1);
 			}
 		});
 
-		u.position.valueHasMutated();
-		u.visible.valueHasMutated();
-*/
 		return u;
 	}
 
 	GoogleMap.prototype.destroyUfo = function(u) {
-/*
-		if (u._model)
-			u._model.setMap(null);
-		if (u._titleModel)
-			u._titleModel.setMap(null);
-		if (u._trackModel)
-			u._trackModel.setMap(null);
-		u.colorSubscribe.dispose();
-		u.modelVisibleSubscribe.dispose();
-		u.titleVisibleSubscribe.dispose();
-		u.trackModelVisibleSubscribe.dispose();
-		u.iconSubscribe.dispose();
-		u.positionSubscribe.dispose();
 		u.trackSubscribe.dispose();
-*/
 	}
 
 	GoogleMap.prototype.createShortWay = function(data) {
 		var self = this;
-		if (!data) return;
+		if (!data) return null;
 
-		var w = {};
+		for (var i = 0; i < data.length; i++) {
+			var p = self.prepareCoords(data[i].lat,data[i].lng);
+			data[i].x = p.x;
+			data[i].y = p.y;
+		}
+
+		var w = {
+			data:data
+		};
+
+		w.render = function(co) {
+			co.setProperties(config.canvas.shortWay.basic);
+			var context = co.getContext();
+			context.beginPath();
+			var prevP = null;
+			for (var i = 0; i < w.data.length; i++) {
+				var p = co.abs2rel(w.data[i],self.zoom());
+				if (i > 0) {
+					context.lineTo(p.x,p.y);
+					var l = Math.sqrt(Math.pow(p.x-prevP.x,2)+Math.pow(p.y-prevP.y,2));
+					if (l > config.canvas.shortWay.arrowSize/2) {
+						
+					}
+				}
+				else
+					context.moveTo(p.x,p.y);
+				prevP = p;
+			}
+			context.stroke();
+
+		}
 /*
 		w.style = ko.computed(function() {
 			return config.shortWay[self.shortWayVisualMode()];
@@ -527,7 +449,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 
 		this.mapShortWay = w;
 */
-		this.refreshShortWayArrows();
+//		this.refreshShortWayArrows();
+		return w;
 	}
 
 	GoogleMap.prototype.refreshShortWayArrows = function() {
@@ -565,7 +488,6 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			bounds.extend(new gmaps.LatLng(w.lat,w.lng));
 		}
 		this.map.fitBounds(bounds);
-
 		// Допиливание неточностей fitBounds, в большинстве случаев зум можно увеличить на 1 и все равно все помещается
 		if (!this.map.getProjection || !this.map.getProjection()) return;
 		var boundsNE = this.map.getProjection().fromLatLngToPoint(bounds.getNorthEast());
@@ -581,28 +503,41 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			this.map.setZoom(this.map.getZoom()+1);
 	}
 
-	GoogleMap.prototype.updateCanvas = function(force) {
-		var self = this;
-		if (!force && this._updatingCanvas) {
-			this._updateCanvasRequired = true;
-			return;
-		}
-		this._updatingCanvas = true;
-		this._updateCanvasRequired = false;
-		clearTimeout(this._updatingCanvasTimeout);
-		this.canvasOverlay.clear();
+	GoogleMap.prototype._updateDynamicCanvas = function(canvas) {
 		this.mapUfos.forEach(function(ufo) {
-			ufo.render(self.canvasOverlay);
-		});
-		this._updatingCanvasTimeout = setTimeout(function() {
-			self._updatingCanvas = false;
-			if (self._updateCanvasRequired)
-				self.updateCanvas();
-		},100);
+			ufo.render(canvas);
+		},this);
 	}
 
-	GoogleMap.prototype.update = function() {
-		this.updateCanvas();
+	GoogleMap.prototype._updateStaticCanvas = function(canvas) {
+		this.mapWaypoints.forEach(function(waypoint) {
+			waypoint.render(canvas);
+		},this);
+		if (this.mapShortWay)
+			this.mapShortWay.render(canvas);
+	}
+
+	GoogleMap.prototype.update = function(type,force) {
+		var self = this;
+		var canvas = type=="static" ? this.staticCanvasOverlay : this.canvasOverlay;
+		if (!canvas) return;
+		if (!force && canvas._updating) {
+			canvas._updateRequired = true;
+			return;
+		}
+		canvas._updating = true;
+		canvas._updateRequired = false;
+		clearTimeout(canvas._updatingTimeout);
+
+		canvas.clear();
+		if (type=="static") this._updateStaticCanvas(canvas);
+		else this._updateDynamicCanvas(canvas);
+
+		canvas._updatingTimeout = setTimeout(function() {
+			canvas._updating = false;
+			if (canvas._updateRequired)
+				self.update(type);
+		});
 	}
 
 	GoogleMap.prototype.domInit = function(elem,params) {
@@ -616,26 +551,34 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","./CanvasOverla
 			center: new gmaps.LatLng(config.map.center.lat,config.map.center.lng),
 			mapTypeId: gmaps.MapTypeId[config.map.type]
 		});
-//		gmaps.event.addListener(this.map,"mousedown",function() {
-//			self.activateMapScroll(true);
-//		});
-//		gmaps.event.addListener(this.map,"click",function() {
-//			self.activateMapScroll(true);
-//		});
+		gmaps.event.addListenerOnce(this.map,"mousedown",function() {
+			self.activateMapScroll(true);
+		});
+		gmaps.event.addListenerOnce(this.map,"click",function() {
+			self.activateMapScroll(true);
+		});
+
+		this.staticCanvasOverlay = new CanvasOverlay({
+			map: this.map,
+			container: gmaps.ControlPosition.TOP_CENTER
+		});
 
 		this.canvasOverlay = new CanvasOverlay({
-			map: this.map
+			map: this.map,
+			container: gmaps.ControlPosition.BOTTOM_CENTER
 		});
-		this.canvasOverlay.setTextProperties(config.ufosNames);
 
 		gmaps.event.addListener(this.map,"center_changed",function() {
 			// событие center_changed возникает когда меняется размер карты (так же поступает bounds_changed, но он с глючной задержкой)
+			self.staticCanvasOverlay.relayout();
 			self.canvasOverlay.relayout();
-			self.updateCanvas(true);
+			self.update("static",true);
+			self.update("dynamic",true);
 		});
 		gmaps.event.addListener(this.map,"zoom_changed",function() {
 			self.zoom(self.map.getZoom());
-			self.updateCanvas(true);
+			self.update("static",true);
+			self.update("dynamic",true);
 		});
 
 		this.isReady(true);

@@ -18,6 +18,7 @@ define([
     'widget!MainMenu',
     'widget!TopBar',
     'widget!Facebook',
+    'widget!RetrieveDistanceMeasurer',
     'TestServer',
     'RealServer',
     'DataSource',
@@ -43,6 +44,7 @@ define([
     MainMenu,
     TopBar,
     Facebook,
+    RetrieveDistanceMeasurer,
     TestServer,
     RealServer,
     DataSource,
@@ -312,6 +314,15 @@ define([
 				self.retrieveRun();
 			});
 
+      this.retrieveDistanceMeasurer = new RetrieveDistanceMeasurer({map:this.map});
+      this.retrieveDistanceMeasurerWindow = new Window(this.options.windows.retrieveDistanceMeasurer);
+      this.retrieveDistanceMeasurerWindow.on('showed', function(){
+        self.retrieveDistanceMeasurer.enable(self.map.map);
+      });
+      this.retrieveDistanceMeasurerWindow.on('hided', function(){
+        self.retrieveDistanceMeasurer.disable();
+      });
+
 			this.retrieveRawForm = new RetrieveRawForm({server:this.server});
 			this.retrieveRawFormWindow = new Window(this.options.windows.retrieveRawForm);
 
@@ -319,10 +330,10 @@ define([
 			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
 
 			this.topBar = new TopBar();
-			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow);
+			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveDistanceMeasurerWindow);
 
 			this.windowManager = new WindowManager();
-			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow);
+			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow,this.retrieveDistanceMeasurerWindow);
 		}
 	}
 
@@ -366,6 +377,8 @@ define([
 		self.mapWidget(self.options.mapWidget);
 		self.mapOptions(self.options.mapOptions);
 		self.isOnline(self.options.isOnline);
+
+		if (self.isOnline()) self.server.setOption("isOnline",true);
 
 		// Сначала проставляем mode из настроек виджета
 		self.mode(self.options.mode);
@@ -466,6 +479,7 @@ define([
 				dt: self.currentKey(),
 				timeMultiplier: self.playerSpeed(),
 				dtStart: self.startKey(),
+				isOnline: self.isOnline(),
 				callback: function(data) {
 					// в data ожидается массив с ключами - id-шниками пилотов и данными - {lat и lng} - текущее положение
 					self.loading(false);

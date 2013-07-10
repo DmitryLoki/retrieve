@@ -123,7 +123,7 @@ define(["jquery","knockout","widget!Checkbox","config","CountryCodes","jquery.ti
 			noData: data.noData,
 			tableData: data.tableData
 		}
-		w.visibleCheckbox = new Checkbox({checked:w.visible,color:w.color});
+		w.visibleCheckbox = new Checkbox({checked:w.visible,color:"#909090"});
 		w.trackVisibleCheckbox = new Checkbox({checked:w.trackVisible,color:w.color});
 		w.finishedTime = ko.computed(function() {
 			if (!w.tableData || !w.tableData.state || w.tableData.state()!="finished" || !w.tableData.stateChangedAt || !w.tableData.stateChangedAt()) return null;

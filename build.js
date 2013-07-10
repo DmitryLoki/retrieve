@@ -1,3 +1,4 @@
+//hello
 var requirejs = require('requirejs');
 var exec = require('child_process').exec;
 
