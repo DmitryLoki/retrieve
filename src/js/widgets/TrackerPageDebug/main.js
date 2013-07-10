@@ -127,7 +127,7 @@ define([
 		this.body = options.body;
 		this.target = options.from == "me" ? options.to : options.from;
 		this.readed = ko.observable(false);
-		var d = new Date(this.timestamp);
+		var d = new Date(this.timestamp * 1000);
 		this.time = (d.getHours()<10?"0":"") + d.getHours() + ":" + (d.getMinutes()<10?"0":"") + d.getMinutes();
 	}
 
