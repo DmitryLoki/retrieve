@@ -3,6 +3,7 @@
 	<head>
 		<link rel="stylesheet" href="/s.css" />
 		<script type="text/javascript" src="/jquery.js"></script>
+		<script type="text/javascript" src="/proj4js/proj4js-combined.js"></script>
 		<script type="text/javascript" src="/knockout.js"></script>
 		<script type="text/javascript" src="/latlon.js"></script>
 	
@@ -14,6 +15,10 @@
 				contestId: "<!-- contestId -->",
 				raceId: "<!-- raceId -->"
 			}
+
+            var sourceProjection = new Proj4js.Proj('EPSG:4326');
+            //Грузим файл с UTM проекциями
+            new Proj4js.Proj('EPSG:32635');
 
 			var table = {
 				timeout: ko.observable(0),
@@ -45,6 +50,7 @@
 				dataType: "json",
 				success: function(result) {
 					hq = new LatLon(result.coords[0],result.coords[1]);
+                    console.log(hq);
 				}
 			});
 
@@ -79,7 +85,14 @@
 						if (rwTr.last_point) {
 							rw.last_update = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]);
 							rw.alt = rwTr.last_point[2];
-							rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ")";
+
+                            var utmZone = (Math.floor((rwTr.last_point[1] + 180)/6) % 60) + 1,
+                                    coordinate = new Proj4js.Point(rwTr.last_point[1], rwTr.last_point[0]);
+                            //Переопределяем UTM проекцию
+                            Proj4js.defs["EPSG:32635"] = "+proj=utm +zone=" + utmZone +" +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+                            Proj4js.transform(sourceProjection, new Proj4js.Proj('EPSG:32635'), coordinate);
+
+							rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ") / ("+utmZone+"T " + coordinate.x.toFixed(0) + " " + coordinate.y.toFixed(0) + ")";
 							rw.gspd = rwTr.last_point[5] || 0;
 							rw.gspd = Math.floor(rw.gspd*100)/100;
 							if (isNaN(rw.gspd)) rw.gspd = 0;
