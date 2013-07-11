@@ -28,7 +28,11 @@
 					if (sort == this.sort()) this.sort(sort + "_desc");
 					else this.sort(sort);
 					updateData();
-				}
+				},
+                formatTime: function(time){
+                    var dateFromLastSignal  = new Date(time * 1000);
+                    return getTimeString(dateFromLastSignal.getUTCHours(),dateFromLastSignal.getUTCMinutes(), dateFromLastSignal.getUTCSeconds());
+                }
 			}
 			ko.applyBindings(table);
 
@@ -74,6 +78,14 @@
 				}
 			}
 
+        var getTimeString = function(h,m,s) {
+            h = Math.abs(h);
+            m = Math.abs(m);
+            s = Math.abs(s);
+            return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        }
+
+        var formatTime = function(){console.log(arguments)};
 			var updateData = function() {
 				var ar = [];
 				for (var i = 0; i < pilots.length; i++) {
@@ -82,9 +94,7 @@
 					if (rwTr) {
 						rw.tracker_name = rwTr.name;
 						if (rwTr.last_point) {
-							var secondsFromLastSignal = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]),
-                                dateFromLastSignal  = new Date(secondsFromLastSignal * 1000);
-                            rw.last_update = dateFromLastSignal.getUTCHours() + ":" + dateFromLastSignal.getUTCMinutes() + ":" + dateFromLastSignal.getUTCSeconds();
+                            rw.last_update = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]);
 							rw.alt = rwTr.last_point[2];
 
                             var utmZone = (Math.floor((rwTr.last_point[1] + 180)/6) % 60) + 1,
@@ -152,7 +162,7 @@
 					<td class="num" data-bind="text:$index()+1"></td>
 					<td class="num" data-bind="text:contest_number"></td>
 					<td data-bind="text:name"></td>
-					<td class="num" data-bind="text:last_update"></td>
+					<td class="num" data-bind="text:$parent.formatTime(last_update)"></td>
 					<td data-bind="text:tracker_name"></td>
 					<td class="num" data-bind="text:alt"></td>
 					<td data-bind="text:coords"></td>
