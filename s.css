@@ -16,11 +16,11 @@ th a {
 }
 
 .desc {
-	background: url(/img/desc.png) top right no-repeat;
+	background: url(img/desc.png) top right no-repeat;
 }
 
 .asc {
-	background: url(/img/asc.png) top right no-repeat;
+	background: url(img/asc.png) top right no-repeat;
 }
 
 .num { 
