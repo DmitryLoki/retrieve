@@ -82,7 +82,9 @@
 					if (rwTr) {
 						rw.tracker_name = rwTr.name;
 						if (rwTr.last_point) {
-							rw.last_update = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]);
+							var secondsFromLastSignal = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]),
+                                dateFromLastSignal  = new Date(secondsFromLastSignal * 1000);
+                            rw.last_update = dateFromLastSignal.getUTCHours() + ":" + dateFromLastSignal.getUTCMinutes() + ":" + dateFromLastSignal.getUTCSeconds();
 							rw.alt = rwTr.last_point[2];
 
                             var utmZone = (Math.floor((rwTr.last_point[1] + 180)/6) % 60) + 1,
