@@ -1,7 +1,6 @@
 define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"], function(ko,Slider,RadioGroup,Select,config) {
 	var PlayerControl = function(options) {
 		var self = this;
-
 		this.startKey = options.startKey;
 		this.endKey =  options.endKey;
 		this.currentKey = options.currentKey;
@@ -25,7 +24,12 @@ define(["knockout","widget!Slider","widget!RadioGroup","widget!Select","config"]
 		this.dragging = ko.observable(false);
 
 		if (this.isOnline) {
-			this.hideOnlineNotification = ko.observable(false);
+      //по умолчанию скрывать сообщение
+			this.hideOnlineNotification = ko.observable(true);
+      this.isCurrentlyOnline.subscribe(function(val){
+        self.hideOnlineNotification(val);
+      });
+
 			this.showOnlineNotification = ko.computed(function() {
 				return (self.isOnline() && !self.isCurrentlyOnline() && !self.hideOnlineNotification());
 			});

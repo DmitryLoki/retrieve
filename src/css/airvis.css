@@ -190,15 +190,15 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 .airvis-player-controls-wrapper { background: rgba(0, 47, 64, 0.5); height: 40px; position: relative;}
 .airvis-player-controls-wrapper .airvis-player-controls { float: left;}
-.airvis-player-controls a { text-decoration: none; display: inline-block; min-width: 14px; padding: 0 5px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25); text-align: center; color: #002a3a; cursor: pointer; overflow: hidden; vertical-align: top;
+.airvis-player-controls a { text-decoration: none; display: inline-block; min-width: 14px; padding: 0px 5px 0px 25px; font: bold 12px/24px Arial, Helvetica, sans-serif; height: 24px; background: rgba(255,255,255,0.25) url(../img/player_but.png) 0 -48px no-repeat; text-align: center; color: #002a3a; cursor: pointer; overflow: hidden; vertical-align: top;
   -webkit-border-radius: 3px; 
   -moz-border-radius: 3px; 
   border-radius: 3px;
   transition: background-color 0.5s ease;
   -webkit-transition: background-color 0.5s ease;
 }
-.airvis-player-controls a:hover { background: #ffffff;}
-.airvis-player-controls a.player-button-on { background: #ffffff; }
+.airvis-player-controls a:hover { background-color: #ffffff;}
+.airvis-player-controls a.player-button-on { background-color: #ffffff; }
 /*
 .airvis-player-controls a.play_pause { background-image: url(../img/player_but.png); background-repeat: no-repeat; background-position: 0 -24px;}
 .airvis-player-controls a.play_pause.player-button-on { background-position: 0 0}
@@ -526,10 +526,22 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 
 }
 
-.aivis-player-online-notification {
+.airvis-player-online-notification {
   position: absolute;
-  top: -50px;
-  background-color: rgba(255,100,100,0.5);
+  top: -40px;
+  background-color: rgba(253, 63, 63, 0.8);
   color: #ffffff;
   font-weight: bold;
+  width: 100%;
+  line-height: 35px;
+}
+
+.airvis-player-online-notification .airvis-player-online-notification-text {
+    padding-left: 5px;
+}
+
+.airvis-player-online-notification .airvis-window-close {
+  position: absolute;
+  right: 10px;
+  top: -2px;
 }
