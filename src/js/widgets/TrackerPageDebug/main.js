@@ -82,6 +82,7 @@ define([
 		this.name = ko.observable(options.name);
 		this.country = ko.observable(options.country);
 		this.personId = ko.observable(options.personId);
+    this.tracker = options.tracker;
 		this.color = ko.observable(options.color || config.ufo.color);
 		this.state = ko.observable(null);
 		this.stateChangedAt = ko.observable(null);
@@ -336,12 +337,34 @@ define([
 			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow,this.retrieveDistanceMeasurerWindow);
 		}
 	}
-
 	TrackerPageDebug.prototype.domInit = function(elem,params) {
-		if (params.contestId)
-			this.options.contestId = params.contestId;
-		if (params.raceId)
-			this.options.raceId = params.raceId;
+
+    var QueryString = function () {
+      // This function is anonymous, is executed immediately and
+      // the return value is assigned to QueryString!
+      var query_string = {};
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        // If first entry with this name
+        if (typeof query_string[pair[0]] === "undefined") {
+          query_string[pair[0]] = pair[1];
+          // If second entry with this name
+        } else if (typeof query_string[pair[0]] === "string") {
+          var arr = [ query_string[pair[0]], pair[1] ];
+          query_string[pair[0]] = arr;
+          // If third or later entry with this name
+        } else {
+          query_string[pair[0]].push(pair[1]);
+        }
+      }
+      return query_string;
+    } ();
+
+
+	  this.options.contestId = QueryString.contestId || params.contestId;
+	  this.options.raceId = QueryString.raceId || params.raceId;
 		if (params.apiVersion)
 			this.options.apiVersion = params.apiVersion;
 		if (params.imgRootUrl)
@@ -397,8 +420,14 @@ define([
 				}
 				else if (self.mode() == "retrieve") {
 					self.loadUfosData(function() {
-						self.retrieveInit();
-						self.emit("loaded",raceData);
+            self.dataSource.get({
+              type:"tracker",
+              callback: function(trackers) {
+                self.extendUfosWithTrackerData(trackers);
+                self.retrieveInit();
+                self.emit("loaded",raceData);
+              }
+            });
 					});
 				}
 				else
@@ -407,6 +436,17 @@ define([
 		}
 	}
 
+  TrackerPageDebug.prototype.extendUfosWithTrackerData = function(trackers){
+    for(var i = 0, l = this.ufos().length; i<l; ++i){
+      for(var j = 0, k = trackers.length; j<k; j++){
+        if(this.ufos()[i].tracker == trackers[j].id){
+          this.ufos()[i].position({lat:trackers[j].last_point[0],lng:trackers[j].last_point[1]});
+          break;
+        }
+      }
+    }
+    this.ufos.notifySubscribers(this.ufos());
+  };
 	TrackerPageDebug.prototype.clear = function() {
 		this.ufos([]);
 		this.waypoints([]);
@@ -584,6 +624,7 @@ define([
 		var self = this;
 		this.retrieveStatus("Loading...");
 		clearTimeout(this.retrieveCounter);
+
 		this.dataSource.get({
 			type: "sms",
 			lastSmsTimestamp: self.retrieveLastSmsTimestamp,
@@ -629,6 +670,36 @@ define([
 			else clearTimeout(self.retrieveCounter);
 		});
 		this.retrieveState.notifySubscribers(this.retrieveState());
+
+    var loadTrackers = function(){
+      self.dataSource.get({type:'tracker',callback:function(data){
+        self.ufos().forEach(function(ufo) {
+          for(var i = 0, l = data.length; i<l; ++i) {
+            if (ufo.tracker == data[i].id) {
+              var rw = data[i].last_point;
+              //ufo.alt(rw.alt);
+              //ufo.dist(rw.dist);
+              //ufo.gSpd(rw.gspd);
+              //ufo.state('finished');
+              ufo.noData(false);
+              ufo.position({lat:rw[0],lng:rw[1],dt:null});
+              if (rw.state && rw.state != ufo.state()) {
+                ufo.state(rw.state);
+              }
+              if (rw.stateChangedAt)
+                ufo.stateChangedAt(rw.stateChangedAt);
+              return;
+            }
+          }
+            ufo.noData(true);
+        });
+        self.map.update();
+        setTimeout(loadTrackers,10000);
+
+        }
+      });
+    }
+    loadTrackers();
 	}
 
 	TrackerPageDebug.prototype.templates = ["main"];

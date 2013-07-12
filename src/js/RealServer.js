@@ -81,7 +81,8 @@
     			return color;
 			}
 			$.ajax({
-				url: "http://apidev.airtribune.com/v0.1.4/race/" + this.options.raceId + "/paragliders",
+        //url: "http://apidev.airtribune.com/v0.1.4/race/" + this.options.raceId + "/paragliders",
+				url: "http://api.airtribune.com/" + this.options.apiVersion + "/contest/" + this.options.contestId + "/race/" + this.options.raceId + "/paragliders",
 				dataType: "json",
 				success: function(result) {
 					var data = [];
@@ -93,6 +94,7 @@
 							personId: rw.person_id,
 							name: rw.name,
 							country: rw.country,
+              tracker: rw.tracker,
 							color: getRandomColor()
 						});
 					}
@@ -186,6 +188,16 @@
 				}
 			});
 		}
+    else if (query.type == "tracker") {
+      $.ajax({
+        url: "http://api.airtribune.com/v0.2/tracker",
+        dataType: "json",
+        success: function(result) {
+          if (query.callback)
+            query.callback(result);
+        }
+      })
+    }
 	}
 
 	RealServer.prototype.post = function(query) {
