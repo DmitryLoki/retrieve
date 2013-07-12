@@ -17,7 +17,7 @@ define(["jquery","knockout","config","jquery.tinyscrollbar"], function($,ko,conf
 					sms2add.push(sms);
 			});
 			self.chatData(sms2add);
-			self.updateScrollbar();
+			self.updateScrollbar(false, true);
 			return null;
 		});
 
@@ -51,12 +51,12 @@ define(["jquery","knockout","config","jquery.tinyscrollbar"], function($,ko,conf
 		}
 	}
 
-	RetrieveChat.prototype.updateScrollbar = function(it) {
+	RetrieveChat.prototype.updateScrollbar = function(it, scrollToBottom) {
 		var self = this;
 		if (this.scrollbarContainer)
-			this.scrollbarContainer.tinyscrollbar_update();
+			this.scrollbarContainer.tinyscrollbar_update(scrollToBottom?'bottom':'');
 		if (!it) setTimeout(function() {
-			self.updateScrollbar(1);
+			self.updateScrollbar(1,scrollToBottom);
 		},100);
 	}
 
@@ -70,7 +70,10 @@ define(["jquery","knockout","config","jquery.tinyscrollbar"], function($,ko,conf
 			});
 			this.modalWindow.on("resize",function() {
 				self.updateScrollbar();
-			})
+			});
+      this.modalWindow.on("open",function() {
+        self.updateScrollbar(false, true);
+      })
 		}
 		var div = ko.virtualElements.firstChild(element);
 		while (div && div.nodeType != 1)
