@@ -29,9 +29,12 @@
 					else this.sort(sort);
 					updateData();
 				},
-                formatTime: function(time){
-                    var dateFromLastSignal  = new Date(time * 1000);
-                    return getTimeString(dateFromLastSignal.getUTCHours(),dateFromLastSignal.getUTCMinutes(), dateFromLastSignal.getUTCSeconds());
+                formatTime: function(time) {
+                    if(isNaN(time)||time === "") {
+                        return "-:-:-";
+                    }
+                    var dateFromLastSignal  = new Date(time);
+                    return getTimeString(Math.floor(dateFromLastSignal / 3600), Math.floor(dateFromLastSignal % 3600 / 60), dateFromLastSignal % 60);
                 }
 			}
 			ko.applyBindings(table);
