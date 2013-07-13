@@ -94,7 +94,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-window table .airvis-pilot-name .countryicon-sprite { margin-left: 10px; }
 .airvis-window table .airvis-pilot-country .countryicon-sprite { margin-right: 5px; }
 .airvis-window table .airvis-pilot-person-id { width: 180px;}
-.airvis-window table .airvis-pilot-sms { width: 40px;}
+.airvis-window table .airvis-pilot-sms { width: 30px;}
 
 .airvis-window table .airvis-dist-to-goal { width: 59px;}
 .airvis-window table .airvis-alt { width: 39px;}
@@ -103,10 +103,15 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 .airvis-window table .airvis-pilot-country { text-align: left; padding-left: 10px; width: 69px;}
 
 .airvis-window table .pilot-name { vertical-align: top;}
+.airvis-window table.airvis-sms-table .pilot-name{width: 100px;}
 .airvis-window table .pilot-name .countryicon-sprite { margin-left: 10px;}
 
 .airvis-window table .pilot-nation .countryicon-sprite { margin-right: 10px;}
 
+.airvis-window table .airvis-pilot-dist-to-hq {width: 60px;}
+.airvis-window table .airvis-pilot-speed {width: 40px;}
+.airvis-window table .airvis-pilot-last-update {width: 60px;}
+.airvis-window table .airvis-pilot-tracker-name {width: 70px;}
 
 .airvis-tbl {
   position: absolute;
@@ -545,3 +550,4 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   right: 10px;
   top: -2px;
 }
+

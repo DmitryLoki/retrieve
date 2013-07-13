@@ -1,7 +1,7 @@
 <div class="airvis-tbl">
 	<!-- ko if: inModalWindow -->
-		<a href="#" class="airvis-window-ec-absolute" data-bind="click:switchState,css:{'airvis-pause':state()=='play','airvis-play':state()=='pause'}"></a>
-		<span class="airvis-window-ec-absolute-status" data-bind="visible:state()=='play',text:status"></span>
+		<a href="#" class="airvis-window-ec-absolute" style="display:none" data-bind="click:switchState,css:{'airvis-pause':state()=='play','airvis-play':state()=='pause'}"></a>
+		<span class="airvis-window-ec-absolute-status" style="display:none" data-bind="text:status"></span>
 	<!-- /ko -->
 	<div class="airvis-table-header-1">
 		<table cellspacing="0" cellpadding="0" border="0">

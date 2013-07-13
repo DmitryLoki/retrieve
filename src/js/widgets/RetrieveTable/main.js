@@ -1,51 +1,54 @@
 define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], function($,ko,config,countryCodes) {
 	var RetrieveTable = function(options) {
-		var self = this;
-		this.ufos = options.ufos;
-		this.status = options.status;
-		this.state = options.state;
-		this.selectedUfo = options.selectedUfo;
-		this.smsData = options.smsData;
-		this.inModalWindow = ko.observable(false);
-
-		this.tableUfos = ko.observableArray([]);
-		this.ufos.subscribe(function(ufos) {
-			var rev1 = {}, rev2 = {}, values2push = [];
-			for (var i = 0, l = ufos.length; i < l; i++)
-				rev1[ufos[i].id()] = i;
-			for (var i = 0, l = self.tableUfos().length; i < l; i++)
-				rev2[self.tableUfos()[i].id()] = i;
-			for (var i = 0, l = ufos.length; i < l; i++) {
-				if (rev2[ufos[i].id()] == null) {
-					values2push.push(self.createUfo(ufos[i]));
-					rev2[ufos[i].id()] = self.tableUfos.length - 1;
-				}
-			}
-			if (values2push.length > 0)
-				ko.utils.arrayPushAll(self.tableUfos,values2push);
-			for (var i = 0, l = self.tableUfos().length; i < l; i++) {
-				if (rev1[self.tableUfos()[i].id()] == null) {
-					self.destroyUfo(self.tableUfos()[i]);
-					self.tableUfos.splice(i,1);
-					i--;
-				}
-			}
-			self.sortTableRows();
-		});
-
-		this.newSmsCounter = ko.observable({});
-		this.smsData.subscribe(function(data) {
-			var ar = {};
-			data.forEach(function(sms) {
-				if (!ar[sms.target]) ar[sms.target] = {cnt:0,timestamp:0};
-				if (!sms.readed())
-					ar[sms.target].cnt++;
-				ar[sms.target].timestamp = Math.max(ar[sms.target].timestamp,sms.timestamp);
-			});
-			self.newSmsCounter(ar);
-		});
+		this.constr(options);
 	}
 
+  RetrieveTable.prototype.constr = function(options){
+    var self = this;
+    this.ufos = options.ufos;
+    this.status = options.status;
+    this.state = options.state;
+    this.selectedUfo = options.selectedUfo;
+    this.smsData = options.smsData;
+    this.inModalWindow = ko.observable(false);
+
+    this.tableUfos = ko.observableArray([]);
+    this.ufos.subscribe(function(ufos) {
+      var rev1 = {}, rev2 = {}, values2push = [];
+      for (var i = 0, l = ufos.length; i < l; i++)
+        rev1[ufos[i].id()] = i;
+      for (var i = 0, l = self.tableUfos().length; i < l; i++)
+        rev2[self.tableUfos()[i].id()] = i;
+      for (var i = 0, l = ufos.length; i < l; i++) {
+        if (rev2[ufos[i].id()] == null) {
+          values2push.push(self.createUfo(ufos[i]));
+          rev2[ufos[i].id()] = self.tableUfos.length - 1;
+        }
+      }
+      if (values2push.length > 0)
+        ko.utils.arrayPushAll(self.tableUfos,values2push);
+      for (var i = 0, l = self.tableUfos().length; i < l; i++) {
+        if (rev1[self.tableUfos()[i].id()] == null) {
+          self.destroyUfo(self.tableUfos()[i]);
+          self.tableUfos.splice(i,1);
+          i--;
+        }
+      }
+      self.sortTableRows();
+    });
+
+    this.newSmsCounter = ko.observable({});
+    this.smsData.subscribe(function(data) {
+      var ar = {};
+      data.forEach(function(sms) {
+        if (!ar[sms.target]) ar[sms.target] = {cnt:0,timestamp:0};
+        if (!sms.readed())
+          ar[sms.target].cnt++;
+        ar[sms.target].timestamp = Math.max(ar[sms.target].timestamp,sms.timestamp);
+      });
+      self.newSmsCounter(ar);
+    });
+  }
 	RetrieveTable.prototype.sortTableRows = function() {
 		console.log("sortTableRows");
 		this.tableUfos.sort(function(a,b) {
@@ -73,12 +76,16 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
 			id: data.id,
 			name: data.name,
 			personId: data.personId,
+			dist: data.dist,
 			country: data.country,
+			gSpd: data.gSpd,
+      lastUpdate: data.lastUpdate,
+      trackerName: data.trackerName,
 			tableData: data.tableData
 		}
-		w.country3 = ko.computed(function() {
-			return w.country() && countryCodes[w.country()] ? countryCodes[w.country()] : w.country();
-		});
+    w.country3 = ko.computed(function() {
+      return w.country() && countryCodes[w.country()] ? countryCodes[w.country()] : w.country();
+    });
 		w.newSmsCount = ko.computed(function() {
 			var n = self.newSmsCounter()[w.personId()];
 			return n ? n.cnt : 0;
@@ -92,6 +99,21 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
 		});
 		return w;
 	}
+
+  RetrieveTable.prototype.lastUpdateFormat = function(lastTime) {
+    if(!lastTime()) {
+      return "-:-:-";
+    }
+    var dateFromLastSignal  = new Date(lastTime());
+    return this.getTimeString(Math.floor(dateFromLastSignal / 3600), Math.floor(dateFromLastSignal % 3600 / 60), dateFromLastSignal % 60);
+  }
+
+  RetrieveTable.prototype.getTimeString = function(h,m,s){
+    h = Math.abs(h);
+    m = Math.abs(m);
+    s = Math.abs(s);
+    return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
 
 	RetrieveTable.prototype.destroyUfo = function(ufo) {
 	}

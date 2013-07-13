@@ -190,11 +190,35 @@
 		}
     else if (query.type == "tracker") {
       $.ajax({
-        url: "http://api.airtribune.com/v0.2/tracker",
+        url: "http://api.airtribune.com/"+ this.options.apiVersion +"/tracker",
         dataType: "json",
         success: function(result) {
           if (query.callback)
             query.callback(result);
+        }
+      })
+    }
+    else if (query.type == "contest") {
+      $.ajax({
+        url: "http://api.airtribune.com/"+ this.options.apiVersion +"/contest/" + this.options.contestId,
+        dataType: "json",
+        success: function(result) {
+          if (query.callback)
+            query.callback(result);
+        }
+      })
+    }
+    else if (query.type == "transport") {
+      $.ajax({
+        url: "http://api.airtribune.com/"+ this.options.apiVersion +"/transport",
+        dataType: "json",
+        success: function(result) {
+          if (query.callback)
+            query.callback(result);
+        },
+        error: function(){
+          //TODO убрать
+          query.callback([]);
         }
       })
     }

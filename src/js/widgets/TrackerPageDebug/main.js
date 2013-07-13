@@ -11,6 +11,7 @@ define([
     'widget!PlayerControl',
     'widget!UfosTable',
     'widget!RetrieveTable',
+    'widget!RetrieveTransportTable',
     'widget!RetrieveRawForm',
     'widget!RetrieveChat',
     'widget!Checkbox',
@@ -37,6 +38,7 @@ define([
 	PlayerControl,
 	UfosTable,
 	RetrieveTable,
+	RetrieveTransportTable,
 	RetrieveRawForm,
 	RetrieveChat,
     Checkbox,
@@ -92,7 +94,9 @@ define([
 		this.dist = ko.observable(null);
 		this.gSpd = ko.observable(null);
 		this.vSpd = ko.observable(null);
+		this.lastUpdate = ko.observable(null);
 		this.visible = ko.observable(config.ufo.visible);
+		this.trackerName = ko.observable(null);
 		this.trackVisible = ko.observable(config.ufo.trackVisible);
 		this.noData = ko.observable(true);
 		this.tableData = {
@@ -159,8 +163,13 @@ define([
 		this.isOnline = ko.observable(false);
 		this.isCurrentlyOnline = ko.observable(false);
 		this.loading = ko.observable(false);
+		this.hqCoords = ko.observable(null);
 
 		this.ufos = ko.observableArray();
+		this.transport = ko.observableArray();
+    this.ufosAndTransport = ko.computed(function(){
+      return self.ufos().concat(self.transport());
+    })
 		this.waypoints = ko.observableArray();
 		this.shortWay = ko.observable(null);
 
@@ -203,7 +212,7 @@ define([
 				if (self.map)
 					self.map.destroy();
 				var mapOptions = {
-						ufos: self.ufos,
+						ufos: self.ufosAndTransport,
 						waypoints: self.waypoints,
 						shortWay: self.shortWay,
 						tracksVisualMode: self.tracksVisualMode,
@@ -218,6 +227,13 @@ define([
 						mapOptions: self.mapOptions,
 						mode: self.mode
 				};
+        if(self.mode() == "retrieve"){
+          mapOptions.ufoClickCallback = function(ufoId) {
+            var clickedUfo = self.retrieveTable.ufos().filter(function(ufo){ return ufo.id() == ufoId});
+            if(clickedUfo.length)
+            self.retrieveTable.selectUfo(clickedUfo[0])
+          }
+        }
 				if (self.mapWidget() == "2d") {
 					self.map = new GoogleMap(mapOptions);
 					self.mapType = "GoogleMap";
@@ -292,6 +308,7 @@ define([
 			this.retrieveState = ko.observable(config.retrieveState);
 			this.retrieveSelectedUfo = ko.observable(null);
 			this.smsData = ko.observableArray([]);
+
 			this.retrieveTable = new RetrieveTable({
 				ufos: this.ufos,
 				status: this.retrieveStatus,
@@ -300,6 +317,15 @@ define([
 				smsData: this.smsData
 			});
 			this.retrieveTableWindow = new Window(this.options.windows.retrieveTable);
+
+      this.retrieveTransportTable = new RetrieveTransportTable({
+        ufos: this.transport,
+        status: this.retrieveStatus,
+        state: this.retrieveState,
+        selectedUfo: this.retrieveSelectedUfo,
+        smsData: this.smsData
+      });
+      this.retrieveTransportTableWindow = new Window(this.options.windows.retrieveTransportTable);
 
 			this.retrieveChat = new RetrieveChat({
 				ufo: this.retrieveSelectedUfo,
@@ -331,10 +357,10 @@ define([
 			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
 
 			this.topBar = new TopBar();
-			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveDistanceMeasurerWindow);
+			this.topBar.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveDistanceMeasurerWindow,this.retrieveTransportTableWindow);
 
 			this.windowManager = new WindowManager();
-			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow,this.retrieveDistanceMeasurerWindow);
+			this.windowManager.items.push(this.mainMenuWindow,this.retrieveTableWindow,this.retrieveRawFormWindow,this.retrieveChatWindow,this.retrieveTransportTableWindow,this.retrieveDistanceMeasurerWindow);
 		}
 	}
 	TrackerPageDebug.prototype.domInit = function(elem,params) {
@@ -420,15 +446,9 @@ define([
 				}
 				else if (self.mode() == "retrieve") {
 					self.loadUfosData(function() {
-            self.dataSource.get({
-              type:"tracker",
-              callback: function(trackers) {
-                self.extendUfosWithTrackerData(trackers);
                 self.retrieveInit();
                 self.emit("loaded",raceData);
-              }
             });
-					});
 				}
 				else
 					self.emit("loaded",raceData);
@@ -436,17 +456,6 @@ define([
 		}
 	}
 
-  TrackerPageDebug.prototype.extendUfosWithTrackerData = function(trackers){
-    for(var i = 0, l = this.ufos().length; i<l; ++i){
-      for(var j = 0, k = trackers.length; j<k; j++){
-        if(this.ufos()[i].tracker == trackers[j].id){
-          this.ufos()[i].position({lat:trackers[j].last_point[0],lng:trackers[j].last_point[1]});
-          break;
-        }
-      }
-    }
-    this.ufos.notifySubscribers(this.ufos());
-  };
 	TrackerPageDebug.prototype.clear = function() {
 		this.ufos([]);
 		this.waypoints([]);
@@ -671,18 +680,24 @@ define([
 		});
 		this.retrieveState.notifySubscribers(this.retrieveState());
 
-    var loadTrackers = function(){
-      self.dataSource.get({type:'tracker',callback:function(data){
-        self.ufos().forEach(function(ufo) {
-          for(var i = 0, l = data.length; i<l; ++i) {
+    var loadTrackers = function () {
+      self.dataSource.get({type: 'tracker', callback: function (data) {
+        self.ufosAndTransport().forEach(function (ufo) {
+          for (var i = 0, l = data.length; i < l; ++i) {
             if (ufo.tracker == data[i].id) {
               var rw = data[i].last_point;
-              //ufo.alt(rw.alt);
-              //ufo.dist(rw.dist);
-              //ufo.gSpd(rw.gspd);
-              //ufo.state('finished');
+              ufo.alt(rw.alt);
+              ufo.gSpd(rw[5]);
+              ufo.lastUpdate(Math.floor((new Date).getTime()/1000-rw[3]));
+              ufo.trackerName(data[i].name);
               ufo.noData(false);
-              ufo.position({lat:rw[0],lng:rw[1],dt:null});
+              ufo.position({lat: rw[0], lng: rw[1], dt: null});
+              if(self.hqCoords()){
+                ufo.dist(
+                  RetrieveDistanceMeasurer.distance(rw[0],rw[1],self.hqCoords().lat,self.hqCoords().lon)
+                    .toFixed(2)
+                );
+              }
               if (rw.state && rw.state != ufo.state()) {
                 ufo.state(rw.state);
               }
@@ -691,15 +706,33 @@ define([
               return;
             }
           }
-            ufo.noData(true);
+          ufo.noData(true);
         });
         self.map.update();
-        setTimeout(loadTrackers,10000);
-
-        }
+        setTimeout(loadTrackers, 10000);
+      }
       });
     }
     loadTrackers();
+
+    this.dataSource.get({type:"contest",callback: function(contestInfo){
+        self.hqCoords({lat:contestInfo.coords[0],lon:contestInfo.coords[1]});
+      }
+    });
+
+    this.dataSource.get({type:"transport",callback: function(transports) {
+      /*var fixture = {"glider":"ozone","contest_number":"214","name":"D. Balykin","person_id":"pers-130707-1183991700","country":"UA","tracker":"tr20311-011412001289473"};
+      var ufo = new Ufo(window.ufos[0]);
+      ufo.id("11111111");
+      //ufo.state("transposda");
+      ufo.position({lat:12,lng:32});
+      ufo.noData(false);
+      ufo.state('transport');
+      //fixture.position = ko.observable
+      self.transport.push(ufo);*/
+
+    }
+    });
 	}
 
 	TrackerPageDebug.prototype.templates = ["main"];

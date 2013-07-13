@@ -123,11 +123,21 @@ define({
 			title: "Pilots",
 			resizable: false,
 			resizableY: true,
-			height: 500,
-			width: 500,
+			height: 300,
+			width: 750,
 			top: 180,
-			left: 90
+			left: 30
 		},
+    retrieveTransportTable: {
+      visible: true,
+      title: "Transport",
+      resizable: false,
+      resizableY: true,
+      height: 200,
+      width: 750,
+      top: 580,
+      left: 30
+    },
 		retrieveChat: {
 			visible: false,
 			title: "Chat",
@@ -136,7 +146,7 @@ define({
 			height: 600,
 			width: 400,
 			top: 180,
-			left: 600
+			left: 800
 		},
 		retrieveRawForm: {
 			visible: false,

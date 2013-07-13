@@ -71,6 +71,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.isReady = ko.observable(false);
 		this.mapOptions = options.mapOptions;
 		this.mode = options.mode;
+    this.ufoClickCallback = options.ufoClickCallback;
 		this.activateMapScroll = ko.observable(false);
 
 		this.mapWaypoints = [];
@@ -326,6 +327,11 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			flat: config.ufo.flat,
 			map: self.map
 		});
+    if(this.ufoClickCallback)
+      gmaps.event.addListener(u._model,"click", function(){
+        self.ufoClickCallback(u.id());
+      });
+
 		u._titleModel = new MapFloatElem({
 			template: self.templates.markerTitle,
 			data: {

@@ -89,13 +89,13 @@ define(["google.maps", "knockout"], function (gmap, ko) {
   DistanceMeasurer.prototype.calcDistance = function () {
     var totalDistance = 0;
     this.rulers.reduce(function(ruler1, ruler2){
-      totalDistance += distance(ruler1.getPosition().lat(), ruler1.getPosition().lng(), ruler2.getPosition().lat(), ruler2.getPosition().lng());
+      totalDistance += DistanceMeasurer.distance(ruler1.getPosition().lat(), ruler1.getPosition().lng(), ruler2.getPosition().lat(), ruler2.getPosition().lng());
       return ruler2;
     });
     return totalDistance;
   }
 
-  function distance(lat1, lon1, lat2, lon2) {
+  DistanceMeasurer.distance = function(lat1, lon1, lat2, lon2) {
     var R = 6371; // km
     var dLat = (lat2 - lat1) * Math.PI / 180;
     var dLon = (lon2 - lon1) * Math.PI / 180;
