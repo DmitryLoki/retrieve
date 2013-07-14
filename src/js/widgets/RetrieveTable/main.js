@@ -51,7 +51,6 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
   }
 
 	RetrieveTable.prototype.sortTableRows = function() {
-		console.log("sortTableRows");
 		this.tableUfos.sort(function(a,b) {
 			var d1 = a.lastSmsTimestamp();
 			var d2 = b.lastSmsTimestamp();

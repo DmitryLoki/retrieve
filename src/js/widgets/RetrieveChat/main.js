@@ -38,7 +38,7 @@ define(["jquery","knockout","config","jquery.tinyscrollbar"], function($,ko,conf
 						self.form.loading(false);
 						self.form.text("");
 						if (result.error)
-							alert("Failed sending message");
+							console.warn("Failed sending message");
 						self.emit("newMessage");
 					}
 				});
