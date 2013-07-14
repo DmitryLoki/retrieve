@@ -229,7 +229,7 @@ define([
 				};
         if(self.mode() == "retrieve"){
           mapOptions.ufoClickCallback = function(ufoId) {
-            var clickedUfo = self.retrieveTable.ufos().filter(function(ufo){ return ufo.id() == ufoId});
+            var clickedUfo = self.ufos().filter(function(ufo){ return ufo.id() == ufoId});
             if(clickedUfo.length)
             self.retrieveTable.selectUfo(clickedUfo[0])
           }
@@ -501,6 +501,7 @@ define([
 		self.dataSource.get({
 			type: "ufos",
 			callback: function(ufos) {
+        window.ufos = ufos;
 				var ufos2load = [];
 				if (ufos) {
 					for (var i = 0; i < ufos.length; i++) {
@@ -721,16 +722,15 @@ define([
     });
 
     this.dataSource.get({type:"transport",callback: function(transports) {
-      /*var fixture = {"glider":"ozone","contest_number":"214","name":"D. Balykin","person_id":"pers-130707-1183991700","country":"UA","tracker":"tr20311-011412001289473"};
-      var ufo = new Ufo(window.ufos[0]);
-      ufo.id("11111111");
-      //ufo.state("transposda");
-      ufo.position({lat:12,lng:32});
-      ufo.noData(false);
-      ufo.state('transport');
-      //fixture.position = ko.observable
-      self.transport.push(ufo);*/
-
+      var transportsToAdd=[];
+      transports.forEach(function(transport){
+        transport.name = transport.title;
+        var ufo = new Ufo(transport);
+        ufo.state(transport.type);
+        ufo.noData(false);
+        transportsToAdd.push(ufo);
+      });
+      ko.utils.arrayPushAll(self.transport,transportsToAdd);
     }
     });
 	}

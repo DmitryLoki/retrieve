@@ -178,7 +178,7 @@
 			var data = {};
 			if (query.lastSmsTimestamp) data.from_time = query.lastSmsTimestamp + 1; // здесь прибавляем 1 чтобы было не включительно (чтобы последняя смс не приходила снова и снова)
 			$.ajax({
-				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
+				url: "http://api.airtribune.com/"+ this.options.apiVersion +"/chatroom/" + this.options.raceId,
 //				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
 				dataType: "json",
 				data: data,
@@ -210,15 +210,11 @@
     }
     else if (query.type == "transport") {
       $.ajax({
-        url: "http://api.airtribune.com/"+ this.options.apiVersion +"/transport",
+        url: "http://api.airtribune.com/"+ this.options.apiVersion +"/contest/"+this.options.contestId+"/race/"+this.options.raceId+"/transport",
         dataType: "json",
         success: function(result) {
           if (query.callback)
             query.callback(result);
-        },
-        error: function(){
-          //TODO убрать
-          query.callback([]);
         }
       })
     }
@@ -228,7 +224,7 @@
 		console.log("post",query);
 		if (query.type == "sms") {
 			var ajax = $.ajax({
-				url: "http://apidev.airtribune.com/chatroom/" + this.options.raceId,
+				url: "http://api.airtribune.com/"+ this.options.apiVersion +"/chatroom/" + this.options.raceId,
 //				url: "http://apidev.airtribune.com/chatroom/r-7dc4d514-aa6b-44cb-b515-18cec12d8691",
 				type: "POST",
 				dataType: "json",

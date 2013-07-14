@@ -49,6 +49,7 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
       self.newSmsCounter(ar);
     });
   }
+
 	RetrieveTable.prototype.sortTableRows = function() {
 		console.log("sortTableRows");
 		this.tableUfos.sort(function(a,b) {
