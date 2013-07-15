@@ -23,7 +23,7 @@
 		<div class="airvis-table-body viewport">
 			<table class="overview airvis-sms-table" cellspacing="0" cellpadding="0" border="0">
 				<tbody data-bind="foreach:tableUfos">
-					<tr data-bind="click:$parent.selectUfo.bind($parent,$data),css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false}">
+					<tr data-bind="css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false}">
 						<td class="airvis-pilot-number" data-bind="text:$index()+1"></td>
 						<td class="airvis-pilot-name" data-bind="text:name"></td>
 						<td class="airvis-pilot-sms"><div class="sms-box" data-bind="visible:newSmsCount()>0,text:newSmsCount"></div></td>
