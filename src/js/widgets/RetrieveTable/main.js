@@ -61,6 +61,8 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
       });
       self.newSmsCounter(ar);
     });
+
+    this.pilotNameFilter = ko.observable("");
   }
 
 	RetrieveTable.prototype.sortTableRows = function() {

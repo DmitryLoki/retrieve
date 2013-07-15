@@ -105,7 +105,7 @@ define({
 		allVisibleCheckboxColor: "blue"
 	},
 	serverDelay: 120000,	// 2 минуты
-	retrieveState: "pause",
+	retrieveState: "play",
 	retrieveInterval: 10000,
 	playerState: "pause",
 	playerSpeed: 1,
@@ -129,7 +129,7 @@ define({
 			resizableY: true,
 			height: 300,
 			width: 750,
-			top: 180,
+			top: 50,
 			left: 30
 		},
     retrieveTransportTable: {
@@ -139,7 +139,7 @@ define({
       resizableY: true,
       height: 200,
       width: 750,
-      top: 580,
+      top: 360,
       left: 30
     },
 		retrieveChat: {
@@ -147,9 +147,9 @@ define({
 			title: "Chat",
 			resizable: false,
 			resizableY: true,
-			height: 600,
+			height: 510,
 			width: 400,
-			top: 180,
+			top: 50,
 			left: 800
 		},
 		retrieveRawForm: {

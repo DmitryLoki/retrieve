@@ -354,6 +354,7 @@ define([
 			this.retrieveRawFormWindow = new Window(this.options.windows.retrieveRawForm);
 
 			this.mainMenu = new MainMenu();
+      this.options.windows.mainMenu.visible = false;
 			this.mainMenuWindow = new Window(this.options.windows.mainMenu);
 
 			this.topBar = new TopBar();
