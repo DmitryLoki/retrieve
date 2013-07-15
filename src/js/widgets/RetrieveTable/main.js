@@ -1,4 +1,4 @@
-define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], function($,ko,config,countryCodes) {
+define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.tinyscrollbar"], function($,ko,config,countryCodes, Checkbox) {
 	var RetrieveTable = function(options) {
 		this.constr(options);
 	}
@@ -37,6 +37,19 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
       self.sortTableRows();
     });
 
+    this.allVisible = ko.computed({
+      read: function() {
+        return !self.ufos().some(function(w) {
+          return !w.visible();
+        });
+      },
+      write: function(val) {
+        self.ufos().forEach(function(w) {
+          w.visible(val);
+        });
+      }
+    });
+    this.allVisibleCheckbox = new Checkbox({checked:this.allVisible,color:config.ufosTable.allVisibleCheckboxColor});
     this.newSmsCounter = ko.observable({});
     this.smsData.subscribe(function(data) {
       var ar = {};
@@ -81,7 +94,8 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
 			gSpd: data.gSpd,
       lastUpdate: data.lastUpdate,
       trackerName: data.trackerName,
-			tableData: data.tableData
+			tableData: data.tableData,
+      visible: data.visible
 		}
     w.country3 = ko.computed(function() {
       return w.country() && countryCodes[w.country()] ? countryCodes[w.country()] : w.country();
@@ -97,6 +111,7 @@ define(["jquery","knockout","config","CountryCodes","jquery.tinyscrollbar"], fun
 		w.lastSmsTimestamp.subscribe(function(dt) {
 			if (dt>0) self.runTableSorter();
 		});
+    w.visibleCheckbox = new Checkbox({checked:w.visible,color:"#909090"});
 		return w;
 	}
 

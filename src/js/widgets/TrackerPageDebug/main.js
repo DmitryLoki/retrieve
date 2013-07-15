@@ -687,9 +687,13 @@ define([
           for (var i = 0, l = data.length; i < l; ++i) {
             if (ufo.tracker == data[i].id) {
               var rw = data[i].last_point;
+              ufo.lastUpdate(Math.floor((new Date).getTime()/1000-rw[3]));
+              if(ufo.lastUpdate() > 12 * 3600) {
+                ufo.lastUpdate(false);
+                continue;
+              }
               ufo.alt(rw.alt);
               ufo.gSpd(rw[5]);
-              ufo.lastUpdate(Math.floor((new Date).getTime()/1000-rw[3]));
               ufo.trackerName(data[i].name);
               ufo.noData(false);
               ufo.position({lat: rw[0], lng: rw[1], dt: null});

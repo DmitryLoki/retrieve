@@ -7,12 +7,13 @@
 		<table cellspacing="0" cellpadding="0" border="0">
 			<tbody>
 				<tr>
+                    <td class="airvis-checkbox"><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
 					<td class="airvis-pilot-number">#</td>
 					<td class="airvis-pilot-number">Id</td>
 					<td class="airvis-pilot-name">Pilot</td>
                     <td class="airvis-pilot-country"></td>
 					<td class="airvis-pilot-sms">Sms</td>
-					<td class="airvis-pilot-person-id">Person Id</td>
+					<!-- <td class="airvis-pilot-person-id">Person Id</td> -->
 					<td class="airvis-pilot-dist-to-hq">Dist. to HQ, km</td>
 					<td class="airvis-pilot-speed">Ground spd</td>
 					<td class="airvis-pilot-last-update">Data age</td>
@@ -27,6 +28,9 @@
 			<table class="overview airvis-sms-table" cellspacing="0" cellpadding="0" border="0">
 				<tbody data-bind="foreach:tableUfos">
 					<tr data-bind="click:$parent.selectUfo.bind($parent,$data),css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false}">
+                        <td class="airvis-checkbox" data-bind="click:function(t,event){event.stopPropagation()}">
+                            <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
+                        </td>
 						<td class="airvis-pilot-number" data-bind="text:$index()+1"></td>
 						<td class="airvis-pilot-number" data-bind="text:id"></td>
 						<td class="airvis-pilot-name" data-bind="text:name"></td>
@@ -35,7 +39,7 @@
                             <span data-bind="text:country3"></span>
                         </td>
 						<td class="airvis-pilot-sms"><div class="sms-box" data-bind="visible:newSmsCount()>0,text:newSmsCount"></div></td>
-						<td class="airvis-pilot-person-id" data-bind="text:personId"></td>
+						<!-- <td class="airvis-pilot-person-id" data-bind="text:personId"></td>-->
 						<td class="airvis-pilot-dist-to-hq">
 							<span data-bind="text:dist"></span>
 						</td>
