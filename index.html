@@ -99,20 +99,26 @@
 						if (rwTr.last_point) {
                             rw.last_update = Math.floor((new Date).getTime()/1000-rwTr.last_point[3]);
 							rw.alt = rwTr.last_point[2];
+                            /*if(!rwTr.last_point[0] || rwTr.last_point[1])
+                                continue;*/
+                            if(!rwTr.last_point[0] || !rwTr.last_point[1]) {
+                                rw.coords = rw.gspd = rw.dist =" - ";
+                            } else {
+                                var utmZone = (Math.floor((rwTr.last_point[1] + 180)/6) % 60) + 1,
+                                        coordinate = new Proj4js.Point(rwTr.last_point[1], rwTr.last_point[0]);
+                                //Переопределяем UTM проекцию
+                                Proj4js.defs["EPSG:32635"] = "+proj=utm +zone=" + utmZone +" +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
+                                Proj4js.transform(sourceProjection, new Proj4js.Proj('EPSG:32635'), coordinate);
 
-                            var utmZone = (Math.floor((rwTr.last_point[1] + 180)/6) % 60) + 1,
-                                    coordinate = new Proj4js.Point(rwTr.last_point[1], rwTr.last_point[0]);
-                            //Переопределяем UTM проекцию
-                            Proj4js.defs["EPSG:32635"] = "+proj=utm +zone=" + utmZone +" +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
-                            Proj4js.transform(sourceProjection, new Proj4js.Proj('EPSG:32635'), coordinate);
+                                rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ") / ("+utmZone+"T " + coordinate.x.toFixed(0) + " " + coordinate.y.toFixed(0) + ")";
+                                rw.gspd = rwTr.last_point[5] || 0;
+                                rw.gspd = Math.floor(rw.gspd*100)/100;
+                                if (isNaN(rw.gspd)) rw.gspd = 0;
+                                rw.dist = hq ? hq.distanceTo(new LatLon(rwTr.last_point[0],rwTr.last_point[1])) : 0;
+                                rw.dist = Math.floor(rw.dist*100)/100;
+                                if (isNaN(rw.dist)) rw.dist = 0;
+                            }
 
-							rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ") / ("+utmZone+"T " + coordinate.x.toFixed(0) + " " + coordinate.y.toFixed(0) + ")";
-							rw.gspd = rwTr.last_point[5] || 0;
-							rw.gspd = Math.floor(rw.gspd*100)/100;
-							if (isNaN(rw.gspd)) rw.gspd = 0;
-							rw.dist = hq ? hq.distanceTo(new LatLon(rwTr.last_point[0],rwTr.last_point[1])) : 0;
-							rw.dist = Math.floor(rw.dist*100)/100;
-							if (isNaN(rw.dist)) rw.dist = 0;
 						}
 					}
 					ar.push(rw);
