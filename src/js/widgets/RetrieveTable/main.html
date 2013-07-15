@@ -10,7 +10,7 @@
                     <td class="airvis-checkbox"><!-- ko widget: { data: allVisibleCheckbox, type: 'Checkbox'} --><!-- /ko --></td>
 					<td class="airvis-pilot-number">#</td>
 					<td class="airvis-pilot-number">Id</td>
-					<td class="airvis-pilot-name">Pilot <input style="margin-left:20px;height:10px" type="text" data-bind="value:pilotNameFilter,valueUpdate: 'afterkeydown'"></td>
+					<td class="airvis-pilot-name">Pilot <input style="margin-left:20px;height:10px" type="text" data-bind="value:pilotNameFilter,valueUpdate: 'keydown'"></td>
                     <td class="airvis-pilot-country"></td>
 					<td class="airvis-pilot-sms">Sms</td>
 					<!-- <td class="airvis-pilot-person-id">Person Id</td> -->
@@ -27,8 +27,7 @@
 		<div class="airvis-table-body viewport">
 			<table class="overview airvis-sms-table" cellspacing="0" cellpadding="0" border="0">
 				<tbody data-bind="foreach:tableUfos">
-					<tr data-bind="click:$parent.selectUfo.bind($parent,$data),css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false},
-					visible:name().toLowerCase().indexOf($parent.pilotNameFilter().toLowerCase())>-1">
+					<tr data-bind="click:$parent.selectUfo.bind($parent,$data),css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false},visible:name().toLowerCase().indexOf($parent.pilotNameFilter().toLowerCase())>-1">
                         <td class="airvis-checkbox" data-bind="click:function(t,event){event.stopPropagation()}">
                             <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
                         </td>
