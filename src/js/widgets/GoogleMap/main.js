@@ -321,7 +321,8 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			visible: data.visible,
 			trackVisible: data.trackVisible,
 			noData: data.noData,
-			trackData: []
+			trackData: [],
+      type: data.type
 		}
 		u._model = new gmaps.Marker({
 			flat: config.ufo.flat,
@@ -357,6 +358,10 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 
 		u.titleVisible = ko.computed(function() {
+      //TODO Рефакторить нах!
+      if(u.type=="transport"){
+        return u.visible() && !u.noData();
+      }
 			return u.visible() && !u.noData() && (self.namesVisualMode() == "on" || (self.namesVisualMode() == "auto" && self.zoom() >= config.namesVisualModeAutoMinZoom));
 		});
 

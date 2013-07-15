@@ -731,6 +731,7 @@ define([
       transports.forEach(function(transport){
         transport.name = transport.title;
         var ufo = new Ufo(transport);
+        ufo.type="transport";
         ufo.state(transport.type);
         ufo.noData(false);
         transportsToAdd.push(ufo);
