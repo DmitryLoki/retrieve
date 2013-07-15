@@ -21,6 +21,7 @@ define({
 		"finished_landed_small": {url: "ufo_finished_landed_small.png", width: 16, height: 17, x: 8, y: 8},
 		"finished_landed_large": {url: "ufo_finished_landed_large.png", width: 64, height: 70, x: 32, y: 70},
 		"bus_medium": {url: "bus_medium.png", width: 26, height: 37, x: 13, y: 37},
+		"van_medium": {url: "van_medium.png", width: 26, height: 37, x: 13, y: 37},
 		"car_medium": {url: "car_medium.png", width: 26, height: 37, x: 13, y: 37},
 		"helicopter_medium": {url: "helicopter_medium.png", width: 26, height: 37, x: 13, y: 37},
 		"motorcycle_medium": {url: "motorcycle_medium.png", width: 26, height: 37, x: 13, y: 37}
