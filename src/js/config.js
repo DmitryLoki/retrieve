@@ -262,7 +262,7 @@ define({
 	map: {
 		zoom: 9,
 		center: {lat: 55.748758, lng: 37.6174},
-		type: "TERRAIN"
+		type: "HYBRID"
 	},
 	// Настройки тестового сервера
 	testServerOptions: {

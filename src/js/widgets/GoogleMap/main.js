@@ -561,6 +561,16 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			this.map.setZoom(this.map.getZoom()+1);
 	}
 
+  GoogleMap.prototype.centerOnUfo = function(ufoId) {
+    var ufo = this.mapUfos.filter(function(ufo){return ufo.id() == ufoId});
+    if(ufo.length ){
+      var position = ufo[0].position();
+      if(position.lat && position.lng)
+        this.map.panTo(new gmaps.LatLng(position.lat,position.lng));
+      if(this.map.getZoom() < config.namesVisualModeAutoMinZoom)
+        this.map.setZoom(config.namesVisualModeAutoMinZoom);
+    }
+  };
 	GoogleMap.prototype.domInit = function(elem,params) {
 		var self = this;
 		var div = ko.virtualElements.firstChild(elem);
@@ -584,7 +594,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		this.isReady(true);
 		this.mapOptions.valueHasMutated();
 	}
-	
+
 	GoogleMap.prototype.domDestroy = function(elem,params) {
 		delete this.map;
 	}

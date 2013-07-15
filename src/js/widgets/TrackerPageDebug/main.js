@@ -316,6 +316,10 @@ define([
 				selectedUfo: this.retrieveSelectedUfo,
 				smsData: this.smsData
 			});
+      this.retrieveTable.on('pilotClicked', function(ufoId){
+        self.map.centerOnUfo(ufoId);
+      });
+
 			this.retrieveTableWindow = new Window(this.options.windows.retrieveTable);
 
       this.retrieveTransportTable = new RetrieveTransportTable({
@@ -324,6 +328,9 @@ define([
         state: this.retrieveState,
         selectedUfo: this.retrieveSelectedUfo,
         smsData: this.smsData
+      });
+      this.retrieveTransportTable.on('pilotClicked', function(ufoId){
+        self.map.centerOnUfo(ufoId);
       });
       this.retrieveTransportTableWindow = new Window(this.options.windows.retrieveTransportTable);
 
