@@ -13,6 +13,8 @@ define({
 //		"not started_small": {url: "ufo_not_started_small.png", width: 16, height: 17, x: 8, y: 8},
 //		"not started_large": {url: "ufo_not_started_large.png", width: 64, height: 70, x: 32, y: 70},
 		"landed_medium": {url: "ufo_landed_medium.png", width: 32, height: 35, x: 16, y: 35},
+		"picked_up_medium": {url: "ufo_picked_up_medium.png", width: 32, height: 35, x: 16, y: 35},
+		"returned_medium": {url: "ufo_returned_medium.png", width: 32, height: 35, x: 16, y: 35},
 		"landed_small": {url: "ufo_landed_small.png", width: 16, height: 17, x: 8, y: 8},
 		"landed_large": {url: "ufo_landed_large.png", width: 64, height: 70, x: 32, y: 70},
 		"finished_medium": {url: "ufo_finished_medium.png", width: 32, height: 35, x: 16, y: 35},
@@ -130,7 +132,7 @@ define({
 			resizable: false,
 			resizableY: true,
 			height: 300,
-			width: 600,
+			width: 700,
 			top: 50,
 			left: 30
 		},
@@ -265,6 +267,7 @@ define({
 		center: {lat: 55.748758, lng: 37.6174},
 		type: "HYBRID"
 	},
+  ufoStatuses:[{title:'Landed',weight:4},{title:'Fly',weight:3},{title:'Picked up',weight:2},{title:'Returned',weight:1}],
 	// Настройки тестового сервера
 	testServerOptions: {
 		mainTitle: "52th FAI european paragliding championship",

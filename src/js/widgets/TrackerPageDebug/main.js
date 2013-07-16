@@ -80,12 +80,14 @@ define([
 	}
 
 	var Ufo = function(options) {
+    var self = this;
 		this.id = ko.observable(options.id);
 		this.name = ko.observable(options.name);
 		this.country = ko.observable(options.country);
 		this.personId = ko.observable(options.personId);
     this.tracker = options.tracker;
 		this.color = ko.observable(options.color || config.ufo.color);
+    this.status = ko.observable(null);
 		this.state = ko.observable(null);
 		this.stateChangedAt = ko.observable(null);
 		this.position = ko.observable({lat:null,lng:null,dt:null});
@@ -99,6 +101,27 @@ define([
 		this.trackerName = ko.observable(null);
 		this.trackVisible = ko.observable(config.ufo.trackVisible);
 		this.noData = ko.observable(true);
+    this.smsData = ko.observableArray();
+    this.newSmsCount = ko.observable(0);
+
+    this.smsData.subscribe(function(){
+      //обновить количество непрочитанных СМС
+      if(self.smsData().length == 0) {
+        self.newSmsCount(0);
+        return;
+      }
+      var orgSms = self.smsData().filter(function(sms){
+        return sms.from == "me";
+      });
+      if(orgSms.length) {
+        orgSms.sort(function(a,b){return a.timestamp > b._timeout?-1:1});
+        var lastOrgSms = orgSms[0];
+        var unansweredSms = self.smsData().filter(function(sms){
+          return sms.timestamp > lastOrgSms.timestamp;
+        });
+        self.newSmsCount(unansweredSms.length);
+      } else self.newSmsCount(self.smsData().length);
+    });
 		this.tableData = {
 			dist: ko.observable(null),
 			gSpd: ko.observable(null),
@@ -106,7 +129,19 @@ define([
 			alt: ko.observable(null),
 			state: ko.observable(null),
 			stateChangedAt: ko.observable(null)
-		}
+		};
+    this.status.subscribe(function(status){
+      if(self.type == "transport") return;
+      var state;
+      switch(status){
+        case 4: state = 'landed';break;
+        case 3: state = 'fly';break;
+        case 2: state = 'picked_up';break;
+        case 1: state = 'returned';break;
+      }
+      self.state(state);
+    });
+    this.status(4);
 	}
 
 	Ufo.prototype.updateTableData = function() {
@@ -659,8 +694,18 @@ define([
 					}
 					self.retrieveLastSmsTimestamp = Math.max(self.retrieveLastSmsTimestamp,rw.timestamp);
 				});
-				if (sms2push.length > 0)
-					ko.utils.arrayPushAll(self.smsData,sms2push);
+				if (sms2push.length > 0) {
+          sms2push.forEach(function(sms){
+            self.ufos().forEach(function(ufo){
+              if(ufo.personId() == sms.from || ufo.personId() == sms.to){
+                ufo.smsData.push(sms);
+              }
+            });
+          });
+
+          ko.utils.arrayPushAll(self.smsData,sms2push);
+        }
+
 				self.retrieveStatus(sms2push.length > 0 ? sms2push.length + " message" + (sms2push.length>1?"s":"") + " received":"No new messages");
 				if (self.retrieveState() == "play") {
 					var counter = 10;
@@ -696,6 +741,7 @@ define([
             if (ufo.tracker == data[i].id) {
               var rw = data[i].last_point;
               ufo.lastUpdate(Math.floor((new Date).getTime()/1000-rw[3]));
+              //ufo.status(4);
               if(ufo.lastUpdate() > 12 * 3600) {
                 ufo.lastUpdate(false);
                 continue;
@@ -704,15 +750,13 @@ define([
               ufo.gSpd(rw[5]);
               ufo.trackerName(data[i].name);
               ufo.noData(false);
+
               ufo.position({lat: rw[0], lng: rw[1], dt: null});
               if(self.hqCoords()){
                 ufo.dist(
                   RetrieveDistanceMeasurer.distance(rw[0],rw[1],self.hqCoords().lat,self.hqCoords().lon)
                     .toFixed(2)
                 );
-              }
-              if (rw.state && rw.state != ufo.state()) {
-                ufo.state(rw.state);
               }
               if(ufo.lastUpdate() > 40*60) {
                 ufo.state("ufo_untrusted");
@@ -725,6 +769,7 @@ define([
           ufo.noData(true);
         });
         self.map.update();
+        self.retrieveTable.runTableSorter();
         setTimeout(loadTrackers, 10000);
       }
       });

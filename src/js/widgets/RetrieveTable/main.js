@@ -9,9 +9,9 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
     this.status = options.status;
     this.state = options.state;
     this.selectedUfo = options.selectedUfo;
-    this.smsData = options.smsData;
+    //this.smsData = options.smsData;
     this.inModalWindow = ko.observable(false);
-
+    this.ufoStatuses = ko.observableArray(config.ufoStatuses);
     this.tableUfos = ko.observableArray([]);
     this.ufos.subscribe(function(ufos) {
       var rev1 = {}, rev2 = {}, values2push = [];
@@ -50,29 +50,36 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
       }
     });
     this.allVisibleCheckbox = new Checkbox({checked:this.allVisible,color:config.ufosTable.allVisibleCheckboxColor});
-    this.newSmsCounter = ko.observable({});
-    this.smsData.subscribe(function(data) {
-      var ar = {};
-      data.forEach(function(sms) {
-        if (!ar[sms.target]) ar[sms.target] = {cnt:0,timestamp:0};
-        if (!sms.readed())
-          ar[sms.target].cnt++;
-        ar[sms.target].timestamp = Math.max(ar[sms.target].timestamp,sms.timestamp);
-      });
-      self.newSmsCounter(ar);
-    });
 
     this.pilotNameFilter = ko.observable("");
   }
 
 	RetrieveTable.prototype.sortTableRows = function() {
 		this.tableUfos.sort(function(a,b) {
-			var d1 = a.lastSmsTimestamp();
-			var d2 = b.lastSmsTimestamp();
-			if (!d1 && !d2) return 0;
-			if (!d1) return 1;
-			if (!d2) return -1;
-			if (d1>0 && d2>0) return d1==d2?0:(d1<d2?1:- 1);
+      var aNewSMS = a.newSmsCount(),
+        bNewSMS = b.newSmsCount();
+      if(aNewSMS) aNewSMS = a.smsData().slice(-1)[0].timestamp;
+      if(bNewSMS) bNewSMS = b.smsData().slice(-1)[0].timestamp;
+
+      var  aStatus = a.status(),
+        bStatus = b.status(),
+        aDataLength = a.smsData().length,
+        bDataLength = b.smsData().length,
+        aDist = parseFloat(a.dist()),
+        bDist = parseFloat(b.dist());
+      if(aNewSMS && bNewSMS) return aNewSMS > bNewSMS?1:-1;
+      if(!aNewSMS && bNewSMS) return 1;
+      if(!bNewSMS && aNewSMS) return -1;
+      if(!bNewSMS && !aNewSMS) {
+        if(aStatus == bStatus) {
+          if(aDataLength == 0 || bDataLength == 0) { return aDataLength < bDataLength ? -1 : 1; }
+          if(aDataLength != bDataLength) {
+            return aDataLength < bDataLength ? 1 : -1;
+          } else {
+            return aDist < bDist ? 1 : -1;
+          }
+        } else return aStatus < bStatus ? 1: -1;
+      }
 		});
 	}
 
@@ -82,7 +89,7 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
 			clearTimeout(this.tableSorterTimer);
 		this.tableSorterTimer = setTimeout(function() {
 			self.sortTableRows();
-		},100);
+		},1000);
 	}
 
 	RetrieveTable.prototype.createUfo = function(data) {
@@ -93,26 +100,32 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
 			personId: data.personId,
 			dist: data.dist,
 			country: data.country,
+      status: data.status,
 			gSpd: data.gSpd,
       lastUpdate: data.lastUpdate,
       trackerName: data.trackerName,
 			tableData: data.tableData,
-      visible: data.visible
-		}
+      visible: data.visible,
+      smsData: data.smsData,
+      newSmsCount: data.newSmsCount
+    };
+    //w.newSmsCount = ko.observable(0);
+    w.smsData.subscribe(function(){
+      self.runTableSorter();
+    });
     w.country3 = ko.computed(function() {
       return w.country() && countryCodes[w.country()] ? countryCodes[w.country()] : w.country();
     });
-		w.newSmsCount = ko.computed(function() {
-			var n = self.newSmsCounter()[w.personId()];
-			return n ? n.cnt : 0;
-		});
-		w.lastSmsTimestamp = ko.computed(function() {
+    w.smsCount = ko.computed(function() {
+      return w.newSmsCount()|| w.smsData().length;
+    });
+		/*w.lastSmsTimestamp = ko.computed(function() {
 			var n = self.newSmsCounter()[w.personId()];
 			return n ? n.timestamp : 0;
-		});
-		w.lastSmsTimestamp.subscribe(function(dt) {
+		});*/
+		/*w.lastSmsTimestamp.subscribe(function(dt) {
 			if (dt>0) self.runTableSorter();
-		});
+		});*/
     w.visibleCheckbox = new Checkbox({checked:w.visible,color:"#909090"});
 		return w;
 	}
@@ -188,23 +201,13 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
       this.scrollbarContainer.tinyscrollbar_update();
   };
 
-  RetrieveTable.prototype.filterPilots = function(){
+  RetrieveTable.prototype.filterPilots = function() {
     this.pilotNameFilter(this.headerContainer.find('.pilot-filter-input').val());
     setTimeout(this.updateScrollbar.bind(this),0);
   };
 
   RetrieveTable.prototype.onPilotClick = function(ufo){
     this.emit("pilotClicked", ufo.id());
-  };
-
-  RetrieveTable.prototype.hasSmsFromOrg = function(ufo){
-    var smsData = this.smsData();
-    for (var i = 0, l = smsData.length; i < l; i++) {
-      if(smsData[i].to == ufo.personId() && smsData[i].from == "me"){
-        return true;
-      }
-    }
-    return false;
   };
 
   RetrieveTable.prototype.filterPilot = function(name){

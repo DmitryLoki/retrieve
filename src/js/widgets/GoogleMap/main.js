@@ -128,6 +128,7 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		});
 
 		this.zoom.subscribe(function() {
+      self.resetAnimation();
 			self.refreshShortWayArrows();
 		});
 
@@ -322,8 +323,16 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 			trackVisible: data.trackVisible,
 			noData: data.noData,
 			trackData: [],
-      type: data.type
-		}
+      type: data.type,
+      newSmsCount: data.newSmsCount
+		};
+    u.newSmsCount.subscribe(function(val){
+      if(val > 0) {
+        u._model.setAnimation(1);
+      } else {
+        u._model.setAnimation(0);
+      }
+    });
 		u._model = new gmaps.Marker({
 			flat: config.ufo.flat,
 			map: self.map
@@ -563,14 +572,20 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 
   GoogleMap.prototype.centerOnUfo = function(ufoId) {
     var ufo = this.mapUfos.filter(function(ufo){return ufo.id() == ufoId});
-    if(ufo.length ){
+    if(ufo.length){
       var position = ufo[0].position();
       if(position.lat && position.lng)
         this.map.panTo(new gmaps.LatLng(position.lat,position.lng));
       if(this.map.getZoom() < config.namesVisualModeAutoMinZoom)
         this.map.setZoom(config.namesVisualModeAutoMinZoom);
+      this.resetAnimation();
     }
   };
+  GoogleMap.prototype.resetAnimation = function() {
+    this.mapUfos.forEach(function(ufo){
+      ufo.newSmsCount.notifySubscribers(ufo.newSmsCount());
+    });
+  }
 	GoogleMap.prototype.domInit = function(elem,params) {
 		var self = this;
 		var div = ko.virtualElements.firstChild(elem);
@@ -591,6 +606,9 @@ define(["jquery","knockout","utils","EventEmitter","google.maps","config"],funct
 		gmaps.event.addListenerOnce(this.map,"click",function() {
 			self.activateMapScroll(true);
 		});
+    gmaps.event.addListenerOnce(this.map,"center_changed",function() {
+      self.resetAnimation();
+    });
 		this.isReady(true);
 		this.mapOptions.valueHasMutated();
 	}

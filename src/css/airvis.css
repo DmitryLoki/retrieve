@@ -442,6 +442,7 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 }
 
 .sms-box {
+    background-color: #88b7d5;
   display: inline;
   border-radius: 4px;
   font-size: 10px;
@@ -449,10 +450,9 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   margin-top: 3px;
   padding: 2px 5px;
 }
+.sms-box.no-sms { background-color: rgba(255,255,255,0.5)}
 
-.airvis-has-no-sms-from-org .sms-box {
-    background-color: #88b7d5;
-}
+.sms-box.unread-sms {background-color: red;}
 
 .airvis-chat-message {
   padding: 10px;
@@ -554,4 +554,6 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   top: -2px;
 }
 
-.pilot-filter-input {margin-left:5px;height:10px;width:100px;}
+.pilot-filter-input {margin-left:5px;height:10px;width:95px;}
+.airvis-table-body tr.picked-up {background-color: rgba(255, 255, 0, 0.5) !important;}
+.airvis-table-body tr.returned {background-color: rgba(66, 255, 82, 0.49) !important;}
