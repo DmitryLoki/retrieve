@@ -174,7 +174,7 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
 		while (div && div.nodeType != 1)
 			div = ko.virtualElements.nextSibling(div);
 		this.container = $(div);
-		this.headerContainer = this.container.find(".airvis-table-header");
+		this.headerContainer = this.container.find(".airvis-table-header-1");
 		this.bodyContainer = this.container.find(".airvis-table-body");
 		this.alignColumns();
 		this.ufos.subscribe(function() {
@@ -189,7 +189,7 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
   };
 
   RetrieveTable.prototype.filterPilots = function(){
-    this.pilotNameFilter($('#pilot-filter-input').val());
+    this.pilotNameFilter(this.headerContainer.find('.pilot-filter-input').val());
     setTimeout(this.updateScrollbar.bind(this),0);
   };
 

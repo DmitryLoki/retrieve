@@ -554,3 +554,4 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
   top: -2px;
 }
 
+.pilot-filter-input {margin-left:5px;height:10px;width:100px;}
