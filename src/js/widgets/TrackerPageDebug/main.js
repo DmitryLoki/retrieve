@@ -714,6 +714,9 @@ define([
               if (rw.state && rw.state != ufo.state()) {
                 ufo.state(rw.state);
               }
+              if(ufo.lastUpdate() > 40*60) {
+                ufo.state("ufo_untrusted");
+              }
               if (rw.stateChangedAt)
                 ufo.stateChangedAt(rw.stateChangedAt);
               return;

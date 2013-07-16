@@ -197,6 +197,16 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
     this.emit("pilotClicked", ufo.id());
   };
 
+  RetrieveTable.prototype.hasSmsFromOrg = function(ufo){
+    var smsData = this.smsData();
+    for (var i = 0, l = smsData.length; i < l; i++) {
+      if(smsData[i].to == ufo.personId() && smsData[i].from == "me"){
+        return true;
+      }
+    }
+    return false;
+  };
+
   RetrieveTable.prototype.filterPilot = function(name){
     return name().toLowerCase().indexOf(this.pilotNameFilter().toLowerCase())>-1;
   };

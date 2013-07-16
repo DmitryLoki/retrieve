@@ -38,7 +38,7 @@
                             <span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country().toLowerCase()"></span>
                             <span data-bind="text:country3"></span>
                         </td>
-						<td class="airvis-pilot-sms" data-bind="click:$parent.selectUfo.bind($parent,$data)"><div class="sms-box" data-bind="visible:newSmsCount()>0,text:newSmsCount"></div></td>
+						<td class="airvis-pilot-sms" data-bind="click:$parent.selectUfo.bind($parent,$data),css:{'airvis-has-no-sms-from-org':!$parent.hasSmsFromOrg($data)}"><div class="sms-box" data-bind="visible:newSmsCount()>0,text:newSmsCount"></div></td>
 						<!-- <td class="airvis-pilot-person-id" data-bind="text:personId"></td>-->
 						<td class="airvis-pilot-dist-to-hq">
 							<span data-bind="text:dist"></span>

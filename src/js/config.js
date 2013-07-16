@@ -6,6 +6,7 @@ define({
 	imgRootUrl: "/img/",
 	icons: {
 		"default_medium": {url: "ufo_default_medium.png", width: 32, height: 35, x: 16, y: 35},
+		"ufo_untrusted_medium": {url: "default_untrusted_medium.png", width: 32, height: 35, x: 16, y: 35},
 		"default_small": {url: "ufo_default_small.png", width: 16, height: 17, x: 8, y: 8},
 		"default_large": {url: "ufo_default_large.png", width: 64, height: 70, x: 32, y: 70},
 //		"not started_medium": {url: "ufo_not_started_medium.png", width: 32, height: 35, x: 16, y: 35},
