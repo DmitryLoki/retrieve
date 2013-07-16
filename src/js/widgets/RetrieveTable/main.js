@@ -206,7 +206,8 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
     setTimeout(this.updateScrollbar.bind(this),0);
   };
 
-  RetrieveTable.prototype.onPilotClick = function(ufo){
+  RetrieveTable.prototype.onPilotClick = function(ufo,event){
+    event.stopPropagation();
     this.emit("pilotClicked", ufo.id());
   };
 

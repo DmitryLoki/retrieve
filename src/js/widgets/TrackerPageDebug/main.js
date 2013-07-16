@@ -741,7 +741,6 @@ define([
             if (ufo.tracker == data[i].id) {
               var rw = data[i].last_point;
               ufo.lastUpdate(Math.floor((new Date).getTime()/1000-rw[3]));
-              //ufo.status(4);
               if(ufo.lastUpdate() > 12 * 3600) {
                 ufo.lastUpdate(false);
                 continue;

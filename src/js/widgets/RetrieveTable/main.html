@@ -28,18 +28,18 @@
 		<div class="airvis-table-body viewport">
 			<table class="overview airvis-sms-table" cellspacing="0" cellpadding="0" border="0">
 				<tbody data-bind="foreach:tableUfos" >
-					<tr data-bind="css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false,'picked-up':status()==2,'returned':status()==1},visible:$parent.filterPilot(name)">
+					<tr data-bind="click:$parent.selectUfo.bind($parent,$data),css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false,'picked-up':status()==2,'returned':status()==1},visible:$parent.filterPilot(name)">
                         <td class="airvis-checkbox" data-bind="click:function(t,event){event.stopPropagation()}">
                             <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
                         </td>
 						<td class="airvis-pilot-number" data-bind="text:$index()+1"></td>
 						<td class="airvis-pilot-number" data-bind="text:id"></td>
-						<td class="airvis-pilot-name" data-bind="text:name,click:$parent.onPilotClick.bind($parent,$data)"></td>
+						<td class="airvis-pilot-name" data-bind="text:name,click:$parent.onPilotClick.bind($parent)"></td>
                         <td class="airvis-pilot-country">
                             <span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country().toLowerCase()"></span>
                             <span data-bind="text:country3"></span>
                         </td>
-						<td class="airvis-pilot-sms" data-bind="click:$parent.selectUfo.bind($parent,$data)"><div class="sms-box" data-bind="css:{'unread-sms':newSmsCount()>0,'no-sms':smsData().length==0},text:smsCount"></div></td>
+						<td class="airvis-pilot-sms"><div class="sms-box" data-bind="css:{'unread-sms':newSmsCount()>0,'no-sms':smsData().length==0},text:smsCount"></div></td>
                         <td class="airvis-pilot-status"><select data-bind="options:$parent.ufoStatuses,value:status,optionsText:'title',optionsValue:'weight',optionsCaption:'Select an item...',event:{change:$parent.sortTableRows.bind($parent)}"></select></td>
                         <!-- <td class="airvis-pilot-person-id" data-bind="text:personId"></td>-->
 						<td class="airvis-pilot-dist-to-hq">
