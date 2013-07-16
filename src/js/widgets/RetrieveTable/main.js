@@ -183,8 +183,14 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
 		this.scrollbarContainer = this.container.find(".airvis-scrollbar").tinyscrollbar();
 	};
 
+  RetrieveTable.prototype.updateScrollbar = function(){
+    if(this.scrollbarContainer)
+      this.scrollbarContainer.tinyscrollbar_update();
+  };
+
   RetrieveTable.prototype.filterPilots = function(){
     this.pilotNameFilter($('#pilot-filter-input').val());
+    setTimeout(this.updateScrollbar.bind(this),0);
   };
 
   RetrieveTable.prototype.onPilotClick = function(ufo){
@@ -193,7 +199,6 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
 
   RetrieveTable.prototype.filterPilot = function(name){
     return name().toLowerCase().indexOf(this.pilotNameFilter().toLowerCase())>-1;
-    this.scrollbarContainer.tinyscrollbar_update();
   };
 
 	RetrieveTable.prototype.templates = ["main"];

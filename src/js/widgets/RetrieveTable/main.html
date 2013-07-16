@@ -26,7 +26,7 @@
 		<div class="scrollbar" style="margin-top:2px;"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
 		<div class="airvis-table-body viewport">
 			<table class="overview airvis-sms-table" cellspacing="0" cellpadding="0" border="0">
-				<tbody data-bind="foreach:tableUfos">
+				<tbody data-bind="foreach:tableUfos" >
 					<tr data-bind="css:{'airvis-selected':$parent.selectedUfo()?$parent.selectedUfo().personId()==personId():false},visible:$parent.filterPilot(name)">
                         <td class="airvis-checkbox" data-bind="click:function(t,event){event.stopPropagation()}">
                             <!-- ko widget: { data: visibleCheckbox, type: 'Checkbox'} --><!-- /ko -->
