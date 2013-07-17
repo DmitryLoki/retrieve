@@ -103,24 +103,32 @@ define([
 		this.noData = ko.observable(true);
     this.smsData = ko.observableArray();
     this.newSmsCount = ko.observable(0);
+    this.unreadSmsCount = ko.observable(0);
 
     this.smsData.subscribe(function(){
-      //обновить количество непрочитанных СМС
+      //обновить количество неотвеченных СМС
+      //неотвеченные - те, которые пришли после последней смс от орга
       if(self.smsData().length == 0) {
         self.newSmsCount(0);
-        return;
-      }
-      var orgSms = self.smsData().filter(function(sms){
-        return sms.from == "me";
-      });
-      if(orgSms.length) {
-        orgSms.sort(function(a,b){return a.timestamp > b._timeout?-1:1});
-        var lastOrgSms = orgSms[0];
-        var unansweredSms = self.smsData().filter(function(sms){
-          return sms.timestamp > lastOrgSms.timestamp;
+      } else {
+        var orgSms = self.smsData().filter(function(sms){
+          return sms.from == "me";
         });
-        self.newSmsCount(unansweredSms.length);
-      } else self.newSmsCount(self.smsData().length);
+        if(orgSms.length) {
+          orgSms.sort(function(a,b){return a.timestamp > b.timestamp?-1:1});
+          var lastOrgSms = orgSms[0];
+          var unansweredSms = self.smsData().filter(function(sms){
+            return sms.timestamp > lastOrgSms.timestamp;
+          });
+          self.newSmsCount(unansweredSms.length);
+        } else self.newSmsCount(self.smsData().length);
+      }
+
+      //обновить количество непрочитанных смс
+      if(self.newSmsCount() == 0)
+        self.unreadSmsCount(0);
+      else
+        self.unreadSmsCount(self.smsData().filter(function(sms){return !sms.readed()}).length);
     });
 		this.tableData = {
 			dist: ko.observable(null),
@@ -166,7 +174,7 @@ define([
 		this.timestamp = options.timestamp;
 		this.body = options.body;
 		this.target = options.from == "me" ? options.to : options.from;
-		this.readed = ko.observable(false);
+		this.readed = ko.observable(options.from == "me");
 		var d = new Date(this.timestamp * 1000);
 		this.time = (d.getHours()<10?"0":"") + d.getHours() + ":" + (d.getMinutes()<10?"0":"") + d.getMinutes();
 	}

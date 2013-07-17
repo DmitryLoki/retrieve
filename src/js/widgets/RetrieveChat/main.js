@@ -6,7 +6,16 @@ define(["jquery","knockout","config","jquery.tinyscrollbar"], function($,ko,conf
 		this.ufo = options.ufo;
 		this.smsData = options.smsData;
 		this.inModalWindow = ko.observable(false);
-
+    this.ufo.subscribe(function(){
+      //отметить все смс-ки как прочитанные
+      if(!self.ufo()) return;
+      var smsData = self.ufo().smsData();
+      if(smsData.length)
+        smsData.forEach(function(sms){
+          sms.readed(true);
+        });
+      self.ufo().smsData.notifySubscribers(self.ufo().smsData());
+    });
 		this.chatData = ko.observableArray([]);
 		this.chatDataInitializer = ko.computed(function() {
 			if (!self.ufo()) return null;

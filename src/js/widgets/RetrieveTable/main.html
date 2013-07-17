@@ -39,8 +39,9 @@
                             <span class="countryicon-sprite iconset-shiny" data-bind="css:'countrycode-'+country().toLowerCase()"></span>
                             <span data-bind="text:country3"></span>
                         </td>
-						<td class="airvis-pilot-sms"><div class="sms-box" data-bind="css:{'unread-sms':newSmsCount()>0,'no-sms':smsData().length==0},text:smsCount"></div></td>
-                        <td class="airvis-pilot-status"><select data-bind="options:$parent.ufoStatuses,value:status,optionsText:'title',optionsValue:'weight',optionsCaption:'Select an item...',event:{change:$parent.sortTableRows.bind($parent)}"></select></td>
+						<td class="airvis-pilot-sms"><div class="sms-box" data-bind="css:{'unanswered-sms':newSmsCount()>0,'no-sms':smsData().length==0,'unread-sms':unreadCount()>0},text:smsCount"></div></td>
+                        <td class="airvis-pilot-status">
+                            <select data-bind="options:$parent.ufoStatuses,value:status,optionsText:'title',optionsValue:'weight',event:{change:$parent.sortTableRows.bind($parent),click:function(t,event){event.stopPropagation()}}"></select></td>
                         <!-- <td class="airvis-pilot-person-id" data-bind="text:personId"></td>-->
 						<td class="airvis-pilot-dist-to-hq">
 							<span data-bind="text:dist"></span>

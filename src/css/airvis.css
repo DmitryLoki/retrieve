@@ -452,7 +452,8 @@ body { min-width: 1000px; width: 100%; min-height: 100%}
 }
 .sms-box.no-sms { background-color: rgba(255,255,255,0.5)}
 
-.sms-box.unread-sms {background-color: red;}
+.sms-box.unanswered-sms {background-color: red;}
+.sms-box.unread-sms {background-color: #ff8f02;}
 
 .airvis-chat-message {
   padding: 10px;
