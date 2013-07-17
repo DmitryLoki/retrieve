@@ -149,7 +149,7 @@ define([
       }
       self.state(state);
     });
-    this.status(4);
+    this.status(3);
 	}
 
 	Ufo.prototype.updateTableData = function() {
