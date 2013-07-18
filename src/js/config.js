@@ -132,7 +132,7 @@ define({
 			resizable: false,
 			resizableY: true,
 			height: 300,
-			width: 700,
+			width: 730,
 			top: 50,
 			left: 30
 		},

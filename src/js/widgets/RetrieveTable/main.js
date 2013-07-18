@@ -78,7 +78,7 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
       if(!bNewSMS && aNewSMS) return -1;
       if(!bNewSMS && !aNewSMS) {
         if(aStatus == bStatus) {
-          if(aDataLength == 0 && bDataLength == 0) return 0;
+          //if(aDataLength == 0 && bDataLength == 0) return 0;
           if(aDataLength != bDataLength) return aDataLength > bDataLength ? 1 : -1;
           else return aDist < bDist ? 1 : -1;
         }
@@ -108,6 +108,7 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
 			gSpd: data.gSpd,
       lastUpdate: data.lastUpdate,
       trackerName: data.trackerName,
+      trackerCharge: data.trackerCharge,
 			tableData: data.tableData,
       visible: data.visible,
       smsData: data.smsData,
@@ -209,6 +210,9 @@ define(["jquery","knockout","config","CountryCodes","widget!Checkbox","jquery.ti
     this.emit("pilotClicked", ufo.id());
   };
 
+  RetrieveTable.prototype.getPilotsByStatus = function(status){
+    return this.ufos().filter(function(ufo){return ufo.status() == status;});
+  };
   RetrieveTable.prototype.filterPilot = function(name){
     return name().toLowerCase().indexOf(this.pilotNameFilter().toLowerCase())>-1;
   };

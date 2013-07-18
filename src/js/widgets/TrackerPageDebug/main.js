@@ -99,6 +99,7 @@ define([
 		this.lastUpdate = ko.observable(null);
 		this.visible = ko.observable(config.ufo.visible);
 		this.trackerName = ko.observable(null);
+		this.trackerCharge = ko.observable(null);
 		this.trackVisible = ko.observable(config.ufo.trackVisible);
 		this.noData = ko.observable(true);
     this.smsData = ko.observableArray();
@@ -756,6 +757,7 @@ define([
               ufo.alt(rw.alt);
               ufo.gSpd(rw[5]);
               ufo.trackerName(data[i].name);
+              ufo.trackerCharge(rw[4]);
               ufo.noData(false);
 
               ufo.position({lat: rw[0], lng: rw[1], dt: null});

@@ -13,6 +13,7 @@
 					<td class="airvis-pilot-dist-to-hq">Dist. to HQ, km</td>
 					<td class="airvis-pilot-speed">Ground spd</td>
 					<td class="airvis-pilot-last-update">Data age</td>
+                    <td class="airvis-pilot-tracker-charge">Tracker charge, %</td>
 					<td class="airvis-pilot-tracker-name">Tracker</td>
 				</tr>
 			</tbody>
@@ -32,6 +33,7 @@
 						</td>
                         <td class="airvis-pilot-speed" data-bind="text:gSpd"></td>
                         <td class="airvis-pilot-last-update" data-bind="text:$parent.lastUpdateFormat(lastUpdate)"></td>
+                        <td class="airvis-pilot-tracker-charge" data-bind="text:trackerCharge"></td>
                         <td class="airvis-pilot-tracker-name" data-bind="text:trackerName"></td>
 					</tr>
 				</tbody>
