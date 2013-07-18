@@ -92,7 +92,7 @@
 			var updateData = function() {
 				var ar = [];
 				for (var i = 0; i < pilots.length; i++) {
-					var rw = $.extend({last_update:"",tracker_name:pilots[i].tracker,alt:"",coords:"",dist:0,gspd:0},pilots[i]);
+					var rw = $.extend({last_update:"",tracker_name:pilots[i].tracker,alt:"",coords:"",dist:0,gspd:0, charge:'-'},pilots[i]);
 					var rwTr = trackers[rw.tracker];
 					if (rwTr) {
 						rw.tracker_name = rwTr.name;
@@ -113,6 +113,7 @@
                                 rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ") / ("+utmZone+"T " + coordinate.x.toFixed(0) + " " + coordinate.y.toFixed(0) + ")";
                                 rw.gspd = rwTr.last_point[5] || 0;
                                 rw.gspd = Math.floor(rw.gspd*100)/100;
+                                rw.charge = rwTr.last_point[4];
                                 if (isNaN(rw.gspd)) rw.gspd = 0;
                                 rw.dist = hq ? hq.distanceTo(new LatLon(rwTr.last_point[0],rwTr.last_point[1])) : 0;
                                 rw.dist = Math.floor(rw.dist*100)/100;
@@ -159,6 +160,7 @@
 					<th><a href="#" data-bind="click:setSort.bind($data,'contest_number'),css:{'asc':sort()=='contest_number','desc':sort()=='contest_number_desc'}">Pilot #</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'name'),css:{'asc':sort()=='name','desc':sort()=='name_desc'}">Name</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'last_update'),css:{'asc':sort()=='last_update','desc':sort()=='last_update_desc'}">Last Update (sec ago)</a></th>
+					<th><a href="#" data-bind="click:setSort.bind($data,'charge'),css:{'asc':sort()=='charge','desc':sort()=='charge_desc'}">Charge (%)</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'tracker_name'),css:{'asc':sort()=='tracker_name','desc':sort()=='tracker_name_desc'}">Tracker #</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'alt'),css:{'asc':sort()=='alt','desc':sort()=='alt_desc'}">Alt</a></th>
 					<th>Coordinates</th>
@@ -172,6 +174,7 @@
 					<td class="num" data-bind="text:contest_number"></td>
 					<td data-bind="text:name"></td>
 					<td class="num" data-bind="text:$parent.formatTime(last_update)"></td>
+					<td class="num" data-bind="text:charge"></td>
 					<td data-bind="text:tracker_name"></td>
 					<td class="num" data-bind="text:alt"></td>
 					<td data-bind="text:coords"></td>
