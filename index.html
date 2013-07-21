@@ -40,25 +40,25 @@
 			ko.applyBindings(table);
 
 			var pilots = [];
-			var trackers = {};
+			var pilots = trackers = [];
 			var hq = null;
 
-			$.ajax({
+			/*$.ajax({
 				url: "http://api.airtribune.com/" + options.apiVersion + "/contest/" + options.contestId + "/race/" + options.raceId + "/paragliders",
 				dataType: "json",
 				success: function(result) {
 					pilots = result;
 					runTick();
 				}
-			});
+			});*/
 
-			$.ajax({
+			/*$.ajax({
 				url: "http://api.airtribune.com/" + options.apiVersion + "/contest/" + options.contestId + "/",
 				dataType: "json",
 				success: function(result) {
 					hq = new LatLon(result.coords[0],result.coords[1]);
 				}
-			});
+			});*/
 
 			var runTick = function() {
 				table.timeout(table.timeout()-1);
@@ -67,9 +67,9 @@
 						url: "http://api.airtribune.com/" + options.apiVersion + "/tracker",
 						dataType: "json",
 						success: function(result) {
-							trackers = {};
+							trackers = [];
 							for (var i = 0; i < result.length; i++)
-								trackers[result[i].id] = result[i];
+								trackers[i] = result[i];
 							updateData();
 							table.timeout(10);
 							setTimeout(runTick,1000);
@@ -80,7 +80,7 @@
 					setTimeout(runTick,1000);
 				}
 			}
-
+        runTick();
         var getTimeString = function(h,m,s) {
             h = Math.abs(h);
             m = Math.abs(m);
@@ -91,9 +91,9 @@
         var formatTime = function(){console.log(arguments)};
 			var updateData = function() {
 				var ar = [];
-				for (var i = 0; i < pilots.length; i++) {
-					var rw = $.extend({last_update:"",tracker_name:pilots[i].tracker,alt:"",coords:"",dist:0,gspd:0, charge:'-'},pilots[i]);
-					var rwTr = trackers[rw.tracker];
+				for (var i = 0; i < trackers.length; i++) {
+					var rw = $.extend({last_update:"",tracker_name:trackers[i].id,alt:"",coords:"",dist:0,gspd:0, charge:'-'},{});
+					var rwTr = trackers[i];
 					if (rwTr) {
 						rw.tracker_name = rwTr.name;
 						if (rwTr.last_point) {
@@ -156,30 +156,30 @@
 		<table>
 			<thead>
 				<tr>
-					<th>#</th>
-					<th><a href="#" data-bind="click:setSort.bind($data,'contest_number'),css:{'asc':sort()=='contest_number','desc':sort()=='contest_number_desc'}">Pilot #</a></th>
-					<th><a href="#" data-bind="click:setSort.bind($data,'name'),css:{'asc':sort()=='name','desc':sort()=='name_desc'}">Name</a></th>
+					<!--<th>#</th>-->
+					<!--<th><a href="#" data-bind="click:setSort.bind($data,'contest_number'),css:{'asc':sort()=='contest_number','desc':sort()=='contest_number_desc'}">Pilot #</a></th>-->
+					<!--<th><a href="#" data-bind="click:setSort.bind($data,'name'),css:{'asc':sort()=='name','desc':sort()=='name_desc'}">Name</a></th>-->
 					<th><a href="#" data-bind="click:setSort.bind($data,'last_update'),css:{'asc':sort()=='last_update','desc':sort()=='last_update_desc'}">Last Update (sec ago)</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'charge'),css:{'asc':sort()=='charge','desc':sort()=='charge_desc'}">Charge (%)</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'tracker_name'),css:{'asc':sort()=='tracker_name','desc':sort()=='tracker_name_desc'}">Tracker #</a></th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'alt'),css:{'asc':sort()=='alt','desc':sort()=='alt_desc'}">Alt</a></th>
 					<th>Coordinates</th>
 					<th><a href="#" data-bind="click:setSort.bind($data,'gspd'),css:{'asc':sort()=='gspd','desc':sort()=='gspd_desc'}">Spd</a></th>
-					<th><a href="#" data-bind="click:setSort.bind($data,'dist'),css:{'asc':sort()=='dist','desc':sort()=='dist_desc'}">Dist from HQ km</a></th>
+					<!--<th><a href="#" data-bind="click:setSort.bind($data,'dist'),css:{'asc':sort()=='dist','desc':sort()=='dist_desc'}">Dist from HQ km</a></th>-->
 				</tr>
 			</thead>
 			<tbody data-bind="foreach: data">
 				<tr>
-					<td class="num" data-bind="text:$index()+1"></td>
-					<td class="num" data-bind="text:contest_number"></td>
-					<td data-bind="text:name"></td>
+					<!--<td class="num" data-bind="text:$index()+1"></td>-->
+					<!--<td class="num" data-bind="text:contest_number"></td>-->
+					<!--<td data-bind="text:name"></td>-->
 					<td class="num" data-bind="text:$parent.formatTime(last_update)"></td>
 					<td class="num" data-bind="text:charge"></td>
 					<td data-bind="text:tracker_name"></td>
 					<td class="num" data-bind="text:alt"></td>
 					<td data-bind="text:coords"></td>
 					<td class="num" data-bind="text:gspd"></td>
-					<td class="num" data-bind="text:dist"></td>
+					<!--<td class="num" data-bind="text:dist"></td>-->
 				</tr>
 			</tbody>
 		</table>
