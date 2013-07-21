@@ -110,7 +110,7 @@
                                 Proj4js.defs["EPSG:32635"] = "+proj=utm +zone=" + utmZone +" +ellps=WGS84 +datum=WGS84 +units=m +no_defs";
                                 Proj4js.transform(sourceProjection, new Proj4js.Proj('EPSG:32635'), coordinate);
 
-                                rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ") / ("+utmZone+"T " + coordinate.x.toFixed(0) + " " + coordinate.y.toFixed(0) + ")";
+                                rw.coords = "(" + rwTr.last_point[0] + "," + rwTr.last_point[1] + ")";
                                 rw.gspd = rwTr.last_point[5] || 0;
                                 rw.gspd = Math.floor(rw.gspd*100)/100;
                                 rw.charge = rwTr.last_point[4];
