@@ -1,5 +1,6 @@
 table { 
 	width: 100%;
+    text-align: center;
 }
 
 th, td { 
@@ -15,14 +16,56 @@ th a {
 	display: block;
 }
 
-.desc {
-	background: url(img/desc.png) top right no-repeat;
-}
 
-.asc {
-	background: url(img/asc.png) top right no-repeat;
+/*====================================================
+CSS Tooltips by Adam Whitcroft
+https://github.com/AdamWhitcroft/CSS.Tooltips
+====================================================*/
+/*==================================================*/
+/*  $Tooltips                                       */
+/*==================================================*/
+[data-tip] {
+    position:relative;
 }
-
-.num { 
-	text-align: right; 
+[data-tip]:before {
+    content:'';
+    /* hides the tooltip when not hovered */
+    display:none;
+    border:5px solid #1a1a1a;
+    /* 4 border technique to create the arrow */
+    border-top-color:#1a1a1a;
+    border-right-color:transparent;
+    border-bottom-color:transparent;
+    border-left-color:transparent;
+    position:absolute;
+    top:-7px;
+    left:4px;
+    z-index:8;
+    font-size:0;
+    line-height:0;
+    width:0;
+    height:0;
+}
+[data-tip]:after {
+    display:none;
+    content:attr(data-tip);
+    position:absolute;
+    top:-35px;
+    left:0px;
+    padding:5px 8px;
+    background:#1a1a1a;
+    color:#fff;
+    z-index:9;
+    font-size: 0.75em;
+    height:18px;
+    line-height:18px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    white-space:nowrap;
+    word-wrap:normal;
+}
+[data-tip]:hover:before,
+[data-tip]:hover:after {
+    display:block;
 }
