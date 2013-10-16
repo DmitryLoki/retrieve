@@ -180,25 +180,29 @@
                data-bind="click:setSort.bind($data,'name'),css:{'asc':sort()=='name','desc':sort()=='name_desc'}">Pilot</a>
         </th>
         <th><a href="#"
-               data-bind="click:setSort.bind($data,'last_update'),css:{'asc':sort()=='last_update','desc':sort()=='last_update_desc'}">Data
-            age</a></th>
+               data-bind="click:setSort.bind($data,'dist'),css:{'asc':sort()=='dist','desc':sort()=='dist_desc'}">Dist
+            to HQ, km</a></th>
         <th><a href="#"
-               data-bind="click:setSort.bind($data,'charge'),css:{'asc':sort()=='charge','desc':sort()=='charge_desc'}">Battery,
-            %</a></th>
-        <th><a href="#"
-               data-bind="click:setSort.bind($data,'tracker_name'),css:{'asc':sort()=='tracker_name','desc':sort()=='tracker_name_desc'}">Tracker</a>
+               data-bind="click:setSort.bind($data,'gspd'),css:{'asc':sort()=='gspd','desc':sort()=='gspd_desc'}">Spd,
+            km/h</a>
         </th>
         <th><a href="#" data-bind="click:setSort.bind($data,'alt'),css:{'asc':sort()=='alt','desc':sort()=='alt_desc'}">Alt,
             m</a>
         </th>
         <th>Coordinates</th>
         <th><a href="#"
-               data-bind="click:setSort.bind($data,'gspd'),css:{'asc':sort()=='gspd','desc':sort()=='gspd_desc'}">Spd,
-            km/h</a>
+               data-bind="click:setSort.bind($data,'last_update'),css:{'asc':sort()=='last_update','desc':sort()=='last_update_desc'}">Data
+            age</a></th>
+        <th><a href="#"
+               data-bind="click:setSort.bind($data,'tracker_name'),css:{'asc':sort()=='tracker_name','desc':sort()=='tracker_name_desc'}">Tracker</a>
         </th>
         <th><a href="#"
-               data-bind="click:setSort.bind($data,'dist'),css:{'asc':sort()=='dist','desc':sort()=='dist_desc'}">Dist
-            to HQ, km</a></th>
+               data-bind="click:setSort.bind($data,'charge'),css:{'asc':sort()=='charge','desc':sort()=='charge_desc'}">Battery,
+            %</a></th>
+
+
+
+
     </tr>
     </thead>
     <tbody data-bind="foreach: data">
@@ -211,14 +215,16 @@
                 <span data-bind="attr:{class:'countryicon-sprite iconset-shiny countrycode-'+country.toLowerCase()}"></span>
             </span>
         </td>
-        <td class="num" data-bind="text:$parent.formatTime(last_update)"></td>
-        <td class="num" data-bind="text:charge"></td>
-        <td data-bind="text:tracker_name"></td>
+        <td class="num" data-bind="text:dist"></td>
+        <td class="num" data-bind="text:gspd"></td>
         <td class="num" data-bind="text:alt"></td>
         <td><a target="_blank" data-bind="text:coords.latlng, attr:{href:url}"></a><span
                 data-bind="text:coords.utm"></span></td>
-        <td class="num" data-bind="text:gspd"></td>
-        <td class="num" data-bind="text:dist"></td>
+        <td class="num" data-bind="text:$parent.formatTime(last_update)"></td>
+        <td data-bind="text:tracker_name"></td>
+        <td class="num" data-bind="text:charge"></td>
+
+
     </tr>
     </tbody>
 </table>
