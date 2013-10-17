@@ -36,7 +36,7 @@
                     if (isNaN(time) || time === "" || time === Infinity) {
                         return "-:-:-";
                     }
-                    time = Math.floor(time / 1000);
+                    time = Math.floor((new Date).getTime() / 1000 - time );
                     var secInDay = 3600 * 24,
                             days = Math.floor(time / secInDay),
                             rest = days ? time % (days * secInDay) : time,
